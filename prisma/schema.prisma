@@ -1,0 +1,110 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  PERSIAPAN
+  PENGOLAHAN
+  PEMORSIAN
+  DISTRIBUSI
+  PENCUCIAN
+  KEBERSIHAN
+  SATPAM
+}
+
+model Divisi {
+  id             Int             @id @default(autoincrement())
+  nama_divisi    String
+  jumlah_anggota Int
+  users          User[]
+  anggota        AnggotaDivisi[]
+  absensi        Absensi[]
+  foto_kegiatan  FotoKegiatan[]
+  laporan        LaporanDivisi[]
+}
+
+model User {
+  id            String   @id @default(uuid())
+  username      String   @unique
+  email         String?  @unique
+  password_hash String
+  role          Role
+  status        Boolean  @default(true) // aktif/nonaktif
+  
+  divisi_id     Int?
+  divisi        Divisi?  @relation(fields: [divisi_id], references: [id])
+}
+
+model AnggotaDivisi {
+  id        Int    @id @default(autoincrement())
+  nama      String
+  no_hp     String?
+  
+  divisi_id Int
+  divisi    Divisi @relation(fields: [divisi_id], references: [id])
+  
+  // Relasi absensi per anggota
+  absensi_detail AnggotaAbsensi[]
+}
+
+// Rekap Kehadiran Harian Per Divisi
+model Absensi {
+  id             String   @id @default(uuid())
+  tanggal        DateTime @db.Date // Harian
+  jam_input      DateTime @default(now())
+  
+  divisi_id      Int
+  divisi         Divisi   @relation(fields: [divisi_id], references: [id])
+
+  detail         AnggotaAbsensi[]
+
+  @@unique([divisi_id, tanggal])
+}
+
+// Detail Kehadiran Individu (Relasional)
+model AnggotaAbsensi {
+  id             String   @id @default(uuid())
+  status         String   // Hadir, Sakit, Izin, Alpha
+  
+  absensi_id     String
+  absensi        Absensi  @relation(fields: [absensi_id], references: [id], onDelete: Cascade)
+  
+  anggota_id     Int
+  anggota        AnggotaDivisi @relation(fields: [anggota_id], references: [id], onDelete: Cascade)
+}
+
+// Laporan Harian Per Divisi
+model LaporanDivisi {
+  id               String   @id @default(uuid())
+  tanggal          DateTime @db.Date
+  isi_laporan      String?  @db.Text
+  data_terstruktur Json?    // Contoh: { "porsi_besar": 100, "porsi_kecil": 50 }
+  created_by       String   // username atau user_id
+  
+  divisi_id        Int
+  divisi           Divisi   @relation(fields: [divisi_id], references: [id])
+  
+  foto             FotoKegiatan[] // Menautkan foto langsung ke laporan
+  
+  @@unique([divisi_id, tanggal])
+}
+
+model FotoKegiatan {
+  id          String   @id @default(uuid())
+  tanggal     DateTime @db.Date
+  url_foto    String
+  tipe_foto   String   // kegiatan, bahan_makanan, sampah, makanan_matang, dll.
+  catatan     Json?    // { berat: "10kg", jumlah: 5 }
+  
+  divisi_id   Int
+  divisi      Divisi   @relation(fields: [divisi_id], references: [id])
+
+  laporan_id  String?
+  laporan     LaporanDivisi? @relation(fields: [laporan_id], references: [id], onDelete: Cascade)
+}
