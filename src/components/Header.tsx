@@ -32,7 +32,7 @@ export default function Header({ session }: { session: any }) {
 
   return (
     <>
-      <header className="bg-white border-b border-gray-200 h-14 flex items-center justify-between px-4 sm:px-8 relative z-20 shrink-0">
+      <header className="bg-white border-b border-gray-200 h-14 flex items-center justify-between px-4 sm:px-8 sticky top-0 z-30 shrink-0 shadow-sm">
       <div className="flex items-center gap-1">
          <button 
            onClick={toggle}
