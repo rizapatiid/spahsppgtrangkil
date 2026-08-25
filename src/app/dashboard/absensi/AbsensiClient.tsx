@@ -13,6 +13,9 @@ export default function AbsensiClient({ anggotaList, divisiName }: { anggotaList
   const [filePreview, setFilePreview] = useState<string | null>(null)
   const router = useRouter()
 
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [isFromCamera, setIsFromCamera] = useState(false)
+
   async function addWatermark(file: File, divisi: string): Promise<File> {
     return new Promise((resolve) => {
       const img = new Image()
@@ -75,21 +78,42 @@ export default function AbsensiClient({ anggotaList, divisiName }: { anggotaList
     }
   }
 
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>, fromCamera: boolean) {
+    const file = e.target.files?.[0]
+    if (file) {
+      setIsFromCamera(fromCamera)
+      setSelectedFile(file)
+      if (fromCamera) {
+        const watermarked = await addWatermark(file, divisiName)
+        setFilePreview(URL.createObjectURL(watermarked))
+      } else {
+        setFilePreview(URL.createObjectURL(file))
+      }
+    }
+  }
+
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    if (!selectedFile) {
+      setMessage({ text: "Harap lampirkan foto bukti atau foto briefing!", type: "error" })
+      return
+    }
+
     setLoading(true)
     setMessage({ text: "", type: "" })
 
     const form = e.currentTarget
     const formData = new FormData(form)
 
-    // Kompresi & Watermark foto
-    const foto = formData.get("foto") as File
-    if (foto && foto.size > 0) {
-      const watermarkedFoto = await addWatermark(foto, divisiName)
-      const compressedFoto = await handleCompress(watermarkedFoto)
-      formData.set("foto", compressedFoto, foto.name)
+    // Kompresi & Watermark foto (HANYA jika dari kamera)
+    let processedFile = selectedFile
+    if (isFromCamera) {
+      processedFile = await addWatermark(processedFile, divisiName)
     }
+    const compressedFoto = await handleCompress(processedFile)
+    
+    // Set file ke form data
+    formData.set("foto", compressedFoto, selectedFile.name)
 
     const res = await submitAbsensi(formData)
 
@@ -97,7 +121,7 @@ export default function AbsensiClient({ anggotaList, divisiName }: { anggotaList
       setMessage({ text: res.error, type: "error" })
     } else {
       setMessage({ text: "Absensi berhasil disimpan!", type: "success" })
-      setFileName("")
+      setSelectedFile(null)
       setFilePreview(null)
       form.reset()
       router.refresh()
@@ -140,51 +164,64 @@ export default function AbsensiClient({ anggotaList, divisiName }: { anggotaList
                 <p className="text-[11px] text-slate-500 font-medium">Wajib diunggah setiap hari</p>
               </div>
             </div>
-            <div className="border-2 border-dashed border-slate-200/80 bg-slate-50/50 rounded-2xl p-6 hover:bg-slate-50 hover:border-blue-200 transition-all group">
+            
+            <div className="border-2 border-dashed border-slate-200/80 bg-slate-50/50 rounded-2xl p-6 transition-all">
               <div className="flex flex-col items-center text-center">
-                <label className="cursor-pointer flex flex-col items-center w-full">
-                  {filePreview ? (
-                    <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden border border-slate-200 mb-3 shadow-sm group-hover:ring-2 group-hover:ring-blue-100 transition-all">
+                
+                {filePreview ? (
+                  <div className="w-full relative group">
+                    <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden border border-slate-200 mb-4 shadow-sm group-hover:ring-2 group-hover:ring-rose-100 transition-all">
                       <img src={filePreview} alt="Preview" className="w-full h-full object-cover" />
-                      <div className="absolute inset-0 bg-slate-900/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-[2px]">
-                         <UploadCloud size={24} className="text-white mb-2" />
-                         <span className="text-white text-xs font-bold">Ganti Foto</span>
-                      </div>
                     </div>
-                  ) : (
-                    <div className="w-12 h-12 rounded-full bg-white shadow-sm border border-slate-100 flex items-center justify-center text-slate-400 mb-3 group-hover:scale-110 group-hover:text-blue-500 group-hover:border-blue-100 transition-all">
+                    
+                    {/* Actions when preview exists */}
+                    <div className="flex gap-2 w-full max-w-xs mx-auto">
+                      <label className="flex-1 cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 rounded-lg transition-all shadow-sm text-center font-bold text-xs">
+                        Ganti (Kamera)
+                        <input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => handleFileChange(e, true)} />
+                      </label>
+                      <label className="flex-1 cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 rounded-lg transition-all shadow-sm text-center font-bold text-xs">
+                        Ganti (Galeri)
+                        <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileChange(e, false)} />
+                      </label>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-4 w-full max-w-xs mx-auto">
+                    <div className="w-12 h-12 rounded-full bg-white shadow-sm border border-slate-100 flex items-center justify-center text-slate-400 mx-auto mb-1">
                       <UploadCloud size={20} />
                     </div>
-                  )}
-                  
-                  {!filePreview && (
-                    <>
-                      <span className="text-[13px] font-bold text-slate-700 mb-1">Klik untuk memilih foto</span>
-                      <span className="text-[11px] text-slate-500 max-w-[200px] leading-relaxed">
-                        Sistem akan otomatis memberikan watermark waktu & lokasi.
-                      </span>
-                    </>
-                  )}
-                  <input 
-                    type="file" 
-                    name="foto" 
-                    accept="image/*" 
-                    className="hidden" 
-                    onChange={async (e) => {
-                      const file = e.target.files?.[0]
-                      if (file) {
-                        setFileName(file.name)
-                        // Buat watermark untuk preview sekalian
-                        const watermarked = await addWatermark(file, divisiName)
-                        setFilePreview(URL.createObjectURL(watermarked))
-                      } else {
-                        setFileName("")
-                        setFilePreview(null)
-                      }
-                    }}
-                    required 
-                  />
-                </label>
+                    <span className="text-[13px] font-bold text-slate-700">Pilih sumber foto kehadiran:</span>
+                    
+                    <div className="flex gap-2">
+                      <label className="flex-1 cursor-pointer bg-white border border-slate-200 hover:border-blue-300 hover:bg-blue-50 text-slate-700 hover:text-blue-600 py-3.5 rounded-xl transition-all shadow-sm flex flex-col items-center justify-center gap-2 group">
+                        <Camera size={22} className="group-hover:scale-110 transition-transform" />
+                        <span className="text-[12px] font-bold">Kamera</span>
+                        <span className="text-[9px] text-slate-400 font-medium">(Watermark)</span>
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          capture="environment" 
+                          className="hidden" 
+                          onChange={(e) => handleFileChange(e, true)}
+                        />
+                      </label>
+                      
+                      <label className="flex-1 cursor-pointer bg-white border border-slate-200 hover:border-emerald-300 hover:bg-emerald-50 text-slate-700 hover:text-emerald-600 py-3.5 rounded-xl transition-all shadow-sm flex flex-col items-center justify-center gap-2 group">
+                        <UploadCloud size={22} className="group-hover:scale-110 transition-transform" />
+                        <span className="text-[12px] font-bold">Galeri</span>
+                        <span className="text-[9px] text-slate-400 font-medium">(Tanpa WM)</span>
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          className="hidden" 
+                          onChange={(e) => handleFileChange(e, false)}
+                        />
+                      </label>
+                    </div>
+                  </div>
+                )}
+                
               </div>
             </div>
           </div>
