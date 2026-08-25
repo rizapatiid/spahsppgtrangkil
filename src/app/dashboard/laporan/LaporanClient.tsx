@@ -106,21 +106,44 @@ export default function LaporanClient({ role, initialPhotos, initialCatatan }: {
     if (!filesToUpload || filesToUpload.length === 0) return
 
     setLoadingSection(catId)
-    const formData = new FormData()
 
-    for (const item of filesToUpload) {
-      const compressed = await handleCompress(item.file)
-      formData.append("fotos", compressed, item.file.name)
-      formData.append("keterangans", item.keterangan || "")
+    try {
+      // Unggah secara paralel dari sisi klien agar tidak terkena limit payload/timeout Vercel
+      const uploadPromises = filesToUpload.map(async (item) => {
+        const formData = new FormData()
+        const compressed = await handleCompress(item.file)
+        formData.append("fotos", compressed, item.file.name)
+        formData.append("keterangans", item.keterangan || "")
+        
+        return uploadFotoLaporan(formData, catId)
+      })
+
+      const results = await Promise.all(uploadPromises)
+
+      const successfulPhotos: any[] = []
+      let lastError: string | null = null
+
+      for (const res of results) {
+        if (res.error) {
+          lastError = res.error
+        } else if (res.photos) {
+          successfulPhotos.push(...res.photos)
+        }
+      }
+
+      if (successfulPhotos.length > 0) {
+        setUploadedPhotos(prev => [...prev, ...successfulPhotos])
+      }
+
+      if (lastError) {
+        alert("Gagal mengunggah sebagian foto: " + lastError)
+      } else {
+        setSelectedFiles(prev => ({ ...prev, [catId]: [] }))
+      }
+    } catch (err: any) {
+      alert("Terjadi kesalahan sistem: " + err.message)
     }
 
-    const res = await uploadFotoLaporan(formData, catId)
-    if (res.error) {
-      alert(res.error)
-    } else if (res.photos) {
-      setUploadedPhotos(prev => [...prev, ...res.photos])
-      setSelectedFiles(prev => ({ ...prev, [catId]: [] }))
-    }
     setLoadingSection(null)
   }
 
