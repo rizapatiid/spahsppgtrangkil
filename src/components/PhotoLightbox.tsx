@@ -26,6 +26,14 @@ export default function PhotoLightbox({
 }: PhotoLightboxProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 
+  const getDownloadUrl = (url: string | null) => {
+    if (!url) return "";
+    if (url.includes("res.cloudinary.com")) {
+      return url.replace("/upload/", "/upload/fl_attachment:foto_kegiatan/");
+    }
+    return url;
+  }
+
   return (
     <>
       <div className={containerClassName}>
@@ -84,8 +92,8 @@ export default function PhotoLightbox({
             {/* Footer Aksi */}
             <div className="flex gap-2.5 p-4 border-t border-slate-100 bg-white">
               <a
-                href={previewUrl}
-                download="foto.jpg"
+                href={getDownloadUrl(previewUrl)}
+                download="foto_kegiatan.jpg"
                 target="_blank"
                 rel="noreferrer"
                 className="flex-1 inline-flex items-center justify-center gap-1.5 text-[13px] font-bold bg-slate-900 text-white hover:bg-slate-800 py-2.5 rounded-lg shadow transition-colors"
