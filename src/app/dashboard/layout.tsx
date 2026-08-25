@@ -21,15 +21,15 @@ export default async function DashboardLayout({
 
   return (
     <SidebarProvider>
-      <div className="flex h-full w-full bg-slate-50 font-sans">
+      <div className="flex min-h-screen w-full bg-slate-50 font-sans">
         
         {/* SIDEBAR */}
         <DashboardSidebar role={role} />
 
         {/* MAIN CONTENT AREA */}
-        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <div className="flex-1 flex flex-col min-w-0">
           <Header session={session} />
-          <main className="flex-1 overflow-y-auto">
+          <main className="flex-1">
             <div className="p-4 md:p-8 max-w-5xl mx-auto pb-6 md:pb-8">
               {children}
             </div>

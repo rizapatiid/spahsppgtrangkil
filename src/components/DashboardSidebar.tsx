@@ -37,7 +37,7 @@ export default function DashboardSidebar({ role }: { role: string }) {
       />
       
       <aside 
-        className={`fixed md:relative inset-y-0 left-0 bg-white flex flex-col z-50 shrink-0 overflow-hidden transition-all duration-300 ease-in-out shadow-2xl md:shadow-none ${
+        className={`fixed md:sticky md:top-0 h-screen left-0 bg-white flex flex-col z-50 shrink-0 overflow-hidden transition-all duration-300 ease-in-out shadow-2xl md:shadow-none ${
           isOpen 
             ? "translate-x-0 w-64 border-r border-gray-200" 
             : "-translate-x-full w-64 md:w-0 border-r-0 md:border-transparent opacity-0 md:opacity-100"
