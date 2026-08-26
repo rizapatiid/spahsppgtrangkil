@@ -68,17 +68,17 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
       </div>
 
       {/* Filter Section */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center gap-4">
-        <div className="flex items-center gap-2 text-slate-400">
-          <Filter size={16} />
-          <span className="text-[12px] font-bold uppercase tracking-wider">Filter:</span>
+      <div className="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+        <div className="flex items-center gap-2 text-slate-400 shrink-0">
+          <Filter size={14} className="sm:w-4 sm:h-4" />
+          <span className="text-[11px] sm:text-[12px] font-bold uppercase tracking-wider">Filter:</span>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 flex-1">
+        <div className="grid grid-cols-3 gap-2 flex-1 w-full">
           <select 
             value={selectedMonth} 
             onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
-            className="w-full border border-slate-200 bg-slate-50 rounded-lg text-[13px] font-bold text-slate-700 p-2.5 outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400"
+            className="w-full border border-slate-200 bg-slate-50 rounded-lg text-[11px] sm:text-[13px] font-bold text-slate-700 p-2 sm:p-2.5 outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400"
           >
             {months.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
           </select>
@@ -86,7 +86,7 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
           <select 
             value={selectedYear} 
             onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-            className="w-full border border-slate-200 bg-slate-50 rounded-lg text-[13px] font-bold text-slate-700 p-2.5 outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400"
+            className="w-full border border-slate-200 bg-slate-50 rounded-lg text-[11px] sm:text-[13px] font-bold text-slate-700 p-2 sm:p-2.5 outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400"
           >
             {years.map(y => <option key={y} value={y}>{y}</option>)}
           </select>
@@ -94,7 +94,7 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
           <select 
             value={selectedDivisi} 
             onChange={(e) => setSelectedDivisi(e.target.value)}
-            className="w-full border border-slate-200 bg-slate-50 rounded-lg text-[13px] font-bold text-slate-700 p-2.5 outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400"
+            className="w-full border border-slate-200 bg-slate-50 rounded-lg text-[11px] sm:text-[13px] font-bold text-slate-700 p-2 sm:p-2.5 outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400"
           >
             <option value="all">Semua Divisi</option>
             {divisiList.map(d => <option key={d.id} value={d.id}>{d.nama_divisi}</option>)}
