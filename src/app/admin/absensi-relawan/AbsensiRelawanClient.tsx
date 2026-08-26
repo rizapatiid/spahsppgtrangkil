@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { CalendarDays, Filter, Check, FileSpreadsheet, Printer, X, CalendarIcon } from "lucide-react"
 import { fetchAbsensiMatrix } from "./actions"
 
@@ -340,7 +340,7 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
 
                   let globalIndex = 0;
 
-                  return Object.entries(groupedData).map(([groupName, rows]) => (
+                  return Object.entries(groupedData as Record<string, any[]>).map(([groupName, rows]) => (
                     <React.Fragment key={groupName}>
                       {groupName && (
                         <tr className="bg-slate-50/80 print:bg-gray-100" style={{ backgroundColor: '#f8fafc', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' } as any}>
