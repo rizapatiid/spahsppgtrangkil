@@ -185,33 +185,42 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
         </button>
       </div>
 
-      {/* Kop Surat Khusus Cetak/Print - DESAIN RESMI */}
-      <div className="hidden print:block mb-6 w-full">
-        <div className="flex items-center justify-between border-b-[3px] border-black pb-4 mb-1">
-          <div className="flex items-center gap-5">
-            <img src="https://res.cloudinary.com/glcpjxnr/image/upload/v1787672024/sppg_trangkil/assets/gcvi4ohrnoapnxb8dfro.png" alt="Logo SPPG" className="h-20 w-20 object-contain" />
-            <div>
-              <h1 className="text-2xl font-black uppercase text-black tracking-wide">SPPG TRANGKIL</h1>
-              <h2 className="text-lg font-bold text-gray-800 mt-1">Laporan Rekapitulasi Kehadiran Relawan</h2>
-              <p className="text-sm text-gray-600 mt-0.5">Sistem Pelaporan dan Pencatatan SPPG</p>
+      {/* Kop Surat Khusus Cetak/Print - DESAIN RESMI (CENTERED) */}
+      <div className="hidden print:block mb-4 w-full">
+        {/* Header Kop Surat */}
+        <div className="flex flex-col items-center justify-center pb-3 border-b-[3px] border-black text-center">
+          <img src="https://res.cloudinary.com/glcpjxnr/image/upload/v1787672024/sppg_trangkil/assets/gcvi4ohrnoapnxb8dfro.png" alt="Logo SPPG" className="h-16 object-contain mb-3" />
+          <h2 className="text-lg font-black uppercase text-black tracking-widest">Laporan Rekapitulasi Kehadiran Relawan</h2>
+        </div>
+        <div className="border-b border-black mb-5 w-full mt-0.5"></div>
+        
+        {/* Informasi Laporan & Legenda */}
+        <div className="flex justify-between items-end mb-2">
+          {/* Legenda di Print */}
+          <div className="flex flex-col gap-1.5 pb-1">
+            <span className="text-[10px] font-black text-black uppercase tracking-wider">Keterangan:</span>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5"><div className="w-3.5 h-3.5 rounded-sm flex items-center justify-center border border-gray-400"><Check size={10} strokeWidth={4} className="text-black" /></div> <span className="text-[10px] font-semibold text-black">Hadir</span></div>
+              <div className="flex items-center gap-1.5"><div className="w-3.5 h-3.5 rounded-sm flex items-center justify-center border border-gray-400 text-[9px] font-black text-black">S</div> <span className="text-[10px] font-semibold text-black">Sakit</span></div>
+              <div className="flex items-center gap-1.5"><div className="w-3.5 h-3.5 rounded-sm flex items-center justify-center border border-gray-400 text-[9px] font-black text-black">I</div> <span className="text-[10px] font-semibold text-black">Izin</span></div>
+              <div className="flex items-center gap-1.5"><div className="w-3.5 h-3.5 rounded-sm flex items-center justify-center border border-gray-400 text-[9px] font-black text-black">A</div> <span className="text-[10px] font-semibold text-black">Alfa</span></div>
             </div>
           </div>
-          <div className="text-right flex flex-col justify-end h-full">
-            <table className="text-sm text-black ml-auto">
-              <tbody>
-                <tr>
-                  <td className="font-bold text-right pr-3 py-1">PERIODE:</td>
-                  <td className="text-left py-1 font-semibold">{actualStart && actualEnd ? `${formatId(actualStart)} - ${formatId(actualEnd)}` : '-'}</td>
-                </tr>
-                <tr>
-                  <td className="font-bold text-right pr-3 py-1">DIVISI:</td>
-                  <td className="text-left py-1 uppercase font-semibold">{selectedDivisi === 'all' ? 'SEMUA DIVISI' : divisiList.find(d => d.id === parseInt(selectedDivisi))?.nama_divisi}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+
+          {/* Info Periode */}
+          <table className="text-[11px] text-black">
+            <tbody>
+              <tr>
+                <td className="font-bold text-right pr-3 py-0.5 uppercase tracking-wider">Periode:</td>
+                <td className="text-left py-0.5 font-semibold">{actualStart && actualEnd ? `${formatId(actualStart)} - ${formatId(actualEnd)}` : '-'}</td>
+              </tr>
+              <tr>
+                <td className="font-bold text-right pr-3 py-0.5 uppercase tracking-wider">Divisi:</td>
+                <td className="text-left py-0.5 uppercase font-semibold">{selectedDivisi === 'all' ? 'SEMUA DIVISI' : divisiList.find(d => d.id === parseInt(selectedDivisi))?.nama_divisi}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <div className="border-b border-black mb-4 w-full"></div>
       </div>
 
       {/* Filter Section (Sembunyi saat print) */}
@@ -237,13 +246,13 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
         </div>
       </div>
 
-      {/* Legenda (Tampil di print di atas tabel) */}
-      <div className="flex flex-wrap items-center gap-4 px-1 mb-3">
-        <span className="text-xs font-bold text-black uppercase tracking-wider print:text-black">Keterangan:</span>
-        <div className="flex items-center gap-1.5"><div className="w-4 h-4 rounded bg-emerald-100 text-emerald-700 flex items-center justify-center print:bg-transparent print:border-none print:w-auto print:text-black"><Check size={10} strokeWidth={3} className="print:w-3.5 print:h-3.5 print:stroke-[4px]" /></div> <span className="text-[11px] font-semibold text-slate-600 print:text-black">Hadir</span></div>
-        <div className="flex items-center gap-1.5"><div className="w-4 h-4 rounded bg-amber-100 text-amber-700 flex items-center justify-center text-[10px] font-bold print:bg-transparent print:border-none print:w-auto print:text-black">S</div> <span className="text-[11px] font-semibold text-slate-600 print:text-black">Sakit</span></div>
-        <div className="flex items-center gap-1.5"><div className="w-4 h-4 rounded bg-purple-100 text-purple-700 flex items-center justify-center text-[10px] font-bold print:bg-transparent print:border-none print:w-auto print:text-black">I</div> <span className="text-[11px] font-semibold text-slate-600 print:text-black">Izin</span></div>
-        <div className="flex items-center gap-1.5"><div className="w-4 h-4 rounded bg-rose-100 text-rose-700 flex items-center justify-center text-[10px] font-bold print:bg-transparent print:border-none print:w-auto print:text-black">A</div> <span className="text-[11px] font-semibold text-slate-600 print:text-black">Alfa</span></div>
+      {/* Legenda Main UI (Sembunyi saat print karena sudah dipindah ke atas tabel) */}
+      <div className="flex flex-wrap items-center gap-3 px-1 print:hidden">
+        <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Keterangan:</span>
+        <div className="flex items-center gap-1.5"><div className="w-4 h-4 rounded bg-emerald-100 text-emerald-600 flex items-center justify-center"><Check size={10} strokeWidth={3}/></div> <span className="text-[11px] font-bold text-slate-600">Hadir</span></div>
+        <div className="flex items-center gap-1.5"><div className="w-4 h-4 rounded bg-amber-100 text-amber-600 flex items-center justify-center text-[10px] font-bold">S</div> <span className="text-[11px] font-bold text-slate-600">Sakit</span></div>
+        <div className="flex items-center gap-1.5"><div className="w-4 h-4 rounded bg-purple-100 text-purple-600 flex items-center justify-center text-[10px] font-bold">I</div> <span className="text-[11px] font-bold text-slate-600">Izin</span></div>
+        <div className="flex items-center gap-1.5"><div className="w-4 h-4 rounded bg-rose-100 text-rose-600 flex items-center justify-center text-[10px] font-bold">A</div> <span className="text-[11px] font-bold text-slate-600">Alfa</span></div>
       </div>
 
       {/* Tabel Matriks */}
