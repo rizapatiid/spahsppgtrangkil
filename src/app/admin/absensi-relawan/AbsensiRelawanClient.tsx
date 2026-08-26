@@ -280,7 +280,10 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
           <table className="w-full text-left border-collapse min-w-max print:border print:border-black">
             <thead className="sticky top-0 z-10 print:static">
               <tr style={{ backgroundColor: '#f1f5f9', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' } as any}>
-                <th className="p-3 bg-slate-50 border-b border-slate-200 border-r text-[11px] font-extrabold text-slate-500 uppercase tracking-wider sticky left-0 z-20 min-w-[160px] max-w-[220px] print:static print:bg-transparent print:border print:border-black print:shadow-none print:text-black print:text-[10px] print:p-2 align-middle">
+                <th className="p-3 bg-slate-50 border-b border-slate-200 border-r text-[11px] font-extrabold text-slate-500 uppercase tracking-wider sticky left-0 z-20 w-[40px] print:static print:bg-transparent print:border print:border-black print:shadow-none print:text-black print:text-[10px] print:p-2 align-middle text-center">
+                  No
+                </th>
+                <th className="p-3 bg-slate-50 border-b border-slate-200 border-r text-[11px] font-extrabold text-slate-500 uppercase tracking-wider sticky left-[40px] z-20 min-w-[160px] max-w-[220px] print:static print:bg-transparent print:border print:border-black print:shadow-none print:text-black print:text-[10px] print:p-2 align-middle">
                   Relawan & Divisi
                 </th>
                 {dateColumns.map(col => (
@@ -288,25 +291,28 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
                     {col.label}
                   </th>
                 ))}
-                <th className="p-3 bg-slate-100 border-b border-slate-200 text-[11px] font-extrabold text-slate-700 uppercase tracking-wider text-center w-[60px] sticky right-0 z-20 print:static print:bg-transparent print:border print:border-black print:shadow-none print:text-black print:text-[10px] print:p-2 align-middle">
-                  Total<br/>Hadir
+                <th className="p-3 bg-slate-100 border-b border-slate-200 text-[11px] font-extrabold text-slate-700 uppercase tracking-wider text-center w-[80px] sticky right-0 z-20 print:static print:bg-transparent print:border print:border-black print:shadow-none print:text-black print:text-[10px] print:p-2 align-middle whitespace-nowrap">
+                  Total Hadir
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 print:divide-none">
               {dataMatrix.length === 0 && !loading ? (
                 <tr>
-                  <td colSpan={dateColumns.length + 2} className="p-8 text-center text-slate-400 text-[13px] font-medium print:border print:border-black print:text-black">
+                  <td colSpan={dateColumns.length + 3} className="p-8 text-center text-slate-400 text-[13px] font-medium print:border print:border-black print:text-black">
                     Tidak ada relawan yang ditemukan di divisi/periode ini.
                   </td>
                 </tr>
               ) : (
-                dataMatrix.map((row) => {
+                dataMatrix.map((row, index) => {
                   let totalHadir = 0
                   
                   return (
                     <tr key={row.id} className="hover:bg-slate-50/50 transition-colors group print:break-inside-avoid">
-                      <td className="p-3 bg-white border-r border-slate-200 sticky left-0 z-10 min-w-[160px] max-w-[220px] print:static print:border print:border-black print:shadow-none print:p-2 align-middle print:bg-transparent">
+                      <td className="p-2 bg-white border-r border-slate-200 sticky left-0 z-10 w-[40px] print:static print:border print:border-black print:shadow-none print:p-2 align-middle print:bg-transparent text-center text-[11px] font-semibold text-slate-500 print:text-black">
+                        {index + 1}
+                      </td>
+                      <td className="p-3 bg-white border-r border-slate-200 sticky left-[40px] z-10 min-w-[160px] max-w-[220px] print:static print:border print:border-black print:shadow-none print:p-2 align-middle print:bg-transparent">
                         <div className="text-[12px] font-extrabold text-slate-800 truncate print:whitespace-normal print:text-black print:text-[11px]" title={row.nama}>{row.nama}</div>
                         <div className="text-[10px] font-bold text-slate-400 mt-0.5 truncate print:text-gray-600 print:text-[9px]" title={row.divisi}>{row.divisi}</div>
                       </td>
