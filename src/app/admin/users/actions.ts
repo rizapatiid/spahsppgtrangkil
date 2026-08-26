@@ -10,6 +10,8 @@ export async function createDivisiAccount(formData: FormData) {
   const role = formData.get("role") as any
   const password = formData.get("password") as string
   const jumlah_anggota = parseInt(formData.get("jumlah_anggota") as string) || 0
+  const koordinator = formData.get("koordinator") as string
+  const nip_koordinator = formData.get("nip_koordinator") as string
 
   if (!username || !nama_divisi || !role || !password) {
     return { error: "Semua kolom wajib diisi" }
@@ -24,6 +26,8 @@ export async function createDivisiAccount(formData: FormData) {
     data: {
       nama_divisi,
       jumlah_anggota,
+      koordinator,
+      nip_koordinator,
     }
   })
 
@@ -46,6 +50,8 @@ export async function updateDivisiAccount(id: string, formData: FormData) {
   const nama_divisi = formData.get("nama_divisi") as string
   const role = formData.get("role") as any
   const divisi_id = parseInt(formData.get("divisi_id") as string)
+  const koordinator = formData.get("koordinator") as string
+  const nip_koordinator = formData.get("nip_koordinator") as string
 
   if (!username || !nama_divisi || !role) {
     return { error: "Username, Nama Divisi, dan Role wajib diisi" }
@@ -64,7 +70,7 @@ export async function updateDivisiAccount(id: string, formData: FormData) {
   if (divisi_id) {
     await prisma.divisi.update({
       where: { id: divisi_id },
-      data: { nama_divisi }
+      data: { nama_divisi, koordinator, nip_koordinator }
     })
   }
 

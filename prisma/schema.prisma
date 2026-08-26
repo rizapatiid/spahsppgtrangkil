@@ -22,6 +22,8 @@ model Divisi {
   id             Int             @id @default(autoincrement())
   nama_divisi    String
   jumlah_anggota Int
+  koordinator    String?         // Nama Koordinator Divisi
+  nip_koordinator String?        // NIP Koordinator Divisi
   users          User[]
   anggota        AnggotaDivisi[]
   absensi        Absensi[]

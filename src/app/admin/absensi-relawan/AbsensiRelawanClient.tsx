@@ -46,6 +46,19 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
   const [ttdName, setTtdName] = useState("")
   const [ttdNip, setTtdNip] = useState("")
 
+  useEffect(() => {
+    if (selectedDivisi !== "all") {
+      const div = divisiList.find(d => d.id === parseInt(selectedDivisi))
+      if (div) {
+        setTtdName(div.koordinator || "")
+        setTtdNip(div.nip_koordinator || "")
+      }
+    } else {
+      setTtdName("")
+      setTtdNip("")
+    }
+  }, [selectedDivisi, divisiList])
+
   const months = [
     { value: 1, label: "Januari" }, { value: 2, label: "Februari" }, { value: 3, label: "Maret" },
     { value: 4, label: "April" }, { value: 5, label: "Mei" }, { value: 6, label: "Juni" },
@@ -280,6 +293,9 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
         <style dangerouslySetInnerHTML={{__html: `
           @media print {
             @page { size: landscape; margin: 10mm 15mm; }
+            * {
+              font-family: "Times New Roman", Times, serif !important;
+            }
           }
         `}} />
 
@@ -312,35 +328,62 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
                   </td>
                 </tr>
               ) : (
-                dataMatrix.map((row, index) => {
-                  let totalHadir = 0
-                  
-                  return (
-                    <tr key={row.id} className="hover:bg-slate-50/50 transition-colors group print:break-inside-avoid">
-                      <td className="p-2 bg-white border-r border-slate-200 sticky left-0 z-10 w-[40px] print:static print:border print:border-black print:shadow-none print:p-2 align-middle print:bg-transparent text-center text-[11px] font-semibold text-slate-500 print:text-black">
-                        {index + 1}
-                      </td>
-                      <td className="p-3 bg-white border-r border-slate-200 sticky left-[40px] z-10 min-w-[160px] max-w-[220px] print:static print:border print:border-black print:shadow-none print:p-2 align-middle print:bg-transparent">
-                        <div className="text-[12px] font-extrabold text-slate-800 truncate print:whitespace-normal print:text-black print:text-[11px]" title={row.nama}>{row.nama}</div>
-                        <div className="text-[10px] font-bold text-slate-400 mt-0.5 truncate print:text-gray-600 print:text-[9px]" title={row.divisi}>{row.divisi}</div>
-                      </td>
-                      
-                      {dateColumns.map(col => {
-                        const status = row.attendance[col.dateStr]
-                        if (status === "Hadir") totalHadir++
-                        return (
-                          <td key={col.dateStr} className="p-0.5 border-r border-slate-100 text-center align-middle print:border print:border-black print:bg-transparent">
-                            {renderStatus(status)}
+                (() => {
+                  // Kelompokkan berdasarkan divisi jika "Semua Divisi" dipilih
+                  const groupedData = selectedDivisi === 'all' 
+                    ? dataMatrix.reduce((acc, row) => {
+                        if (!acc[row.divisi]) acc[row.divisi] = [];
+                        acc[row.divisi].push(row);
+                        return acc;
+                      }, {} as Record<string, typeof dataMatrix>)
+                    : { "": dataMatrix };
+
+                  let globalIndex = 0;
+
+                  return Object.entries(groupedData).map(([groupName, rows]) => (
+                    <React.Fragment key={groupName}>
+                      {groupName && (
+                        <tr className="bg-slate-50/80 print:bg-gray-100" style={{ backgroundColor: '#f8fafc', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' } as any}>
+                          <td colSpan={dateColumns.length + 3} className="px-3 py-2 border-y border-slate-200 font-extrabold text-slate-700 text-[12px] uppercase print:border print:border-black print:text-black">
+                            {groupName}
                           </td>
+                        </tr>
+                      )}
+                      {rows.map((row) => {
+                        let totalHadir = 0;
+                        globalIndex++;
+                        
+                        return (
+                          <tr key={row.id} className="hover:bg-slate-50/50 transition-colors group print:break-inside-avoid">
+                            <td className="p-2 bg-white border-r border-slate-200 sticky left-0 z-10 w-[40px] print:static print:border print:border-black print:shadow-none print:p-2 align-middle print:bg-transparent text-center text-[11px] font-semibold text-slate-500 print:text-black">
+                              {globalIndex}
+                            </td>
+                            <td className="p-3 bg-white border-r border-slate-200 sticky left-[40px] z-10 min-w-[160px] max-w-[220px] print:static print:border print:border-black print:shadow-none print:p-2 align-middle print:bg-transparent">
+                              <div className="text-[12px] font-extrabold text-slate-800 truncate print:whitespace-normal print:text-black print:text-[11px]" title={row.nama}>{row.nama}</div>
+                              {!groupName && (
+                                <div className="text-[10px] font-bold text-slate-400 mt-0.5 truncate print:text-gray-600 print:text-[9px]" title={row.divisi}>{row.divisi}</div>
+                              )}
+                            </td>
+                            
+                            {dateColumns.map(col => {
+                              const status = row.attendance[col.dateStr]
+                              if (status === "Hadir") totalHadir++
+                              return (
+                                <td key={col.dateStr} className="p-0.5 border-r border-slate-100 text-center align-middle print:border print:border-black print:bg-transparent">
+                                  {renderStatus(status)}
+                                </td>
+                              )
+                            })}
+                            
+                            <td className="p-3 bg-slate-50/50 text-[13px] font-extrabold text-emerald-600 text-center sticky right-0 z-10 border-l border-slate-200 print:static print:bg-transparent print:text-black print:border print:border-black print:shadow-none print:text-[11px] align-middle">
+                              {totalHadir}
+                            </td>
+                          </tr>
                         )
                       })}
-                      
-                      <td className="p-3 bg-slate-50/50 text-[13px] font-extrabold text-emerald-600 text-center sticky right-0 z-10 border-l border-slate-200 print:static print:bg-transparent print:text-black print:border print:border-black print:shadow-none print:text-[11px] align-middle">
-                        {totalHadir}
-                      </td>
-                    </tr>
-                  )
-                })
+                    </React.Fragment>
+                  ));
+                })()
               )}
             </tbody>
           </table>

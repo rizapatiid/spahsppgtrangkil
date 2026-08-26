@@ -131,11 +131,22 @@ export default function UsersClient({ users }: { users: any[] }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Nama Divisi</label>
-                <input name="nama_divisi" required className="w-full border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none" placeholder="Contoh: Divisi Persiapan" />
+                <input type="text" name="nama_divisi" placeholder="Contoh: Pencucian" required className="w-full border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none" />
               </div>
               <div>
-                <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Jumlah Anggota</label>
-                <input name="jumlah_anggota" type="number" required defaultValue="0" className="w-full border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none" />
+                <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Target Jumlah Anggota</label>
+                <input type="number" name="jumlah_anggota" placeholder="Contoh: 10" required className="w-full border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Nama Koordinator</label>
+                <input type="text" name="koordinator" placeholder="Opsional" className="w-full border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none" />
+              </div>
+              <div>
+                <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">NIP Koordinator</label>
+                <input type="text" name="nip_koordinator" placeholder="Opsional" className="w-full border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none" />
               </div>
             </div>
             
@@ -185,12 +196,24 @@ export default function UsersClient({ users }: { users: any[] }) {
             <form onSubmit={handleEdit} className="p-5 space-y-4">
               <div>
                 <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Nama Divisi</label>
-                <input name="nama_divisi" defaultValue={editUser.divisi?.nama_divisi} required className="w-full border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none" />
+                <input type="text" name="nama_divisi" defaultValue={editUser.divisi?.nama_divisi || ""} required className="w-full border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none" />
               </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Nama Koordinator</label>
+                  <input type="text" name="koordinator" defaultValue={editUser.divisi?.koordinator || ""} placeholder="Opsional" className="w-full border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none" />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">NIP Koordinator</label>
+                  <input type="text" name="nip_koordinator" defaultValue={editUser.divisi?.nip_koordinator || ""} placeholder="Opsional" className="w-full border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none" />
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Username Login</label>
-                  <input name="username" defaultValue={editUser.username} required className="w-full border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none" />
+                  <input type="text" name="username" defaultValue={editUser.username} required className="w-full border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none" />
                 </div>
                 <div>
                   <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Role / Peran</label>
