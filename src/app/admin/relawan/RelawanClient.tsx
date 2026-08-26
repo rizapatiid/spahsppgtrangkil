@@ -207,11 +207,18 @@ export default function RelawanClient({ relawan, divisiList }: { relawan: any[],
 
                     {/* Info (Nama, Divisi, NIK) */}
                     <div className="flex-1 min-w-0">
-                      <p className="text-[12px] sm:text-[13px] font-extrabold text-slate-800 truncate leading-tight">{r.nama}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-[12px] sm:text-[13px] font-extrabold text-slate-800 truncate leading-tight">{r.nama}</p>
+                        {r.divisi?.koordinator === r.nama && (
+                          <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-600 px-1.5 py-0.5 rounded text-[9px] font-bold border border-amber-100 uppercase tracking-wider shrink-0">
+                            Koordinator
+                          </span>
+                        )}
+                      </div>
                       <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
                         <span className="text-[10px] text-emerald-600 font-bold tracking-wide truncate">{r.divisi?.nama_divisi || "Tanpa Divisi"}</span>
-                        <span className="text-slate-200 hidden sm:inline">·</span>
-                        <span className="text-[10px] text-slate-400 font-semibold truncate">NIK: {r.nik || "—"}</span>
+                        <span className="text-slate-200 hidden sm:inline">•</span>
+                        <span className="text-[10px] text-slate-400 font-semibold truncate">NIK: {r.nik || "-"}</span>
                       </div>
                     </div>
                   </div>

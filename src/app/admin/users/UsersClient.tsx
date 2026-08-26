@@ -297,8 +297,17 @@ export default function UsersClient({ users }: { users: any[] }) {
                   <p className="text-[12px] sm:text-[13px] font-extrabold text-slate-800 truncate leading-tight">{user.username}</p>
                   <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
                     <span className="text-[10px] text-slate-400 font-semibold truncate">{user.divisi?.nama_divisi || "—"}</span>
-                    <span className="text-slate-200 hidden sm:inline">·</span>
+                    <span className="text-slate-200 hidden sm:inline">•</span>
                     <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider hidden sm:inline">{user.role}</span>
+                    
+                    {user.divisi?.koordinator && (
+                      <>
+                        <span className="text-slate-200 hidden sm:inline">•</span>
+                        <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-600 px-1.5 py-0.5 rounded text-[9px] font-bold">
+                          Koord: {user.divisi.koordinator}
+                        </span>
+                      </>
+                    )}
                   </div>
                 </div>
 
