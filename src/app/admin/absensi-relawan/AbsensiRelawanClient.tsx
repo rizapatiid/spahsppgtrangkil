@@ -92,15 +92,15 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
   const renderStatus = (status: string) => {
     switch (status) {
       case "Hadir":
-        return <div className="mx-auto w-5 h-5 rounded-md bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-[12px] print:bg-transparent print:text-black print:border print:border-black"><Check size={14} strokeWidth={3} /></div>
+        return <div className="mx-auto w-5 h-5 rounded-md bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-[12px] print:bg-transparent print:w-auto print:h-auto"><Check size={14} strokeWidth={4} className="print:text-black print:w-3.5 print:h-3.5" /></div>
       case "Sakit":
-        return <div className="mx-auto w-5 h-5 rounded-md bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-[12px] print:bg-transparent print:text-black print:border print:border-black" title="Sakit">S</div>
+        return <div className="mx-auto w-5 h-5 rounded-md bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-[12px] print:bg-transparent print:w-auto print:h-auto print:text-black" title="Sakit">S</div>
       case "Izin":
-        return <div className="mx-auto w-5 h-5 rounded-md bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-[12px] print:bg-transparent print:text-black print:border print:border-black" title="Izin">I</div>
+        return <div className="mx-auto w-5 h-5 rounded-md bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-[12px] print:bg-transparent print:w-auto print:h-auto print:text-black" title="Izin">I</div>
       case "Alfa":
-        return <div className="mx-auto w-5 h-5 rounded-md bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-[12px] print:bg-transparent print:text-black print:border print:border-black" title="Alfa">A</div>
+        return <div className="mx-auto w-5 h-5 rounded-md bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-[12px] print:bg-transparent print:w-auto print:h-auto print:text-black" title="Alfa">A</div>
       default:
-        return <span className="text-slate-300 print:text-black">-</span>
+        return <span className="text-slate-300 print:text-gray-300">-</span>
     }
   }
 
@@ -185,27 +185,33 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
         </button>
       </div>
 
-      {/* Kop Surat Khusus Cetak/Print */}
-      <div className="hidden print:block mb-8">
-        <div className="flex items-center justify-between border-b-4 border-slate-900 pb-4 mb-4">
-          <div className="flex items-center gap-4">
+      {/* Kop Surat Khusus Cetak/Print - DESAIN RESMI */}
+      <div className="hidden print:block mb-6 w-full">
+        <div className="flex items-center justify-between border-b-[3px] border-black pb-4 mb-1">
+          <div className="flex items-center gap-5">
             <img src="https://res.cloudinary.com/glcpjxnr/image/upload/v1787672024/sppg_trangkil/assets/gcvi4ohrnoapnxb8dfro.png" alt="Logo SPPG" className="h-20 w-20 object-contain" />
             <div>
-              <h1 className="text-xl font-black uppercase text-slate-900 leading-tight">Sistem Pelaporan<br/>SPPG Trangkil</h1>
-              <p className="text-sm font-semibold text-slate-600 mt-1">Laporan Rekapitulasi Kehadiran Relawan</p>
+              <h1 className="text-2xl font-black uppercase text-black tracking-wide">SPPG TRANGKIL</h1>
+              <h2 className="text-lg font-bold text-gray-800 mt-1">Laporan Rekapitulasi Kehadiran Relawan</h2>
+              <p className="text-sm text-gray-600 mt-0.5">Sistem Pelaporan dan Pencatatan SPPG</p>
             </div>
           </div>
-          <div className="text-right">
-            <p className="text-xs font-bold text-slate-500 uppercase">Periode Laporan</p>
-            <p className="text-sm font-bold text-slate-900">
-              {actualStart && actualEnd ? `${formatId(actualStart)} - ${formatId(actualEnd)}` : '-'}
-            </p>
-            <p className="text-xs font-bold text-slate-500 uppercase mt-2">Divisi</p>
-            <p className="text-sm font-bold text-slate-900">
-              {selectedDivisi === 'all' ? 'Semua Divisi' : divisiList.find(d => d.id === parseInt(selectedDivisi))?.nama_divisi}
-            </p>
+          <div className="text-right flex flex-col justify-end h-full">
+            <table className="text-sm text-black ml-auto">
+              <tbody>
+                <tr>
+                  <td className="font-bold text-right pr-3 py-1">PERIODE:</td>
+                  <td className="text-left py-1 font-semibold">{actualStart && actualEnd ? `${formatId(actualStart)} - ${formatId(actualEnd)}` : '-'}</td>
+                </tr>
+                <tr>
+                  <td className="font-bold text-right pr-3 py-1">DIVISI:</td>
+                  <td className="text-left py-1 uppercase font-semibold">{selectedDivisi === 'all' ? 'SEMUA DIVISI' : divisiList.find(d => d.id === parseInt(selectedDivisi))?.nama_divisi}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
+        <div className="border-b border-black mb-4 w-full"></div>
       </div>
 
       {/* Filter Section (Sembunyi saat print) */}
@@ -231,17 +237,17 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
         </div>
       </div>
 
-      {/* Legenda (Tampil di print) */}
-      <div className="flex flex-wrap items-center gap-3 px-1">
-        <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider print:text-black">Keterangan:</span>
-        <div className="flex items-center gap-1.5"><div className="w-4 h-4 rounded bg-emerald-100 text-emerald-600 flex items-center justify-center print:bg-transparent print:border print:border-black print:text-black"><Check size={10} strokeWidth={3}/></div> <span className="text-[11px] font-bold text-slate-600 print:text-black">Hadir</span></div>
-        <div className="flex items-center gap-1.5"><div className="w-4 h-4 rounded bg-amber-100 text-amber-600 flex items-center justify-center text-[10px] font-bold print:bg-transparent print:border print:border-black print:text-black">S</div> <span className="text-[11px] font-bold text-slate-600 print:text-black">Sakit</span></div>
-        <div className="flex items-center gap-1.5"><div className="w-4 h-4 rounded bg-purple-100 text-purple-600 flex items-center justify-center text-[10px] font-bold print:bg-transparent print:border print:border-black print:text-black">I</div> <span className="text-[11px] font-bold text-slate-600 print:text-black">Izin</span></div>
-        <div className="flex items-center gap-1.5"><div className="w-4 h-4 rounded bg-rose-100 text-rose-600 flex items-center justify-center text-[10px] font-bold print:bg-transparent print:border print:border-black print:text-black">A</div> <span className="text-[11px] font-bold text-slate-600 print:text-black">Alfa</span></div>
+      {/* Legenda (Tampil di print di atas tabel) */}
+      <div className="flex flex-wrap items-center gap-4 px-1 mb-3">
+        <span className="text-xs font-bold text-black uppercase tracking-wider print:text-black">Keterangan:</span>
+        <div className="flex items-center gap-1.5"><div className="w-4 h-4 rounded bg-emerald-100 text-emerald-700 flex items-center justify-center print:bg-transparent print:border-none print:w-auto print:text-black"><Check size={10} strokeWidth={3} className="print:w-3.5 print:h-3.5 print:stroke-[4px]" /></div> <span className="text-[11px] font-semibold text-slate-600 print:text-black">Hadir</span></div>
+        <div className="flex items-center gap-1.5"><div className="w-4 h-4 rounded bg-amber-100 text-amber-700 flex items-center justify-center text-[10px] font-bold print:bg-transparent print:border-none print:w-auto print:text-black">S</div> <span className="text-[11px] font-semibold text-slate-600 print:text-black">Sakit</span></div>
+        <div className="flex items-center gap-1.5"><div className="w-4 h-4 rounded bg-purple-100 text-purple-700 flex items-center justify-center text-[10px] font-bold print:bg-transparent print:border-none print:w-auto print:text-black">I</div> <span className="text-[11px] font-semibold text-slate-600 print:text-black">Izin</span></div>
+        <div className="flex items-center gap-1.5"><div className="w-4 h-4 rounded bg-rose-100 text-rose-700 flex items-center justify-center text-[10px] font-bold print:bg-transparent print:border-none print:w-auto print:text-black">A</div> <span className="text-[11px] font-semibold text-slate-600 print:text-black">Alfa</span></div>
       </div>
 
       {/* Tabel Matriks */}
-      <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden relative print:border-black print:rounded-none print:shadow-none">
+      <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden relative print:border-none print:rounded-none print:shadow-none">
         {loading && (
           <div className="absolute inset-0 z-20 bg-white/50 backdrop-blur-sm flex items-center justify-center print:hidden">
             <div className="flex flex-col items-center gap-2">
@@ -253,32 +259,32 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
 
         <style dangerouslySetInnerHTML={{__html: `
           @media print {
-            @page { size: landscape; margin: 15mm; }
+            @page { size: landscape; margin: 12mm; }
           }
         `}} />
 
         {/* Gunakan print:overflow-visible dan print:max-h-none agar tabel tercetak utuh */}
         <div className="overflow-x-auto max-h-[65vh] print:overflow-visible print:max-h-none">
-          <table className="w-full text-left border-collapse min-w-max print:border print:border-black">
-            <thead className="sticky top-0 z-10 print:static">
+          <table className="w-full text-left border-collapse min-w-max print:border-2 print:border-gray-800">
+            <thead className="sticky top-0 z-10 print:static print:bg-gray-100" style={{ WebkitPrintColorAdjust: 'exact', colorAdjust: 'exact' } as any}>
               <tr>
-                <th className="p-3 bg-slate-50 border-b border-slate-200 border-r text-[11px] font-extrabold text-slate-500 uppercase tracking-wider sticky left-0 z-20 shadow-[2px_0_5px_rgba(0,0,0,0.05)] min-w-[160px] max-w-[220px] print:static print:bg-transparent print:border-black print:shadow-none print:text-black">
+                <th className="p-3 bg-slate-50 border-b border-slate-200 border-r text-[11px] font-extrabold text-slate-500 uppercase tracking-wider sticky left-0 z-20 min-w-[160px] max-w-[220px] print:static print:bg-transparent print:border-gray-400 print:shadow-none print:text-black print:text-[10px] print:p-2 align-middle">
                   Relawan & Divisi
                 </th>
                 {dateColumns.map(col => (
-                  <th key={col.dateStr} className="p-2 bg-slate-50 border-b border-slate-200 border-r text-[11px] font-extrabold text-slate-500 text-center min-w-[32px] w-[32px] print:bg-transparent print:border-black print:text-black">
+                  <th key={col.dateStr} className="p-1 bg-slate-50 border-b border-slate-200 border-r text-[11px] font-extrabold text-slate-500 text-center min-w-[28px] w-[28px] print:bg-transparent print:border-gray-400 print:text-black print:text-[9px] align-middle">
                     {col.label}
                   </th>
                 ))}
-                <th className="p-3 bg-slate-100 border-b border-slate-200 text-[11px] font-extrabold text-slate-700 uppercase tracking-wider text-center w-[60px] sticky right-0 z-20 shadow-[-2px_0_5px_rgba(0,0,0,0.02)] print:static print:bg-transparent print:border-black print:shadow-none print:text-black">
-                  Total Hadir
+                <th className="p-3 bg-slate-100 border-b border-slate-200 text-[11px] font-extrabold text-slate-700 uppercase tracking-wider text-center w-[60px] sticky right-0 z-20 print:static print:bg-transparent print:border-gray-400 print:shadow-none print:text-black print:text-[10px] print:p-2 align-middle">
+                  Total<br/>Hadir
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 print:divide-black">
+            <tbody className="divide-y divide-slate-100 print:divide-gray-400">
               {dataMatrix.length === 0 && !loading ? (
                 <tr>
-                  <td colSpan={dateColumns.length + 2} className="p-8 text-center text-slate-400 text-[13px] font-medium print:border-black">
+                  <td colSpan={dateColumns.length + 2} className="p-8 text-center text-slate-400 text-[13px] font-medium print:border-gray-400 print:text-black">
                     Tidak ada relawan yang ditemukan di divisi/periode ini.
                   </td>
                 </tr>
@@ -288,22 +294,22 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
                   
                   return (
                     <tr key={row.id} className="hover:bg-slate-50/50 transition-colors group print:break-inside-avoid">
-                      <td className="p-3 bg-white group-hover:bg-slate-50/50 border-r border-slate-200 sticky left-0 z-10 shadow-[2px_0_5px_rgba(0,0,0,0.05)] min-w-[160px] max-w-[220px] print:static print:border-black print:shadow-none">
-                        <div className="text-[12px] font-extrabold text-slate-800 truncate print:whitespace-normal print:text-black" title={row.nama}>{row.nama}</div>
-                        <div className="text-[10px] font-bold text-slate-400 mt-0.5 truncate print:text-black" title={row.divisi}>{row.divisi}</div>
+                      <td className="p-3 bg-white border-r border-slate-200 sticky left-0 z-10 min-w-[160px] max-w-[220px] print:static print:border-gray-400 print:shadow-none print:p-2 align-middle">
+                        <div className="text-[12px] font-extrabold text-slate-800 truncate print:whitespace-normal print:text-black print:text-[11px]" title={row.nama}>{row.nama}</div>
+                        <div className="text-[10px] font-bold text-slate-400 mt-0.5 truncate print:text-gray-600 print:text-[9px]" title={row.divisi}>{row.divisi}</div>
                       </td>
                       
                       {dateColumns.map(col => {
                         const status = row.attendance[col.dateStr]
                         if (status === "Hadir") totalHadir++
                         return (
-                          <td key={col.dateStr} className="p-1 border-r border-slate-100 text-center align-middle print:border-black">
+                          <td key={col.dateStr} className="p-0.5 border-r border-slate-100 text-center align-middle print:border-gray-400">
                             {renderStatus(status)}
                           </td>
                         )
                       })}
                       
-                      <td className="p-3 bg-slate-50/50 group-hover:bg-slate-100 text-[13px] font-extrabold text-emerald-600 text-center sticky right-0 z-10 shadow-[-2px_0_5px_rgba(0,0,0,0.02)] border-l border-slate-200 print:static print:bg-transparent print:text-black print:border-black print:shadow-none">
+                      <td className="p-3 bg-slate-50/50 text-[13px] font-extrabold text-emerald-600 text-center sticky right-0 z-10 border-l border-slate-200 print:static print:bg-transparent print:text-black print:border-gray-400 print:shadow-none print:text-[12px] align-middle">
                         {totalHadir}
                       </td>
                     </tr>
@@ -316,11 +322,11 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
       </div>
 
       {/* Bagian Tanda Tangan Khusus Print */}
-      <div className="hidden print:block mt-12 text-sm text-black">
-        <div className="flex justify-end pr-12">
-          <div className="text-center">
+      <div className="hidden print:block mt-8 text-sm text-black page-break-inside-avoid">
+        <div className="flex justify-end pr-8">
+          <div className="text-center w-48">
             <p className="mb-20">Trangkil, {formatId(new Date().toISOString())}</p>
-            <p className="font-bold border-b border-black pb-1 mb-1 inline-block min-w-[150px]">Admin SPPG Trangkil</p>
+            <p className="font-bold border-b border-black pb-1 mb-1">Admin SPPG Trangkil</p>
           </div>
         </div>
       </div>
