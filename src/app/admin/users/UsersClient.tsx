@@ -2,8 +2,8 @@
 
 import { useState } from "react"
 import { createPortal } from "react-dom"
-import { Users, UserPlus, KeyRound, UserMinus, ToggleLeft, ToggleRight, X, Phone, Settings } from "lucide-react"
-import { createDivisiAccount, updateDivisiAccount, toggleUserStatus, resetPassword, addAnggota, removeAnggota, updateAnggota } from "./actions"
+import { Users, UserPlus, ToggleLeft, ToggleRight, X } from "lucide-react"
+import { createDivisiAccount, updateDivisiAccount, toggleUserStatus, resetPassword } from "./actions"
 import ConfirmModal from "@/components/ConfirmModal"
 
 function ModalPortal({ children }: { children: React.ReactNode }) {
@@ -21,14 +21,6 @@ export default function UsersClient({ users }: { users: any[] }) {
 
   // Edit state
   const [editUser, setEditUser] = useState<any>(null)
-
-  // Kelola Anggota state
-  const [kelolaDivisi, setKelolaDivisi] = useState<any>(null)
-  const [newAnggotaName, setNewAnggotaName] = useState("")
-  const [newAnggotaHp, setNewAnggotaHp] = useState("")
-
-  // Edit Anggota state
-  const [editAnggota, setEditAnggota] = useState<{ id: number; nama: string; no_hp: string } | null>(null)
 
   // Confirm Modal state
   const [confirmConfig, setConfirmConfig] = useState<{
@@ -102,48 +94,6 @@ export default function UsersClient({ users }: { users: any[] }) {
     }
   }
 
-  async function handleAddAnggota(e: React.FormEvent) {
-    e.preventDefault()
-    if (!kelolaDivisi) return
-    setLoading(true)
-    const res = await addAnggota(kelolaDivisi.divisi_id, newAnggotaName, newAnggotaHp)
-    setLoading(false)
-    if (res?.error) {
-      alert(res.error)
-    } else {
-      setNewAnggotaName("")
-      setNewAnggotaHp("")
-    }
-  }
-
-  function handleRemoveAnggota(anggotaId: number) {
-    if (!kelolaDivisi) return
-    setConfirmConfig({
-      isOpen: true,
-      title: "Hapus Anggota",
-      message: "Hapus anggota ini? Anggota tidak akan terdaftar lagi di divisi.",
-      type: "danger",
-      onConfirm: async () => {
-        setConfirmConfig(prev => ({ ...prev, isOpen: false }))
-        setLoading(true)
-        await removeAnggota(anggotaId, kelolaDivisi.divisi_id)
-        setLoading(false)
-      }
-    })
-  }
-
-  async function handleUpdateAnggota(e: React.FormEvent) {
-    e.preventDefault()
-    if (!editAnggota) return
-    setLoading(true)
-    await updateAnggota(editAnggota.id, editAnggota.nama, editAnggota.no_hp)
-    setLoading(false)
-    setEditAnggota(null)
-  }
-
-  // Cari kelola divisi yg terupdate dari props users untuk modal
-  const currentDivisiUser = kelolaDivisi ? users.find(u => u.id === kelolaDivisi.id) : null
-
   return (
     <div className="space-y-6">
       
@@ -155,7 +105,7 @@ export default function UsersClient({ users }: { users: any[] }) {
           </div>
           <div className="min-w-0">
             <h2 className="text-[15px] sm:text-[16px] font-extrabold text-slate-800 tracking-tight truncate">Kelola Akun & Divisi</h2>
-            <p className="text-[11px] text-slate-500 font-medium truncate">Manajemen data divisi, anggota, dan akun login</p>
+            <p className="text-[11px] text-slate-500 font-medium truncate">Manajemen data divisi dan akun login</p>
           </div>
         </div>
 
@@ -299,129 +249,6 @@ export default function UsersClient({ users }: { users: any[] }) {
         </ModalPortal>
       )}
 
-      {/* Kelola Anggota Modal */}
-      {kelolaDivisi && currentDivisiUser && (
-        <ModalPortal>
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="bg-slate-900 p-4 sm:p-5 flex items-center justify-between text-white shrink-0">
-              <div>
-                <h3 className="font-extrabold text-[14px]">Anggota: {currentDivisiUser.divisi?.nama_divisi}</h3>
-                <p className="text-slate-400 text-[11px] font-medium mt-0.5">Kelola daftar personel tim divisi</p>
-              </div>
-              <button onClick={() => setKelolaDivisi(null)} className="text-slate-400 hover:text-white transition"><X size={20} /></button>
-            </div>
-            
-            <div className="p-5 flex-1 overflow-y-auto space-y-4">
-              
-              {/* Form Tambah Anggota */}
-              <form onSubmit={handleAddAnggota} className="space-y-2 pb-4 border-b border-slate-100">
-                <div className="flex gap-2">
-                  <input
-                    value={newAnggotaName} onChange={(e) => setNewAnggotaName(e.target.value)}
-                    placeholder="Nama Lengkap" required
-                    className="flex-1 border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition"
-                  />
-                  <input
-                    value={newAnggotaHp} onChange={(e) => setNewAnggotaHp(e.target.value)}
-                    placeholder="No HP (Opsional)"
-                    className="w-2/5 border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition"
-                  />
-                </div>
-                <button type="submit" disabled={loading} className="w-full bg-slate-900 text-white hover:bg-slate-800 py-2.5 rounded-lg text-[13px] font-bold transition shadow-sm cursor-pointer">
-                  {loading ? "Menyimpan..." : "+ Tambah Anggota"}
-                </button>
-              </form>
-
-              {/* Daftar Anggota */}
-              <div className="max-h-[40vh] overflow-y-auto">
-                {currentDivisiUser.divisi?.anggota?.length === 0 && (
-                  <div className="text-center py-8">
-                    <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3">
-                      <Users size={20} className="text-slate-300" />
-                    </div>
-                    <p className="text-slate-400 text-[13px] font-semibold">Belum ada personel terdaftar</p>
-                  </div>
-                )}
-                <div className="grid grid-cols-2 gap-2">
-                {currentDivisiUser.divisi?.anggota?.map((ang: any) => {
-                  const inisial = ang.nama.split(" ").map((w: string) => w[0]).join("").toUpperCase().slice(0, 2)
-                  const isEditing = editAnggota?.id === ang.id
-                  return (
-                    <div key={ang.id} className={`rounded-xl border transition-all ${isEditing ? "border-blue-200 bg-blue-50/50 col-span-2" : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm"}`}>
-                      {isEditing ? (
-                        /* Mode Edit Inline */
-                        <form onSubmit={handleUpdateAnggota} className="p-3 space-y-2">
-                          <div className="flex gap-2">
-                            <input
-                              value={editAnggota?.nama || ""}
-                              onChange={e => setEditAnggota(prev => prev ? { ...prev, nama: e.target.value } : prev)}
-                              required placeholder="Nama Lengkap"
-                              className="flex-1 border border-slate-200 bg-white p-2 rounded-lg text-[13px] font-medium focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none"
-                            />
-                            <input
-                              value={editAnggota?.no_hp || ""}
-                              onChange={e => setEditAnggota(prev => prev ? { ...prev, no_hp: e.target.value } : prev)}
-                              placeholder="No HP"
-                              className="w-2/5 border border-slate-200 bg-white p-2 rounded-lg text-[13px] font-medium focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none"
-                            />
-                          </div>
-                          <div className="flex gap-2">
-                            <button type="submit" disabled={loading} className="flex-1 bg-slate-900 text-white hover:bg-slate-800 py-2 rounded-lg text-[12px] font-bold transition cursor-pointer">
-                              {loading ? "Menyimpan..." : "Simpan"}
-                            </button>
-                            <button type="button" onClick={() => setEditAnggota(null)} className="flex-1 bg-slate-100 text-slate-700 hover:bg-slate-200 py-2 rounded-lg text-[12px] font-bold transition cursor-pointer">
-                              Batal
-                            </button>
-                          </div>
-                        </form>
-                      ) : (
-                        /* Mode Kartu Normal */
-                        <div className="p-3 flex flex-col gap-2">
-                          {/* Avatar + Info */}
-                          <div className="flex items-center gap-2.5">
-                            <div className="w-9 h-9 rounded-full bg-slate-900 text-white flex items-center justify-center text-[12px] font-extrabold shrink-0">
-                              {inisial}
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <p className="text-[13px] font-extrabold text-slate-800 leading-tight truncate">{ang.nama}</p>
-                              {ang.no_hp
-                                ? <p className="text-[10px] text-slate-400 flex items-center gap-1 font-semibold mt-0.5 truncate"><Phone size={9} /> {ang.no_hp}</p>
-                                : <p className="text-[10px] text-slate-300 italic mt-0.5">No HP —</p>
-                              }
-                            </div>
-                          </div>
-                          {/* Tombol Aksi */}
-                          <div className="flex gap-1.5 border-t border-slate-100 pt-2">
-                            <button
-                              onClick={() => setEditAnggota({ id: ang.id, nama: ang.nama, no_hp: ang.no_hp || "" })}
-                              className="flex-1 flex items-center justify-center gap-1 text-[11px] font-bold text-blue-600 hover:bg-blue-50 py-1.5 rounded-lg transition cursor-pointer"
-                            >
-                              <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => handleRemoveAnggota(ang.id)}
-                              disabled={loading}
-                              className="flex-1 flex items-center justify-center gap-1 text-[11px] font-bold text-rose-600 hover:bg-rose-50 py-1.5 rounded-lg transition cursor-pointer"
-                            >
-                              <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-                              Hapus
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )
-                })}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        </ModalPortal>
-      )}
-
       {/* Grid Kartu Akun & Divisi */}
       <div className="space-y-3">
         <div className="flex items-center justify-between px-1">
@@ -472,18 +299,6 @@ export default function UsersClient({ users }: { users: any[] }) {
                     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                     <span className="hidden sm:inline">Edit</span>
                   </button>
-
-                  {/* Anggota */}
-                  {!isAdmin && (
-                    <button
-                      onClick={() => setKelolaDivisi(user)}
-                      title="Anggota"
-                      className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-lg bg-violet-50 hover:bg-violet-100 text-violet-600 text-[12px] font-bold transition-colors cursor-pointer"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                      <span className="hidden sm:inline">Anggota</span>
-                    </button>
-                  )}
 
                   {/* Reset */}
                   <button

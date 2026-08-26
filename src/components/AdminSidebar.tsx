@@ -17,7 +17,8 @@ export default function AdminSidebar() {
 
   const navItems = [
     { name: "Dashboard", href: "/admin", icon: Home, exact: true },
-    { name: "Akun & Divisi", href: "/admin/users", icon: Users, exact: false },
+    { name: "Akun & Divisi", href: "/admin/users", icon: ShieldCheck, exact: false },
+    { name: "Data Relawan", href: "/admin/relawan", icon: Users, exact: false },
     { name: "Rekap Absensi", href: "/admin/absensi", icon: CalendarCheck, exact: false },
     { name: "Laporan Divisi", href: "/admin/laporan", icon: ClipboardList, exact: false },
   ]
