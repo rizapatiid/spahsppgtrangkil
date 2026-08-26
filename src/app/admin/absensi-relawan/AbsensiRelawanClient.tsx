@@ -405,10 +405,6 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
                 <p className="mt-1 font-semibold text-[10px]">( .................................................... )</p>
               </>
             )}
-            
-            {ttdNip && (
-              <p className="mt-0.5 font-semibold text-[11px]">{ttdNip}</p>
-            )}
           </div>
         </div>
       </div>
@@ -447,19 +443,12 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
 
                 <div className="pt-2 border-t border-slate-100 mt-2">
                   <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">Penandatangan Laporan</label>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="block">
                     <input 
                       type="text"
                       placeholder="Nama Lengkap"
                       value={ttdName}
                       onChange={e => setTtdName(e.target.value)}
-                      className="w-full border border-slate-200 bg-slate-50 p-2.5 rounded-lg text-[12px] font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-100 placeholder:font-medium"
-                    />
-                    <input 
-                      type="text"
-                      placeholder="NIP (Opsional)"
-                      value={ttdNip}
-                      onChange={e => setTtdNip(e.target.value)}
                       className="w-full border border-slate-200 bg-slate-50 p-2.5 rounded-lg text-[12px] font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-100 placeholder:font-medium"
                     />
                   </div>
