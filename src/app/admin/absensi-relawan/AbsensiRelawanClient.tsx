@@ -343,11 +343,24 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
                   return Object.entries(groupedData as Record<string, any[]>).map(([groupName, rows]) => (
                     <React.Fragment key={groupName}>
                       {groupName && (
-                        <tr className="bg-slate-50/80 print:bg-gray-100" style={{ backgroundColor: '#f8fafc', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' } as any}>
-                          <td colSpan={dateColumns.length + 3} className="px-3 py-2 border-y border-slate-200 font-extrabold text-slate-700 text-[12px] uppercase print:border print:border-black print:text-black">
-                            {groupName}
-                          </td>
-                        </tr>
+                        <>
+                          {/* Tampilan Layar (Sticky Header Divisi) */}
+                          <tr className="bg-slate-50/80 print:hidden" style={{ backgroundColor: '#f8fafc' }}>
+                            <td className="sticky left-0 z-10 border-y border-slate-200" style={{ backgroundColor: '#f8fafc' }}></td>
+                            <td className="sticky left-[40px] z-10 px-3 py-2 border-y border-slate-200 font-extrabold text-slate-700 text-[12px] uppercase" style={{ backgroundColor: '#f8fafc' }}>
+                              {groupName}
+                            </td>
+                            <td colSpan={dateColumns.length} className="border-y border-slate-200" style={{ backgroundColor: '#f8fafc' }}></td>
+                            <td className="sticky right-0 z-10 border-y border-slate-200 border-l" style={{ backgroundColor: '#f8fafc' }}></td>
+                          </tr>
+                          
+                          {/* Tampilan Cetak (PDF) */}
+                          <tr className="hidden print:table-row bg-gray-100" style={{ backgroundColor: '#f8fafc', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' } as any}>
+                            <td colSpan={dateColumns.length + 3} className="px-3 py-2 border border-black font-extrabold text-black text-[12px] uppercase">
+                              {groupName}
+                            </td>
+                          </tr>
+                        </>
                       )}
                       {rows.map((row) => {
                         let totalHadir = 0;
