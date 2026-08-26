@@ -43,6 +43,9 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
   const [showPrintModal, setShowPrintModal] = useState(false)
   const [printRequested, setPrintRequested] = useState(false)
 
+  const [ttdName, setTtdName] = useState("")
+  const [ttdNip, setTtdNip] = useState("")
+
   const months = [
     { value: 1, label: "Januari" }, { value: 2, label: "Februari" }, { value: 3, label: "Maret" },
     { value: 4, label: "April" }, { value: 5, label: "Mei" }, { value: 6, label: "Juni" },
@@ -162,7 +165,7 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
   )
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 print:font-serif">
       
       {/* Header Halaman (Sembunyi saat print) */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2 pb-4 border-b border-slate-200/80 px-1 print:hidden">
@@ -190,8 +193,8 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
       <div className="hidden print:block mb-5 w-full">
         {/* Header Kop Surat */}
         <div className="flex flex-col items-center justify-center pb-2 text-center relative">
-          <img src="https://res.cloudinary.com/glcpjxnr/image/upload/v1787672024/sppg_trangkil/assets/gcvi4ohrnoapnxb8dfro.png" alt="Logo SPPG" className="h-24 object-contain mb-1" />
-          <p className="text-[12px] text-gray-800 font-semibold tracking-wide">Jl. Melati RT. 004 RW. 003 Trangkil Pati</p>
+          <img src="https://res.cloudinary.com/glcpjxnr/image/upload/v1787672024/sppg_trangkil/assets/gcvi4ohrnoapnxb8dfro.png" alt="Logo SPPG" className="h-16 object-contain mb-1" />
+          <p className="text-[12px] text-gray-800 font-semibold tracking-wide mt-1">Jl. Melati RT. 004 RW. 003 Trangkil Pati</p>
         </div>
         
         {/* Garis Ganda Kop Surat Klasik */}
@@ -345,13 +348,24 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
       </div>
 
       {/* Bagian Tanda Tangan Khusus Print (Format Resmi) */}
-      <div className="hidden print:block mt-10 text-[11px] text-black page-break-inside-avoid">
+      <div className="hidden print:block mt-10 text-[12px] text-black page-break-inside-avoid">
         <div className="flex justify-end pr-12">
-          <div className="text-center w-52">
+          <div className="text-center w-56">
             <p className="mb-1">Trangkil, {formatId(new Date().toISOString())}</p>
             <p className="font-bold mb-16">Mengetahui,<br/>Admin SPPG Trangkil</p>
-            <div className="border-b border-black w-48 mx-auto"></div>
-            <p className="mt-1 font-semibold text-[10px]">( .................................................... )</p>
+            
+            {ttdName ? (
+              <p className="font-bold underline underline-offset-4 decoration-1">{ttdName}</p>
+            ) : (
+              <>
+                <div className="border-b border-black w-48 mx-auto"></div>
+                <p className="mt-1 font-semibold text-[10px]">( .................................................... )</p>
+              </>
+            )}
+            
+            {ttdNip && (
+              <p className="mt-0.5 font-semibold text-[11px]">{ttdNip}</p>
+            )}
           </div>
         </div>
       </div>
@@ -386,6 +400,26 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
                     <option value="all">Semua Divisi</option>
                     {divisiList.map(d => <option key={d.id} value={d.id}>{d.nama_divisi}</option>)}
                   </select>
+                </div>
+
+                <div className="pt-2 border-t border-slate-100 mt-2">
+                  <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">Penandatangan Laporan</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <input 
+                      type="text"
+                      placeholder="Nama Lengkap"
+                      value={ttdName}
+                      onChange={e => setTtdName(e.target.value)}
+                      className="w-full border border-slate-200 bg-slate-50 p-2.5 rounded-lg text-[12px] font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-100 placeholder:font-medium"
+                    />
+                    <input 
+                      type="text"
+                      placeholder="NIP (Opsional)"
+                      value={ttdNip}
+                      onChange={e => setTtdNip(e.target.value)}
+                      className="w-full border border-slate-200 bg-slate-50 p-2.5 rounded-lg text-[12px] font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-100 placeholder:font-medium"
+                    />
+                  </div>
                 </div>
               </div>
 
