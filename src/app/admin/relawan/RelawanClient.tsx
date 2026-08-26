@@ -98,63 +98,71 @@ export default function RelawanClient({ relawan, divisiList }: { relawan: any[],
         </div>
 
         <button
-          onClick={() => setShowAddForm(!showAddForm)}
+          onClick={() => setShowAddForm(true)}
           className="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white px-3 sm:px-4 py-2 rounded-lg text-[12px] font-bold shadow-sm transition-all shrink-0 cursor-pointer"
         >
           <UserPlus size={15} />
-          <span className="hidden sm:inline">{showAddForm ? "Tutup Form" : "Tambah Relawan"}</span>
-          <span className="sm:hidden">{showAddForm ? "Tutup" : "Tambah"}</span>
+          <span className="hidden sm:inline">Tambah Relawan</span>
+          <span className="sm:hidden">Tambah</span>
         </button>
       </div>
 
-      {/* Form Tambah Relawan */}
+      {/* Form Tambah Relawan Modal */}
       {showAddForm && (
-        <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-4 sm:p-5 animate-in fade-in duration-200">
-          <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100">
-            <UserPlus size={16} className="text-slate-400" />
-            <h3 className="text-[13px] font-extrabold text-slate-800 uppercase tracking-wider">Tambah Relawan Baru</h3>
-          </div>
-          
-          <form onSubmit={handleCreate} className="space-y-4 max-w-3xl">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Nama Lengkap</label>
-                <input name="nama" required className="w-full border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none" placeholder="Masukkan nama relawan..." />
+        <ModalPortal>
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
+            <div className="bg-slate-900 p-4 sm:p-5 flex items-center justify-between text-white shrink-0 border-b border-slate-800">
+              <div className="flex items-center gap-2">
+                <UserPlus size={18} className="text-emerald-400" />
+                <h3 className="font-extrabold text-[14px]">Tambah Relawan Baru</h3>
               </div>
-              <div>
-                <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">NIK (Opsional)</label>
-                <input name="nik" className="w-full border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none" placeholder="Nomor Induk Kependudukan..." />
-              </div>
+              <button onClick={() => setShowAddForm(false)} className="text-slate-400 hover:text-white transition"><X size={20} /></button>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Divisi Penugasan</label>
-                <select name="divisi_id" required className="w-full border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none">
-                  <option value="">-- Pilih Divisi --</option>
-                  {divisiList.map(d => (
-                    <option key={d.id} value={d.id}>{d.nama_divisi}</option>
-                  ))}
-                </select>
+            <form onSubmit={handleCreate} className="p-5 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Nama Lengkap</label>
+                  <input name="nama" required className="w-full border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none" placeholder="Masukkan nama relawan..." />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">NIK (Opsional)</label>
+                  <input name="nik" className="w-full border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none" placeholder="Nomor Induk Kependudukan..." />
+                </div>
               </div>
-              <div>
-                <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Nomor HP / WA (Opsional)</label>
-                <input name="no_hp" className="w-full border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none" placeholder="08..." />
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Divisi Penugasan</label>
+                  <select name="divisi_id" required className="w-full border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none">
+                    <option value="">-- Pilih Divisi --</option>
+                    {divisiList.map(d => (
+                      <option key={d.id} value={d.id}>{d.nama_divisi}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Nomor HP / WA (Opsional)</label>
+                  <input name="no_hp" className="w-full border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none" placeholder="08..." />
+                </div>
               </div>
-            </div>
 
-            <div>
-              <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Alamat (Opsional)</label>
-              <textarea name="alamat" rows={2} className="w-full border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none" placeholder="Alamat lengkap relawan..."></textarea>
-            </div>
-            
-            <div className="flex justify-end pt-2 border-t border-slate-100">
-              <button disabled={loading} className="bg-slate-900 text-white px-6 py-2.5 rounded-lg text-[13px] font-bold hover:bg-slate-800 transition shadow-md hover:shadow-lg w-full sm:w-auto cursor-pointer">
-                {loading ? "Menyimpan..." : "Simpan Data"}
-              </button>
-            </div>
-          </form>
+              <div>
+                <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Alamat (Opsional)</label>
+                <textarea name="alamat" rows={2} className="w-full border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none" placeholder="Alamat lengkap relawan..."></textarea>
+              </div>
+              
+              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                <button type="button" onClick={() => setShowAddForm(false)} className="px-5 py-2.5 bg-slate-150 hover:bg-slate-200 text-slate-700 rounded-lg text-[13px] font-bold transition">Batal</button>
+                <button type="submit" disabled={loading} className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-[13px] font-bold transition shadow-md cursor-pointer">
+                  {loading ? "Menyimpan..." : "Simpan Data"}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
+        </ModalPortal>
       )}
 
       {/* Cari & List */}
