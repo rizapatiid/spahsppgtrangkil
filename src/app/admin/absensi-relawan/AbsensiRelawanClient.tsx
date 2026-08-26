@@ -92,15 +92,16 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
   const renderStatus = (status: string) => {
     switch (status) {
       case "Hadir":
-        return <div className="mx-auto w-5 h-5 rounded-md bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-[12px] print:bg-transparent print:w-auto print:h-auto"><Check size={14} strokeWidth={4} className="print:text-black print:w-3.5 print:h-3.5" /></div>
+        return <div className="mx-auto flex items-center justify-center font-bold text-[12px] print:w-auto print:h-auto"><Check size={14} strokeWidth={4} className="text-emerald-600 print:text-black print:w-3.5 print:h-3.5" /></div>
       case "Sakit":
-        return <div className="mx-auto w-5 h-5 rounded-md bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-[12px] print:bg-transparent print:w-auto print:h-auto print:text-black" title="Sakit">S</div>
+        return <div className="mx-auto flex items-center justify-center font-bold text-[12px] text-amber-600 print:w-auto print:h-auto print:text-black" title="Sakit">S</div>
       case "Izin":
-        return <div className="mx-auto w-5 h-5 rounded-md bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-[12px] print:bg-transparent print:w-auto print:h-auto print:text-black" title="Izin">I</div>
+        return <div className="mx-auto flex items-center justify-center font-bold text-[12px] text-purple-600 print:w-auto print:h-auto print:text-black" title="Izin">I</div>
       case "Alfa":
-        return <div className="mx-auto w-5 h-5 rounded-md bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-[12px] print:bg-transparent print:w-auto print:h-auto print:text-black" title="Alfa">A</div>
+        return <div className="mx-auto flex items-center justify-center font-bold text-[12px] text-rose-600 print:w-auto print:h-auto print:text-black" title="Alfa">A</div>
       default:
-        return <span className="text-slate-300 print:text-gray-300">-</span>
+        // Empty string is cleaner for PDF reports
+        return <span className="text-slate-300 print:text-transparent print:hidden">-</span>
     }
   }
 
@@ -185,38 +186,40 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
         </button>
       </div>
 
-      {/* Kop Surat Khusus Cetak/Print - DESAIN RESMI (CENTERED) */}
-      <div className="hidden print:block mb-4 w-full">
+      {/* Kop Surat Khusus Cetak/Print - DESAIN RESMI (CENTERED, CORPORATE) */}
+      <div className="hidden print:block mb-5 w-full">
         {/* Header Kop Surat */}
-        <div className="flex flex-col items-center justify-center pb-3 border-b-[3px] border-black text-center">
-          <img src="https://res.cloudinary.com/glcpjxnr/image/upload/v1787672024/sppg_trangkil/assets/gcvi4ohrnoapnxb8dfro.png" alt="Logo SPPG" className="h-16 object-contain mb-3" />
-          <h2 className="text-lg font-black uppercase text-black tracking-widest">Laporan Rekapitulasi Kehadiran Relawan</h2>
+        <div className="flex flex-col items-center justify-center pb-2 text-center relative">
+          <img src="https://res.cloudinary.com/glcpjxnr/image/upload/v1787672024/sppg_trangkil/assets/gcvi4ohrnoapnxb8dfro.png" alt="Logo SPPG" className="h-24 object-contain mb-2" />
+          <h2 className="text-[17px] font-bold uppercase text-black tracking-widest mt-1">Laporan Rekapitulasi Kehadiran Relawan</h2>
         </div>
-        <div className="border-b border-black mb-5 w-full mt-0.5"></div>
+        
+        {/* Garis Ganda Kop Surat Klasik */}
+        <div className="border-b-[4px] border-double border-black mb-4 w-full"></div>
         
         {/* Informasi Laporan & Legenda */}
-        <div className="flex justify-between items-end mb-2">
+        <div className="flex justify-between items-end mb-2 px-1">
           {/* Legenda di Print */}
-          <div className="flex flex-col gap-1.5 pb-1">
-            <span className="text-[10px] font-black text-black uppercase tracking-wider">Keterangan:</span>
+          <div className="flex flex-col gap-1 pb-0.5">
+            <span className="text-[9px] font-bold text-black uppercase tracking-wider mb-1">Keterangan:</span>
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1.5"><div className="w-3.5 h-3.5 rounded-sm flex items-center justify-center border border-gray-400"><Check size={10} strokeWidth={4} className="text-black" /></div> <span className="text-[10px] font-semibold text-black">Hadir</span></div>
-              <div className="flex items-center gap-1.5"><div className="w-3.5 h-3.5 rounded-sm flex items-center justify-center border border-gray-400 text-[9px] font-black text-black">S</div> <span className="text-[10px] font-semibold text-black">Sakit</span></div>
-              <div className="flex items-center gap-1.5"><div className="w-3.5 h-3.5 rounded-sm flex items-center justify-center border border-gray-400 text-[9px] font-black text-black">I</div> <span className="text-[10px] font-semibold text-black">Izin</span></div>
-              <div className="flex items-center gap-1.5"><div className="w-3.5 h-3.5 rounded-sm flex items-center justify-center border border-gray-400 text-[9px] font-black text-black">A</div> <span className="text-[10px] font-semibold text-black">Alfa</span></div>
+              <div className="flex items-center gap-1.5"><div className="w-3.5 h-3.5 rounded flex items-center justify-center border border-black"><Check size={10} strokeWidth={4} className="text-black" /></div> <span className="text-[9px] font-semibold text-black">Hadir</span></div>
+              <div className="flex items-center gap-1.5"><div className="w-3.5 h-3.5 rounded flex items-center justify-center border border-black text-[9px] font-bold text-black">S</div> <span className="text-[9px] font-semibold text-black">Sakit</span></div>
+              <div className="flex items-center gap-1.5"><div className="w-3.5 h-3.5 rounded flex items-center justify-center border border-black text-[9px] font-bold text-black">I</div> <span className="text-[9px] font-semibold text-black">Izin</span></div>
+              <div className="flex items-center gap-1.5"><div className="w-3.5 h-3.5 rounded flex items-center justify-center border border-black text-[9px] font-bold text-black">A</div> <span className="text-[9px] font-semibold text-black">Alfa</span></div>
             </div>
           </div>
 
           {/* Info Periode */}
-          <table className="text-[11px] text-black">
+          <table className="text-[10px] text-black">
             <tbody>
               <tr>
                 <td className="font-bold text-right pr-3 py-0.5 uppercase tracking-wider">Periode:</td>
-                <td className="text-left py-0.5 font-semibold">{actualStart && actualEnd ? `${formatId(actualStart)} - ${formatId(actualEnd)}` : '-'}</td>
+                <td className="text-left py-0.5 font-bold">{actualStart && actualEnd ? `${formatId(actualStart)} - ${formatId(actualEnd)}` : '-'}</td>
               </tr>
               <tr>
                 <td className="font-bold text-right pr-3 py-0.5 uppercase tracking-wider">Divisi:</td>
-                <td className="text-left py-0.5 uppercase font-semibold">{selectedDivisi === 'all' ? 'SEMUA DIVISI' : divisiList.find(d => d.id === parseInt(selectedDivisi))?.nama_divisi}</td>
+                <td className="text-left py-0.5 uppercase font-bold">{selectedDivisi === 'all' ? 'SEMUA DIVISI' : divisiList.find(d => d.id === parseInt(selectedDivisi))?.nama_divisi}</td>
               </tr>
             </tbody>
           </table>
@@ -256,7 +259,7 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
       </div>
 
       {/* Tabel Matriks */}
-      <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden relative print:border-none print:rounded-none print:shadow-none">
+      <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden relative print:border-none print:rounded-none print:shadow-none mt-2">
         {loading && (
           <div className="absolute inset-0 z-20 bg-white/50 backdrop-blur-sm flex items-center justify-center print:hidden">
             <div className="flex flex-col items-center gap-2">
@@ -268,32 +271,32 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
 
         <style dangerouslySetInnerHTML={{__html: `
           @media print {
-            @page { size: landscape; margin: 12mm; }
+            @page { size: landscape; margin: 10mm 15mm; }
           }
         `}} />
 
         {/* Gunakan print:overflow-visible dan print:max-h-none agar tabel tercetak utuh */}
         <div className="overflow-x-auto max-h-[65vh] print:overflow-visible print:max-h-none">
-          <table className="w-full text-left border-collapse min-w-max print:border-2 print:border-gray-800">
-            <thead className="sticky top-0 z-10 print:static print:bg-gray-100" style={{ WebkitPrintColorAdjust: 'exact', colorAdjust: 'exact' } as any}>
-              <tr>
-                <th className="p-3 bg-slate-50 border-b border-slate-200 border-r text-[11px] font-extrabold text-slate-500 uppercase tracking-wider sticky left-0 z-20 min-w-[160px] max-w-[220px] print:static print:bg-transparent print:border-gray-400 print:shadow-none print:text-black print:text-[10px] print:p-2 align-middle">
+          <table className="w-full text-left border-collapse min-w-max print:border print:border-black">
+            <thead className="sticky top-0 z-10 print:static">
+              <tr style={{ backgroundColor: '#f1f5f9', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' } as any}>
+                <th className="p-3 bg-slate-50 border-b border-slate-200 border-r text-[11px] font-extrabold text-slate-500 uppercase tracking-wider sticky left-0 z-20 min-w-[160px] max-w-[220px] print:static print:bg-transparent print:border print:border-black print:shadow-none print:text-black print:text-[10px] print:p-2 align-middle">
                   Relawan & Divisi
                 </th>
                 {dateColumns.map(col => (
-                  <th key={col.dateStr} className="p-1 bg-slate-50 border-b border-slate-200 border-r text-[11px] font-extrabold text-slate-500 text-center min-w-[28px] w-[28px] print:bg-transparent print:border-gray-400 print:text-black print:text-[9px] align-middle">
+                  <th key={col.dateStr} className="p-1 bg-slate-50 border-b border-slate-200 border-r text-[11px] font-extrabold text-slate-500 text-center min-w-[28px] w-[28px] print:bg-transparent print:border print:border-black print:text-black print:text-[9px] align-middle">
                     {col.label}
                   </th>
                 ))}
-                <th className="p-3 bg-slate-100 border-b border-slate-200 text-[11px] font-extrabold text-slate-700 uppercase tracking-wider text-center w-[60px] sticky right-0 z-20 print:static print:bg-transparent print:border-gray-400 print:shadow-none print:text-black print:text-[10px] print:p-2 align-middle">
+                <th className="p-3 bg-slate-100 border-b border-slate-200 text-[11px] font-extrabold text-slate-700 uppercase tracking-wider text-center w-[60px] sticky right-0 z-20 print:static print:bg-transparent print:border print:border-black print:shadow-none print:text-black print:text-[10px] print:p-2 align-middle">
                   Total<br/>Hadir
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 print:divide-gray-400">
+            <tbody className="divide-y divide-slate-100 print:divide-none">
               {dataMatrix.length === 0 && !loading ? (
                 <tr>
-                  <td colSpan={dateColumns.length + 2} className="p-8 text-center text-slate-400 text-[13px] font-medium print:border-gray-400 print:text-black">
+                  <td colSpan={dateColumns.length + 2} className="p-8 text-center text-slate-400 text-[13px] font-medium print:border print:border-black print:text-black">
                     Tidak ada relawan yang ditemukan di divisi/periode ini.
                   </td>
                 </tr>
@@ -303,7 +306,7 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
                   
                   return (
                     <tr key={row.id} className="hover:bg-slate-50/50 transition-colors group print:break-inside-avoid">
-                      <td className="p-3 bg-white border-r border-slate-200 sticky left-0 z-10 min-w-[160px] max-w-[220px] print:static print:border-gray-400 print:shadow-none print:p-2 align-middle">
+                      <td className="p-3 bg-white border-r border-slate-200 sticky left-0 z-10 min-w-[160px] max-w-[220px] print:static print:border print:border-black print:shadow-none print:p-2 align-middle print:bg-transparent">
                         <div className="text-[12px] font-extrabold text-slate-800 truncate print:whitespace-normal print:text-black print:text-[11px]" title={row.nama}>{row.nama}</div>
                         <div className="text-[10px] font-bold text-slate-400 mt-0.5 truncate print:text-gray-600 print:text-[9px]" title={row.divisi}>{row.divisi}</div>
                       </td>
@@ -312,13 +315,13 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
                         const status = row.attendance[col.dateStr]
                         if (status === "Hadir") totalHadir++
                         return (
-                          <td key={col.dateStr} className="p-0.5 border-r border-slate-100 text-center align-middle print:border-gray-400">
+                          <td key={col.dateStr} className="p-0.5 border-r border-slate-100 text-center align-middle print:border print:border-black print:bg-transparent">
                             {renderStatus(status)}
                           </td>
                         )
                       })}
                       
-                      <td className="p-3 bg-slate-50/50 text-[13px] font-extrabold text-emerald-600 text-center sticky right-0 z-10 border-l border-slate-200 print:static print:bg-transparent print:text-black print:border-gray-400 print:shadow-none print:text-[12px] align-middle">
+                      <td className="p-3 bg-slate-50/50 text-[13px] font-extrabold text-emerald-600 text-center sticky right-0 z-10 border-l border-slate-200 print:static print:bg-transparent print:text-black print:border print:border-black print:shadow-none print:text-[11px] align-middle">
                         {totalHadir}
                       </td>
                     </tr>
@@ -330,12 +333,14 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
         </div>
       </div>
 
-      {/* Bagian Tanda Tangan Khusus Print */}
-      <div className="hidden print:block mt-8 text-sm text-black page-break-inside-avoid">
-        <div className="flex justify-end pr-8">
-          <div className="text-center w-48">
-            <p className="mb-20">Trangkil, {formatId(new Date().toISOString())}</p>
-            <p className="font-bold border-b border-black pb-1 mb-1">Admin SPPG Trangkil</p>
+      {/* Bagian Tanda Tangan Khusus Print (Format Resmi) */}
+      <div className="hidden print:block mt-10 text-[11px] text-black page-break-inside-avoid">
+        <div className="flex justify-end pr-12">
+          <div className="text-center w-52">
+            <p className="mb-1">Trangkil, {formatId(new Date().toISOString())}</p>
+            <p className="font-bold mb-16">Mengetahui,<br/>Admin SPPG Trangkil</p>
+            <div className="border-b border-black w-48 mx-auto"></div>
+            <p className="mt-1 font-semibold text-[10px]">( .................................................... )</p>
           </div>
         </div>
       </div>
