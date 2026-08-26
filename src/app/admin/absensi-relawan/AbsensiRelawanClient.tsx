@@ -301,21 +301,21 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
 
         {/* Gunakan print:overflow-visible dan print:max-h-none agar tabel tercetak utuh */}
         <div className="overflow-x-auto max-h-[65vh] print:overflow-visible print:max-h-none">
-          <table className="w-full text-left border-collapse min-w-max print:border print:border-black">
+          <table className="w-full text-left border-collapse min-w-max print:border print:border-black print:table-fixed">
             <thead className="sticky top-0 z-10 print:static">
               <tr style={{ backgroundColor: '#f1f5f9', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' } as any}>
-                <th className="p-3 bg-slate-50 border-b border-slate-200 border-r text-[11px] font-extrabold text-slate-500 uppercase tracking-wider sticky left-0 z-20 w-[40px] print:static print:bg-transparent print:border print:border-black print:shadow-none print:text-black print:text-[10px] print:p-2 align-middle text-center">
+                <th className="p-3 bg-slate-50 border-b border-slate-200 border-r text-[11px] font-extrabold text-slate-500 uppercase tracking-wider sticky left-0 z-20 w-[40px] print:w-[4%] print:min-w-0 print:static print:bg-gray-200 print:border print:border-black print:shadow-none print:text-black print:text-[11px] print:p-1 align-middle text-center">
                   No
                 </th>
-                <th className="p-3 bg-slate-50 border-b border-slate-200 border-r text-[11px] font-extrabold text-slate-500 uppercase tracking-wider sticky left-[40px] z-20 min-w-[160px] max-w-[220px] print:static print:bg-transparent print:border print:border-black print:shadow-none print:text-black print:text-[10px] print:p-2 align-middle">
+                <th className="p-3 bg-slate-50 border-b border-slate-200 border-r text-[11px] font-extrabold text-slate-500 uppercase tracking-wider sticky left-[40px] z-20 min-w-[160px] max-w-[220px] print:w-[26%] print:min-w-0 print:static print:bg-gray-200 print:border print:border-black print:shadow-none print:text-black print:text-[11px] print:p-1 align-middle text-center">
                   Relawan & Divisi
                 </th>
                 {dateColumns.map(col => (
-                  <th key={col.dateStr} className="p-1 bg-slate-50 border-b border-slate-200 border-r text-[11px] font-extrabold text-slate-500 text-center min-w-[28px] w-[28px] print:bg-transparent print:border print:border-black print:text-black print:text-[9px] align-middle">
+                  <th key={col.dateStr} className="p-1 bg-slate-50 border-b border-slate-200 border-r text-[11px] font-extrabold text-slate-500 text-center min-w-[28px] w-[28px] print:w-[2%] print:min-w-0 print:bg-gray-200 print:border print:border-black print:text-black print:text-[9px] align-middle print:p-0.5">
                     {col.label}
                   </th>
                 ))}
-                <th className="p-3 bg-slate-100 border-b border-slate-200 text-[11px] font-extrabold text-slate-700 uppercase tracking-wider text-center w-[80px] sticky right-0 z-20 print:static print:bg-transparent print:border print:border-black print:shadow-none print:text-black print:text-[10px] print:p-2 align-middle whitespace-nowrap">
+                <th className="p-3 bg-slate-100 border-b border-slate-200 text-[11px] font-extrabold text-slate-700 uppercase tracking-wider text-center w-[80px] print:w-[8%] print:min-w-0 sticky right-0 z-20 print:static print:bg-gray-200 print:border print:border-black print:shadow-none print:text-black print:text-[10px] print:p-1 align-middle whitespace-nowrap">
                   Total Hadir
                 </th>
               </tr>
@@ -354,8 +354,8 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
                           </tr>
                           
                           {/* Tampilan Cetak (PDF) */}
-                          <tr className="hidden print:table-row bg-gray-100" style={{ backgroundColor: '#f8fafc', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' } as any}>
-                            <td colSpan={dateColumns.length + 3} className="px-3 py-2 border border-black font-extrabold text-black text-[12px] uppercase">
+                          <tr className="hidden print:table-row bg-slate-200" style={{ backgroundColor: '#e2e8f0', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' } as any}>
+                            <td colSpan={dateColumns.length + 3} className="px-3 py-1.5 border border-black font-extrabold text-black text-[11px] uppercase text-left">
                               {groupName}
                             </td>
                           </tr>
@@ -367,11 +367,11 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
                         
                         return (
                           <tr key={row.id} className="hover:bg-slate-50/50 transition-colors group print:break-inside-avoid">
-                            <td className="p-2 bg-white border-r border-slate-200 sticky left-0 z-10 w-[40px] print:static print:border print:border-black print:shadow-none print:p-2 align-middle print:bg-transparent text-center text-[11px] font-semibold text-slate-500 print:text-black">
+                            <td className="p-2 bg-white border-r border-slate-200 sticky left-0 z-10 w-[40px] print:w-auto print:min-w-0 print:static print:border print:border-black print:shadow-none print:p-1 align-middle print:bg-transparent text-center text-[11px] font-semibold text-slate-500 print:text-black">
                               {globalIndex}
                             </td>
-                            <td className="p-3 bg-white border-r border-slate-200 sticky left-[40px] z-10 min-w-[160px] max-w-[220px] print:static print:border print:border-black print:shadow-none print:p-2 align-middle print:bg-transparent">
-                              <div className="text-[12px] font-extrabold text-slate-800 truncate print:whitespace-normal print:text-black print:text-[11px]" title={row.nama}>{row.nama}</div>
+                            <td className="p-3 bg-white border-r border-slate-200 sticky left-[40px] z-10 min-w-[160px] max-w-[220px] print:w-auto print:min-w-0 print:static print:border print:border-black print:shadow-none print:p-1 align-middle print:bg-transparent">
+                              <div className="text-[12px] font-extrabold text-slate-800 truncate print:whitespace-normal print:text-black print:text-[10px]" title={row.nama}>{row.nama}</div>
                               {!groupName && (
                                 <div className="text-[10px] font-bold text-slate-400 mt-0.5 truncate print:text-gray-600 print:text-[9px]" title={row.divisi}>{row.divisi}</div>
                               )}
@@ -381,13 +381,13 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
                               const status = row.attendance[col.dateStr]
                               if (status === "Hadir") totalHadir++
                               return (
-                                <td key={col.dateStr} className="p-0.5 border-r border-slate-100 text-center align-middle print:border print:border-black print:bg-transparent">
+                                <td key={col.dateStr} className="p-0.5 border-r border-slate-100 text-center align-middle print:w-auto print:min-w-0 print:border print:border-black print:bg-transparent print:p-0.5">
                                   {renderStatus(status)}
                                 </td>
                               )
                             })}
                             
-                            <td className="p-3 bg-slate-50/50 text-[13px] font-extrabold text-emerald-600 text-center sticky right-0 z-10 border-l border-slate-200 print:static print:bg-transparent print:text-black print:border print:border-black print:shadow-none print:text-[11px] align-middle">
+                            <td className="p-3 bg-slate-50/50 text-[13px] font-extrabold text-emerald-600 text-center sticky right-0 z-10 border-l border-slate-200 print:w-auto print:min-w-0 print:static print:bg-transparent print:text-black print:border print:border-black print:shadow-none print:text-[10px] print:p-1 align-middle">
                               {totalHadir}
                             </td>
                           </tr>
