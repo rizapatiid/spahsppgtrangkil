@@ -1,17 +1,43 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { CalendarDays, Filter, Check, Info, FileSpreadsheet, Printer, X } from "lucide-react"
+import { CalendarDays, Filter, Check, FileSpreadsheet, Printer, X, CalendarIcon } from "lucide-react"
 import { fetchAbsensiMatrix } from "./actions"
 
 export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[] }) {
   const currentDate = new Date()
+  
+  // Helpers
+  const formatLocal = (d: Date) => {
+    const y = d.getFullYear()
+    const m = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${y}-${m}-${day}`
+  }
+
+  const formatId = (isoStr: string) => {
+    // If it's just YYYY-MM-DD, add time so it parses as local time
+    const dateToParse = isoStr.includes('T') ? isoStr : `${isoStr}T00:00:00`
+    const d = new Date(dateToParse)
+    const monthsId = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"]
+    return `${d.getDate()} ${monthsId[d.getMonth()]} ${d.getFullYear()}`
+  }
+
+  const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
+  const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0)
+
+  // Filters State
+  const [periodType, setPeriodType] = useState<'monthly' | 'range'>('monthly')
   const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth() + 1)
   const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear())
+  const [startDate, setStartDate] = useState(formatLocal(startOfMonth))
+  const [endDate, setEndDate] = useState(formatLocal(endOfMonth))
   const [selectedDivisi, setSelectedDivisi] = useState<string>("all")
   
   const [dataMatrix, setDataMatrix] = useState<any[]>([])
-  const [daysInMonth, setDaysInMonth] = useState<number>(31)
+  const [dateColumns, setDateColumns] = useState<{dateStr: string, label: string}[]>([])
+  const [actualStart, setActualStart] = useState("")
+  const [actualEnd, setActualEnd] = useState("")
   const [loading, setLoading] = useState(true)
 
   const [showPrintModal, setShowPrintModal] = useState(false)
@@ -29,18 +55,27 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
     async function loadData() {
       setLoading(true)
       const divisiId = selectedDivisi === "all" ? undefined : parseInt(selectedDivisi)
-      const res = await fetchAbsensiMatrix(selectedMonth, selectedYear, divisiId)
+      const res = await fetchAbsensiMatrix({
+        type: periodType,
+        month: selectedMonth,
+        year: selectedYear,
+        startDate: startDate,
+        endDate: endDate,
+        divisiId
+      })
       setDataMatrix(res.matrix)
-      setDaysInMonth(res.daysInMonth)
+      setDateColumns(res.dateColumns)
+      setActualStart(res.periodStart)
+      setActualEnd(res.periodEnd)
       setLoading(false)
     }
     loadData()
-  }, [selectedMonth, selectedYear, selectedDivisi])
+  }, [periodType, selectedMonth, selectedYear, startDate, endDate, selectedDivisi])
 
   // Handle Print Queue
   useEffect(() => {
     if (!loading && printRequested) {
-      setTimeout(() => window.print(), 300)
+      setTimeout(() => window.print(), 500)
       setPrintRequested(false)
     }
   }, [loading, printRequested])
@@ -50,7 +85,7 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
     if (loading) {
       setPrintRequested(true)
     } else {
-      setTimeout(() => window.print(), 300)
+      setTimeout(() => window.print(), 500)
     }
   }
 
@@ -69,7 +104,61 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
     }
   }
 
-  const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1)
+  // Komponen pemilih periode yang bisa di-reuse di main UI dan Modal
+  const renderPeriodSelectors = () => (
+    <>
+      <div className="flex gap-2 mb-2 sm:mb-0 sm:mr-2">
+        <button 
+          type="button"
+          onClick={() => setPeriodType('monthly')}
+          className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-[11px] font-bold border transition ${periodType === 'monthly' ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-slate-50 border-slate-200 text-slate-500'}`}
+        >
+          Bulanan
+        </button>
+        <button 
+          type="button"
+          onClick={() => setPeriodType('range')}
+          className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-[11px] font-bold border transition ${periodType === 'range' ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-slate-50 border-slate-200 text-slate-500'}`}
+        >
+          Rentang Tanggal
+        </button>
+      </div>
+
+      {periodType === 'monthly' ? (
+        <div className="grid grid-cols-2 gap-2 flex-1">
+          <select 
+            value={selectedMonth} 
+            onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
+            className="w-full border border-slate-200 bg-slate-50 rounded-lg text-[12px] font-bold text-slate-700 p-2 outline-none focus:ring-2 focus:ring-blue-100"
+          >
+            {months.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
+          </select>
+          <select 
+            value={selectedYear} 
+            onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+            className="w-full border border-slate-200 bg-slate-50 rounded-lg text-[12px] font-bold text-slate-700 p-2 outline-none focus:ring-2 focus:ring-blue-100"
+          >
+            {years.map(y => <option key={y} value={y}>{y}</option>)}
+          </select>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-2 flex-1">
+          <input 
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="w-full border border-slate-200 bg-slate-50 rounded-lg text-[12px] font-bold text-slate-700 p-2 outline-none focus:ring-2 focus:ring-blue-100"
+          />
+          <input 
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="w-full border border-slate-200 bg-slate-50 rounded-lg text-[12px] font-bold text-slate-700 p-2 outline-none focus:ring-2 focus:ring-blue-100"
+          />
+        </div>
+      )}
+    </>
+  )
 
   return (
     <div className="space-y-6">
@@ -82,7 +171,7 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
           </div>
           <div className="min-w-0">
             <h2 className="text-[15px] sm:text-[16px] font-extrabold text-slate-800 tracking-tight truncate">Laporan Kehadiran Relawan</h2>
-            <p className="text-[11px] text-slate-500 font-medium truncate">Rekap kehadiran individu (Matriks Bulanan)</p>
+            <p className="text-[11px] text-slate-500 font-medium truncate">Rekap kehadiran individu (Matriks Bulanan & Periode)</p>
           </div>
         </div>
 
@@ -96,45 +185,49 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
         </button>
       </div>
 
-      {/* Header Khusus Cetak/Print */}
-      <div className="hidden print:block text-center mb-6">
-        <h1 className="text-xl font-bold uppercase mb-1">Laporan Kehadiran Relawan</h1>
-        <p className="text-sm font-semibold">Bulan: {months.find(m => m.value === selectedMonth)?.label} {selectedYear}</p>
-        <p className="text-sm font-semibold">Divisi: {selectedDivisi === 'all' ? 'Semua Divisi' : divisiList.find(d => d.id === parseInt(selectedDivisi))?.nama_divisi}</p>
+      {/* Kop Surat Khusus Cetak/Print */}
+      <div className="hidden print:block mb-8">
+        <div className="flex items-center justify-between border-b-4 border-slate-900 pb-4 mb-4">
+          <div className="flex items-center gap-4">
+            <img src="https://res.cloudinary.com/glcpjxnr/image/upload/v1787672024/sppg_trangkil/assets/gcvi4ohrnoapnxb8dfro.png" alt="Logo SPPG" className="h-20 w-20 object-contain" />
+            <div>
+              <h1 className="text-xl font-black uppercase text-slate-900 leading-tight">Sistem Pelaporan<br/>SPPG Trangkil</h1>
+              <p className="text-sm font-semibold text-slate-600 mt-1">Laporan Rekapitulasi Kehadiran Relawan</p>
+            </div>
+          </div>
+          <div className="text-right">
+            <p className="text-xs font-bold text-slate-500 uppercase">Periode Laporan</p>
+            <p className="text-sm font-bold text-slate-900">
+              {actualStart && actualEnd ? `${formatId(actualStart)} - ${formatId(actualEnd)}` : '-'}
+            </p>
+            <p className="text-xs font-bold text-slate-500 uppercase mt-2">Divisi</p>
+            <p className="text-sm font-bold text-slate-900">
+              {selectedDivisi === 'all' ? 'Semua Divisi' : divisiList.find(d => d.id === parseInt(selectedDivisi))?.nama_divisi}
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Filter Section (Sembunyi saat print) */}
-      <div className="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 print:hidden">
+      <div className="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col xl:flex-row xl:items-center gap-3 sm:gap-4 print:hidden">
         <div className="flex items-center gap-2 text-slate-400 shrink-0">
           <Filter size={14} className="sm:w-4 sm:h-4" />
           <span className="text-[11px] sm:text-[12px] font-bold uppercase tracking-wider">Filter:</span>
         </div>
         
-        <div className="grid grid-cols-3 gap-2 flex-1 w-full">
-          <select 
-            value={selectedMonth} 
-            onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
-            className="w-full border border-slate-200 bg-slate-50 rounded-lg text-[11px] sm:text-[13px] font-bold text-slate-700 p-2 sm:p-2.5 outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400"
-          >
-            {months.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
-          </select>
-
-          <select 
-            value={selectedYear} 
-            onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-            className="w-full border border-slate-200 bg-slate-50 rounded-lg text-[11px] sm:text-[13px] font-bold text-slate-700 p-2 sm:p-2.5 outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400"
-          >
-            {years.map(y => <option key={y} value={y}>{y}</option>)}
-          </select>
-
-          <select 
-            value={selectedDivisi} 
-            onChange={(e) => setSelectedDivisi(e.target.value)}
-            className="w-full border border-slate-200 bg-slate-50 rounded-lg text-[11px] sm:text-[13px] font-bold text-slate-700 p-2 sm:p-2.5 outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400"
-          >
-            <option value="all">Semua Divisi</option>
-            {divisiList.map(d => <option key={d.id} value={d.id}>{d.nama_divisi}</option>)}
-          </select>
+        <div className="flex flex-col sm:flex-row flex-1 w-full gap-2">
+          {renderPeriodSelectors()}
+          
+          <div className="sm:ml-2 sm:pl-4 sm:border-l border-slate-100 flex-1">
+            <select 
+              value={selectedDivisi} 
+              onChange={(e) => setSelectedDivisi(e.target.value)}
+              className="w-full border border-slate-200 bg-slate-50 rounded-lg text-[12px] font-bold text-slate-700 p-2 outline-none focus:ring-2 focus:ring-blue-100"
+            >
+              <option value="all">Semua Divisi</option>
+              {divisiList.map(d => <option key={d.id} value={d.id}>{d.nama_divisi}</option>)}
+            </select>
+          </div>
         </div>
       </div>
 
@@ -158,6 +251,12 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
           </div>
         )}
 
+        <style dangerouslySetInnerHTML={{__html: `
+          @media print {
+            @page { size: landscape; margin: 15mm; }
+          }
+        `}} />
+
         {/* Gunakan print:overflow-visible dan print:max-h-none agar tabel tercetak utuh */}
         <div className="overflow-x-auto max-h-[65vh] print:overflow-visible print:max-h-none">
           <table className="w-full text-left border-collapse min-w-max print:border print:border-black">
@@ -166,9 +265,9 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
                 <th className="p-3 bg-slate-50 border-b border-slate-200 border-r text-[11px] font-extrabold text-slate-500 uppercase tracking-wider sticky left-0 z-20 shadow-[2px_0_5px_rgba(0,0,0,0.05)] min-w-[160px] max-w-[220px] print:static print:bg-transparent print:border-black print:shadow-none print:text-black">
                   Relawan & Divisi
                 </th>
-                {daysArray.map(day => (
-                  <th key={day} className="p-2 bg-slate-50 border-b border-slate-200 border-r text-[11px] font-extrabold text-slate-500 text-center min-w-[32px] w-[32px] print:bg-transparent print:border-black print:text-black">
-                    {day}
+                {dateColumns.map(col => (
+                  <th key={col.dateStr} className="p-2 bg-slate-50 border-b border-slate-200 border-r text-[11px] font-extrabold text-slate-500 text-center min-w-[32px] w-[32px] print:bg-transparent print:border-black print:text-black">
+                    {col.label}
                   </th>
                 ))}
                 <th className="p-3 bg-slate-100 border-b border-slate-200 text-[11px] font-extrabold text-slate-700 uppercase tracking-wider text-center w-[60px] sticky right-0 z-20 shadow-[-2px_0_5px_rgba(0,0,0,0.02)] print:static print:bg-transparent print:border-black print:shadow-none print:text-black">
@@ -179,8 +278,8 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
             <tbody className="divide-y divide-slate-100 print:divide-black">
               {dataMatrix.length === 0 && !loading ? (
                 <tr>
-                  <td colSpan={daysInMonth + 2} className="p-8 text-center text-slate-400 text-[13px] font-medium print:border-black">
-                    Tidak ada relawan yang ditemukan di divisi ini.
+                  <td colSpan={dateColumns.length + 2} className="p-8 text-center text-slate-400 text-[13px] font-medium print:border-black">
+                    Tidak ada relawan yang ditemukan di divisi/periode ini.
                   </td>
                 </tr>
               ) : (
@@ -194,11 +293,11 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
                         <div className="text-[10px] font-bold text-slate-400 mt-0.5 truncate print:text-black" title={row.divisi}>{row.divisi}</div>
                       </td>
                       
-                      {daysArray.map(day => {
-                        const status = row.attendance[day]
+                      {dateColumns.map(col => {
+                        const status = row.attendance[col.dateStr]
                         if (status === "Hadir") totalHadir++
                         return (
-                          <td key={day} className="p-1 border-r border-slate-100 text-center align-middle print:border-black">
+                          <td key={col.dateStr} className="p-1 border-r border-slate-100 text-center align-middle print:border-black">
                             {renderStatus(status)}
                           </td>
                         )
@@ -216,59 +315,58 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
         </div>
       </div>
 
+      {/* Bagian Tanda Tangan Khusus Print */}
+      <div className="hidden print:block mt-12 text-sm text-black">
+        <div className="flex justify-end pr-12">
+          <div className="text-center">
+            <p className="mb-20">Trangkil, {formatId(new Date().toISOString())}</p>
+            <p className="font-bold border-b border-black pb-1 mb-1 inline-block min-w-[150px]">Admin SPPG Trangkil</p>
+          </div>
+        </div>
+      </div>
+
       {/* Modal Popup Cetak PDF */}
       {showPrintModal && (
         <div className="fixed inset-0 z-[60] bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 print:hidden">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="bg-slate-900 p-4 flex items-center justify-between text-white shrink-0">
-              <h3 className="font-extrabold text-[14px]">Cetak Laporan (PDF)</h3>
+              <h3 className="font-extrabold text-[14px]">Pengaturan Cetak Laporan</h3>
               <button onClick={() => setShowPrintModal(false)} className="text-slate-400 hover:text-white transition"><X size={20} /></button>
             </div>
             
             <div className="p-5 space-y-4">
-              <p className="text-[12px] text-slate-500 font-medium">Pilih filter untuk laporan sebelum mencetaknya ke PDF.</p>
+              <p className="text-[12px] text-slate-500 font-medium leading-relaxed">
+                Sesuaikan periode dan divisi di bawah ini, laporan yang dicetak akan mengikuti pilihan Anda.
+              </p>
               
-              <div>
-                <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Bulan</label>
-                <select 
-                  value={selectedMonth} 
-                  onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
-                  className="w-full border border-slate-200 bg-slate-50 p-2.5 rounded-lg text-[13px] font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-100"
-                >
-                  {months.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Tahun</label>
-                <select 
-                  value={selectedYear} 
-                  onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-                  className="w-full border border-slate-200 bg-slate-50 p-2.5 rounded-lg text-[13px] font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-100"
-                >
-                  {years.map(y => <option key={y} value={y}>{y}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Divisi</label>
-                <select 
-                  value={selectedDivisi} 
-                  onChange={(e) => setSelectedDivisi(e.target.value)}
-                  className="w-full border border-slate-200 bg-slate-50 p-2.5 rounded-lg text-[13px] font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-100"
-                >
-                  <option value="all">Semua Divisi</option>
-                  {divisiList.map(d => <option key={d.id} value={d.id}>{d.nama_divisi}</option>)}
-                </select>
+              <div className="space-y-3">
+                <div className="flex flex-col">
+                  <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">Periode Cetak</label>
+                  {renderPeriodSelectors()}
+                </div>
+                
+                <div>
+                  <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1 mt-2">Pilih Divisi</label>
+                  <select 
+                    value={selectedDivisi} 
+                    onChange={(e) => setSelectedDivisi(e.target.value)}
+                    className="w-full border border-slate-200 bg-slate-50 p-2.5 rounded-lg text-[12px] font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-100"
+                  >
+                    <option value="all">Semua Divisi</option>
+                    {divisiList.map(d => <option key={d.id} value={d.id}>{d.nama_divisi}</option>)}
+                  </select>
+                </div>
               </div>
 
-              <div className="pt-4 border-t border-slate-100 flex justify-end gap-2 mt-2">
-                <button type="button" onClick={() => setShowPrintModal(false)} className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[12px] font-bold transition">Batal</button>
+              <div className="pt-4 border-t border-slate-100 flex justify-end gap-2 mt-4">
+                <button type="button" onClick={() => setShowPrintModal(false)} className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[12px] font-bold transition">Tutup</button>
                 <button 
                   type="button" 
                   onClick={handlePrintClick} 
                   disabled={loading}
                   className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-[12px] font-bold transition shadow-md inline-flex items-center gap-1.5 disabled:opacity-50"
                 >
-                  <Printer size={14} /> Cetak & Simpan PDF
+                  <Printer size={14} /> Buka & Cetak PDF
                 </button>
               </div>
             </div>
@@ -278,4 +376,3 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
     </div>
   )
 }
-
