@@ -346,8 +346,7 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
                         <>
                           {/* Tampilan Layar (Sticky Header Divisi) */}
                           <tr className="bg-slate-50/80 print:hidden" style={{ backgroundColor: '#f8fafc' }}>
-                            <td className="sticky left-0 z-10 border-y border-slate-200" style={{ backgroundColor: '#f8fafc' }}></td>
-                            <td className="sticky left-[40px] z-10 px-3 py-2 border-y border-slate-200 font-extrabold text-slate-700 text-[12px] uppercase" style={{ backgroundColor: '#f8fafc' }}>
+                            <td colSpan={2} className="sticky left-0 z-10 px-3 py-2 border-y border-slate-200 font-extrabold text-slate-700 text-[12px] uppercase" style={{ backgroundColor: '#f8fafc' }}>
                               {groupName}
                             </td>
                             <td colSpan={dateColumns.length} className="border-y border-slate-200" style={{ backgroundColor: '#f8fafc' }}></td>
