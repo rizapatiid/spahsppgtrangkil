@@ -86,7 +86,7 @@ export default function RelawanClient({ relawan, divisiList }: { relawan: any[],
     <div className="space-y-6">
       
       {/* Header Halaman */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2 pb-4 border-b border-slate-200/80 px-1">
+      <div className="flex items-center justify-between gap-3 mb-2 pb-4 border-b border-slate-200/80 px-1">
         <div className="flex items-center gap-3 min-w-0">
           <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
             <Users size={18} strokeWidth={2.5} />
@@ -99,10 +99,11 @@ export default function RelawanClient({ relawan, divisiList }: { relawan: any[],
 
         <button
           onClick={() => setShowAddForm(!showAddForm)}
-          className="inline-flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-lg text-[12px] font-bold shadow-sm transition-all shrink-0 cursor-pointer w-full sm:w-auto"
+          className="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white px-3 sm:px-4 py-2 rounded-lg text-[12px] font-bold shadow-sm transition-all shrink-0 cursor-pointer"
         >
           <UserPlus size={15} />
-          {showAddForm ? "Tutup Form" : "Tambah Relawan"}
+          <span className="hidden sm:inline">{showAddForm ? "Tutup Form" : "Tambah Relawan"}</span>
+          <span className="sm:hidden">{showAddForm ? "Tutup" : "Tambah"}</span>
         </button>
       </div>
 
