@@ -190,12 +190,17 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
       <div className="hidden print:block mb-5 w-full">
         {/* Header Kop Surat */}
         <div className="flex flex-col items-center justify-center pb-2 text-center relative">
-          <img src="https://res.cloudinary.com/glcpjxnr/image/upload/v1787672024/sppg_trangkil/assets/gcvi4ohrnoapnxb8dfro.png" alt="Logo SPPG" className="h-24 object-contain mb-2" />
-          <h2 className="text-[17px] font-bold uppercase text-black tracking-widest mt-1">Laporan Rekapitulasi Kehadiran Relawan</h2>
+          <img src="https://res.cloudinary.com/glcpjxnr/image/upload/v1787672024/sppg_trangkil/assets/gcvi4ohrnoapnxb8dfro.png" alt="Logo SPPG" className="h-24 object-contain mb-1" />
+          <p className="text-[12px] text-gray-800 font-semibold tracking-wide">Jl. Melati RT. 004 RW. 003 Trangkil Pati</p>
         </div>
         
         {/* Garis Ganda Kop Surat Klasik */}
         <div className="border-b-[4px] border-double border-black mb-4 w-full"></div>
+        
+        {/* Judul Laporan */}
+        <div className="text-center mb-5">
+          <h2 className="text-[16px] font-extrabold uppercase text-black tracking-widest decoration-black underline underline-offset-4">Laporan Rekapitulasi Kehadiran Relawan</h2>
+        </div>
         
         {/* Informasi Laporan & Legenda */}
         <div className="flex justify-between items-end mb-2 px-1">
