@@ -62,6 +62,14 @@ export default function LaporanDetailClient({
     })
   }
 
+  const getDownloadUrl = (url: string | null) => {
+    if (!url) return "";
+    if (url.includes("res.cloudinary.com")) {
+      return url.replace("/upload/", "/upload/fl_attachment:foto_laporan/");
+    }
+    return url;
+  }
+
   const handleDownloadCategory = (fotos: any[], categoryLabel: string) => {
     if (fotos.length === 0) return
     setConfirmConfig({
@@ -74,7 +82,7 @@ export default function LaporanDetailClient({
         fotos.forEach((f: any, idx: number) => {
           setTimeout(() => {
             const link = document.createElement("a")
-            link.href = f.url_foto
+            link.href = getDownloadUrl(f.url_foto)
             link.download = `${categoryLabel.replace(/\s+/g, "_")}-${f.id}.jpg`
             link.target = "_blank"
             document.body.appendChild(link)
@@ -227,7 +235,7 @@ export default function LaporanDetailClient({
                                   <p className="text-[10px] text-slate-500 font-semibold">{new Date(f.tanggal).toLocaleDateString("id-ID")}</p>
                                 </div>
                                 <a 
-                                  href={f.url_foto} 
+                                  href={getDownloadUrl(f.url_foto)} 
                                   download={`foto-${f.id}.jpg`}
                                   target="_blank"
                                   rel="noopener noreferrer"
@@ -252,51 +260,74 @@ export default function LaporanDetailClient({
         </div>
       </div>
 
-      {/* Lightbox / Popup Gambar */}
+      {/* Lightbox / Popup Gambar (Style sama dengan Dashboard Divisi) */}
       {selectedPhoto && (
-        <div 
-          className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200"
           onClick={() => setSelectedPhoto(null)}
         >
-          <div 
-            className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden flex flex-col max-h-[90vh] relative animate-scale-up"
+          <div
+            className="relative max-w-lg w-full bg-white rounded-xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header Popup */}
-            <div className="bg-slate-900 px-4 py-3 sm:px-5 sm:py-3.5 flex items-center justify-between text-white shrink-0 border-b border-slate-800">
-              <div>
-                <h4 className="font-extrabold text-[13.5px] sm:text-[14.5px] leading-tight">{selectedPhoto.label}</h4>
-                <p className="text-slate-400 text-[10px] sm:text-[11px] font-medium mt-0.5">
-                  Diunggah pada {new Date(selectedPhoto.tanggal).toLocaleDateString("id-ID")}
-                </p>
-              </div>
-              <button 
-                onClick={() => setSelectedPhoto(null)}
-                className="text-slate-400 hover:text-white transition-colors"
-              >
-                <X size={20} strokeWidth={2.5} />
-              </button>
+            {/* Tombol Close X */}
+            <button
+              onClick={() => setSelectedPhoto(null)}
+              className="absolute top-2.5 right-2.5 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-all bg-slate-900/80 hover:bg-slate-700 text-white shadow-md"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+
+            {/* Foto */}
+            <div className="bg-slate-900 flex-shrink-0 flex items-center justify-center">
+              <img
+                src={selectedPhoto.url_foto}
+                alt="Foto"
+                className="w-full max-h-[60vh] object-contain"
+              />
             </div>
 
-            {/* Konten Popup */}
-            <div className="p-5 flex flex-col items-center gap-4 bg-slate-50 flex-1 overflow-y-auto">
-              <div className="relative rounded-xl overflow-hidden max-h-[50vh] flex items-center justify-center w-full">
-                <img 
-                  src={selectedPhoto.url_foto} 
-                  alt="Popup preview" 
-                  className="max-w-full max-h-[50vh] object-contain rounded-xl shadow-md"
-                />
-              </div>
-              
+            {/* Keterangan */}
+            <div className="bg-white px-4 py-3 border-b border-slate-100 flex-shrink-0 overflow-y-auto max-h-[15vh]">
+               <p className="text-[13px] font-bold text-slate-800 leading-relaxed">
+                 {selectedPhoto.keterangan || <span className="text-slate-400 font-normal italic">Tidak ada keterangan yang ditulis oleh divisi.</span>}
+               </p>
+               <p className="text-[10px] text-slate-500 font-medium mt-1">
+                 {selectedPhoto.label} - {new Date(selectedPhoto.tanggal).toLocaleDateString("id-ID")}
+               </p>
+            </div>
 
-              
-              {/* Keterangan */}
-              <div className="w-full bg-white border border-slate-150 rounded-xl p-3.5 shadow-sm text-center">
-                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block mb-1">Keterangan / Catatan Foto</span>
-                <p className="text-[13px] font-bold text-slate-700 leading-relaxed whitespace-pre-wrap">
-                  {selectedPhoto.keterangan || <span className="text-slate-400 font-normal italic">Tidak ada keterangan yang ditulis oleh divisi.</span>}
-                </p>
-              </div>
+            {/* Footer Aksi */}
+            <div className="flex gap-2.5 p-4 bg-slate-50 flex-shrink-0">
+              <a
+                href={getDownloadUrl(selectedPhoto.url_foto)}
+                download="foto_laporan.jpg"
+                target="_blank"
+                rel="noreferrer"
+                className="flex-1 inline-flex items-center justify-center gap-1.5 text-[13px] font-bold bg-slate-900 text-white hover:bg-slate-800 py-2.5 rounded-lg shadow transition-colors"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Simpan Foto
+              </a>
+              <a
+                href={selectedPhoto.url_foto}
+                target="_blank"
+                rel="noreferrer"
+                className="flex-1 inline-flex items-center justify-center gap-1.5 text-[13px] font-bold bg-white text-blue-600 border border-blue-200 hover:bg-blue-50 py-2.5 rounded-lg transition-colors"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+                Buka Tab Baru
+              </a>
             </div>
           </div>
         </div>
