@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { Megaphone, Clock, X, ChevronRight } from 'lucide-react'
 import { Arahan } from '@prisma/client'
 
@@ -9,6 +10,11 @@ type ArahanWithDivisi = Arahan & { divisi?: DivisiOption | null }
 
 export default function ArahanDashboardClient({ arahanList, divisiName }: { arahanList: ArahanWithDivisi[], divisiName?: string }) {
   const [viewItem, setViewItem] = useState<ArahanWithDivisi | null>(null)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   if (arahanList.length === 0) return null
 
@@ -78,8 +84,8 @@ export default function ArahanDashboardClient({ arahanList, divisiName }: { arah
       </div>
 
       {/* Detail Modal */}
-      {viewItem && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+      {viewItem && mounted && createPortal(
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-200 max-h-[90vh]">
             <div className="bg-slate-900 p-4 sm:p-5 flex items-center justify-between text-white shrink-0">
               <div className="flex items-center gap-2">
@@ -141,7 +147,8 @@ export default function ArahanDashboardClient({ arahanList, divisiName }: { arah
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   )

@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { Plus, Edit2, Trash2, Megaphone, CheckCircle2, AlertCircle, X, Search, Eye, Clock } from 'lucide-react'
 import { createArahan, updateArahan, deleteArahan } from './actions'
 
@@ -28,6 +29,12 @@ export default function KordinasiClient({ arahan, divisiList }: { arahan: Arahan
   const [isi, setIsi] = useState('')
   const [divisiId, setDivisiId] = useState('all')
   const [image, setImage] = useState<File | null>(null)
+  const [file, setFile] = useState<File | null>(null)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -213,8 +220,8 @@ export default function KordinasiClient({ arahan, divisiList }: { arahan: Arahan
       </div>
 
       {/* Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+      {isModalOpen && mounted && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col animate-in zoom-in-95 duration-200 max-h-[90vh]">
             <div className="bg-slate-900 p-4 sm:p-5 flex items-center justify-between text-white shrink-0 border-b border-slate-800">
               <div className="flex items-center gap-2">
@@ -254,7 +261,7 @@ export default function KordinasiClient({ arahan, divisiList }: { arahan: Arahan
                   onChange={(e) => setDivisiId(e.target.value)}
                   className="w-full border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none"
                 >
-                  <option value="all">🚀 Semua Divisi (Broadcast)</option>
+                  <option value="all">📢 Semua Divisi (Broadcast)</option>
                   {divisiList.map(d => (
                     <option key={d.id} value={d.id}>{d.nama_divisi}</option>
                   ))}
@@ -321,12 +328,13 @@ export default function KordinasiClient({ arahan, divisiList }: { arahan: Arahan
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Detail Modal */}
-      {viewItem && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+      {viewItem && mounted && createPortal(
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-200 max-h-[90vh]">
             {/* Header Gelap (Konsisten dengan form) */}
             <div className="bg-slate-900 p-4 sm:p-5 flex items-center justify-between text-white shrink-0">
@@ -391,7 +399,8 @@ export default function KordinasiClient({ arahan, divisiList }: { arahan: Arahan
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )
