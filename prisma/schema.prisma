@@ -29,6 +29,7 @@ model Divisi {
   absensi        Absensi[]
   foto_kegiatan  FotoKegiatan[]
   laporan        LaporanDivisi[]
+  arahan         Arahan[]
 }
 
 model User {
@@ -112,3 +113,15 @@ model FotoKegiatan {
   laporan_id  String?
   laporan     LaporanDivisi? @relation(fields: [laporan_id], references: [id], onDelete: Cascade)
 }
+
+model Arahan {
+  id          Int      @id @default(autoincrement())
+  judul       String
+  isi         String   @db.Text
+  image_url   String?
+  divisi_id   Int?     // null berarti semua divisi
+  divisi      Divisi?  @relation(fields: [divisi_id], references: [id], onDelete: Cascade)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+

@@ -2,8 +2,9 @@ import { getServerSession } from "next-auth/next"
 import { authOptions } from "../api/auth/[...nextauth]/route"
 import { prisma } from "@/lib/prisma"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { CheckCircle2, XCircle, Clock, Users, Image as ImageIcon, FileText, ClipboardCheck, Phone, AlertCircle, Eye, PlusCircle, Edit3 } from "lucide-react"
+import { CheckCircle2, XCircle, Clock, Users, Image as ImageIcon, FileText, ClipboardCheck, Phone, AlertCircle, Eye, PlusCircle, Edit3, Megaphone } from "lucide-react"
 import Link from "next/link"
+import ArahanDashboardClient from "./ArahanDashboardClient"
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions)
@@ -41,6 +42,20 @@ export default async function DashboardPage() {
 
   // Statistik Keseluruhan
   const totalFoto = await prisma.fotoKegiatan.count({ where: { divisi_id } })
+
+  // Pengumuman / Arahan terbaru (Global atau khusus divisi ini)
+  const arahanList = await prisma.arahan.findMany({
+    where: {
+      OR: [
+        { divisi_id: null },
+        { divisi_id: divisi_id }
+      ]
+    },
+    orderBy: {
+      created_at: 'desc'
+    },
+    take: 5
+  })
 
   const formattedDate = new Date().toLocaleDateString("id-ID", { timeZone: 'Asia/Jakarta', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
   const formattedTime = new Date().toLocaleTimeString("id-ID", { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit' }) + ' WIB'
@@ -125,14 +140,16 @@ export default async function DashboardPage() {
           </div>
         </div>
       </div>
-      
-      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        
+      <ArahanDashboardClient arahanList={arahanList} divisiName={divisi?.nama_divisi} />
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {/* Status Hari Ini (Soft Modern UI) */}
         {/* Absensi Card - Soft */}
-        <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm shadow-slate-100 md:col-span-1 lg:col-span-1 flex flex-col p-5 sm:p-6 relative overflow-hidden transition-all hover:shadow-md">
-          <div className="flex items-center gap-4 mb-5">
-            <div className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 ${absensiToday ? 'bg-slate-50 text-[#0A1629]' : 'bg-slate-100 text-slate-400'}`}>
-              {absensiToday ? <CheckCircle2 size={28} strokeWidth={2} /> : <Users size={28} strokeWidth={2} />}
+        <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm shadow-slate-100 md:col-span-1 lg:col-span-1 flex flex-col p-4 sm:p-5 relative overflow-hidden transition-all hover:shadow-md">
+          <div className="flex items-center gap-3 mb-4">
+            <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shrink-0 ${absensiToday ? 'bg-slate-50 text-[#0A1629]' : 'bg-slate-100 text-slate-400'}`}>
+              {absensiToday ? <CheckCircle2 size={24} strokeWidth={2} /> : <Users size={24} strokeWidth={2} />}
             </div>
             <div>
               <h3 className="font-extrabold text-slate-800 text-xl tracking-tight mb-1">Absensi</h3>
@@ -188,14 +205,14 @@ export default async function DashboardPage() {
         </div>
         
         {/* Laporan Card - Soft */}
-        <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm shadow-slate-100 md:col-span-1 lg:col-span-2 flex flex-col p-5 sm:p-6 relative overflow-hidden transition-all hover:shadow-md">
-          <div className="flex items-center gap-4 mb-5">
-            <div className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 ${
+        <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm shadow-slate-100 md:col-span-1 lg:col-span-2 flex flex-col p-4 sm:p-5 relative overflow-hidden transition-all hover:shadow-md">
+          <div className="flex items-center gap-3 mb-4">
+            <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shrink-0 ${
               laporanStatus === "COMPLETE" ? 'bg-slate-50 text-[#0A1629]' : 
               laporanStatus === "PARTIAL" ? 'bg-amber-50 text-amber-500' : 'bg-slate-100 text-slate-400'
             }`}>
-              {laporanStatus === "COMPLETE" ? <CheckCircle2 size={28} strokeWidth={2} /> : 
-               laporanStatus === "PARTIAL" ? <AlertCircle size={28} strokeWidth={2} /> : <FileText size={28} strokeWidth={2} />}
+              {laporanStatus === "COMPLETE" ? <CheckCircle2 size={24} strokeWidth={2} /> : 
+               laporanStatus === "PARTIAL" ? <AlertCircle size={24} strokeWidth={2} /> : <FileText size={24} strokeWidth={2} />}
             </div>
             <div>
               <h3 className="font-extrabold text-slate-800 text-xl tracking-tight mb-1">Laporan Harian</h3>
@@ -325,18 +342,22 @@ export default async function DashboardPage() {
           ) : (
             <div className="divide-y divide-slate-100/80 max-h-[350px] overflow-y-auto">
               {divisi?.anggota.map((anggota) => (
-                <div key={anggota.id} className="p-4 sm:px-6 sm:py-5 flex items-center justify-between hover:bg-slate-50/50 transition-colors group">
-                  <div className="flex items-center gap-4">
-                    <div className="w-11 h-11 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-sm shrink-0 border border-slate-200 group-hover:bg-white group-hover:shadow-sm group-hover:border-slate-300 transition-all">
-                      {anggota.nama.substring(0, 1).toUpperCase()}
+                <div key={anggota.id} className="p-4 sm:px-6 sm:py-5 flex items-center justify-between hover:bg-slate-50/50 transition-colors group gap-2">
+                    <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                      <div className="w-11 h-11 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-sm shrink-0 border border-slate-200 group-hover:bg-white group-hover:shadow-sm group-hover:border-slate-300 transition-all">
+                        {anggota.nama.substring(0, 1).toUpperCase()}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-nowrap">
+                          <p className="font-bold text-sm text-slate-800 truncate">{anggota.nama}</p>
+                        </div>
+                        <p className="text-[12px] sm:text-[13px] text-slate-500 mt-0.5 truncate">
+                          {divisi?.koordinator === anggota.nama ? 'Koordinator Divisi' : 'Anggota'}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-bold text-sm text-slate-800">{anggota.nama}</p>
-                      <p className="text-[12px] sm:text-[13px] text-slate-500 mt-0.5">Anggota</p>
-                    </div>
-                  </div>
                   {anggota.no_hp ? (
-                    <a href={`https://wa.me/${anggota.no_hp.replace(/^0/, '62')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-3.5 py-2 rounded-lg transition-all border border-emerald-100 hover:shadow-sm">
+                    <a href={`https://wa.me/${anggota.no_hp.replace(/^0/, '62')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-3 py-2 sm:px-3.5 rounded-lg transition-all border border-emerald-100 hover:shadow-sm shrink-0">
                       <Phone size={14} className="text-emerald-500" />
                       <span className="hidden sm:inline">{anggota.no_hp}</span>
                       <span className="sm:hidden">Hubungi</span>

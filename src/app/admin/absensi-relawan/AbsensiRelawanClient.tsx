@@ -301,21 +301,21 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
 
         {/* Gunakan print:overflow-visible dan print:max-h-none agar tabel tercetak utuh */}
         <div className="overflow-x-auto max-h-[65vh] print:overflow-visible print:max-h-none">
-          <table className="w-full text-left border-collapse min-w-max print:border print:border-black print:table-fixed">
+          <table className="w-full text-left border-collapse min-w-max print:min-w-0 print:w-full print:border print:border-black print:table-fixed">
             <thead className="sticky top-0 z-10 print:static">
               <tr style={{ backgroundColor: '#f1f5f9', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' } as any}>
-                <th className="p-3 bg-slate-50 border-b border-slate-200 border-r text-[11px] font-extrabold text-slate-500 uppercase tracking-wider sticky left-0 z-20 w-[40px] print:w-[4%] print:min-w-0 print:static print:bg-gray-200 print:border print:border-black print:shadow-none print:text-black print:text-[11px] print:p-1 align-middle text-center">
+                <th className="p-3 bg-slate-50 border-b border-slate-200 border-r text-[11px] font-extrabold text-slate-500 uppercase tracking-wider sticky left-0 z-20 w-[40px] print:w-[3%] print:min-w-0 print:static print:bg-gray-200 print:border print:border-black print:shadow-none print:text-black print:text-[11px] print:p-1 align-middle text-center">
                   No
                 </th>
-                <th className="p-3 bg-slate-50 border-b border-slate-200 border-r text-[11px] font-extrabold text-slate-500 uppercase tracking-wider sticky left-[40px] z-20 min-w-[160px] max-w-[220px] print:w-[26%] print:min-w-0 print:static print:bg-gray-200 print:border print:border-black print:shadow-none print:text-black print:text-[11px] print:p-1 align-middle text-center">
+                <th className="p-3 bg-slate-50 border-b border-slate-200 border-r text-[11px] font-extrabold text-slate-500 uppercase tracking-wider sticky left-[40px] z-20 min-w-[160px] max-w-[220px] print:w-[20%] print:min-w-0 print:static print:bg-gray-200 print:border print:border-black print:shadow-none print:text-black print:text-[11px] print:p-1 align-middle text-center">
                   Relawan & Divisi
                 </th>
                 {dateColumns.map(col => (
-                  <th key={col.dateStr} className="p-1 bg-slate-50 border-b border-slate-200 border-r text-[11px] font-extrabold text-slate-500 text-center min-w-[28px] w-[28px] print:w-[2%] print:min-w-0 print:bg-gray-200 print:border print:border-black print:text-black print:text-[9px] align-middle print:p-0.5">
+                  <th key={col.dateStr} className="p-1 bg-slate-50 border-b border-slate-200 border-r text-[11px] font-extrabold text-slate-500 text-center min-w-[28px] w-[28px] print:w-auto print:min-w-0 print:bg-gray-200 print:border print:border-black print:text-black print:text-[10px] align-middle print:p-0.5">
                     {col.label}
                   </th>
                 ))}
-                <th className="p-3 bg-slate-100 border-b border-slate-200 text-[11px] font-extrabold text-slate-700 uppercase tracking-wider text-center w-[80px] print:w-[8%] print:min-w-0 sticky right-0 z-20 print:static print:bg-gray-200 print:border print:border-black print:shadow-none print:text-black print:text-[10px] print:p-1 align-middle whitespace-nowrap">
+                <th className="p-3 bg-slate-100 border-b border-slate-200 text-[11px] font-extrabold text-slate-700 uppercase tracking-wider text-center w-[80px] print:w-[9%] print:min-w-0 sticky right-0 z-20 print:static print:bg-gray-200 print:border print:border-black print:shadow-none print:text-black print:text-[10px] print:p-1 align-middle whitespace-nowrap">
                   Total Hadir
                 </th>
               </tr>
@@ -371,10 +371,7 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
                               {globalIndex}
                             </td>
                             <td className="p-3 bg-white border-r border-slate-200 sticky left-[40px] z-10 min-w-[160px] max-w-[220px] print:w-auto print:min-w-0 print:static print:border print:border-black print:shadow-none print:p-1 align-middle print:bg-transparent">
-                              <div className="text-[12px] font-extrabold text-slate-800 truncate print:whitespace-normal print:text-black print:text-[10px]" title={row.nama}>{row.nama}</div>
-                              {!groupName && (
-                                <div className="text-[10px] font-bold text-slate-400 mt-0.5 truncate print:text-gray-600 print:text-[9px]" title={row.divisi}>{row.divisi}</div>
-                              )}
+                              <div className="text-[12px] font-extrabold text-slate-800 truncate print:whitespace-normal print:text-black print:text-[11px]" title={row.nama}>{row.nama}</div>
                             </td>
                             
                             {dateColumns.map(col => {
