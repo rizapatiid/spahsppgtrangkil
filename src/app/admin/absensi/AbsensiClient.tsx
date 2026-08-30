@@ -65,6 +65,25 @@ export default function AbsensiClient({ absensiData, fotoData }: { absensiData: 
     return d.toLocaleTimeString("id-ID", { hour: '2-digit', minute: '2-digit' }) + " WIB"
   }
 
+  const handleDownload = async (e: React.MouseEvent, url: string, filename: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      const res = await fetch(url);
+      const blob = await res.blob();
+      const objectUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = objectUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(objectUrl);
+    } catch (err) {
+      window.open(url, "_blank");
+    }
+  };
+
   const handleReset = (absen: any) => {
     setConfirmConfig({
       isOpen: true,
@@ -206,17 +225,13 @@ export default function AbsensiClient({ absensiData, fotoData }: { absensiData: 
                         Detail
                       </button>
                       {foto && (
-                        <a
-                          href={foto.url_foto}
-                          download={`absensi-${absen.divisi.nama_divisi.replace(/\s+/g, "_")}-${new Date(absen.tanggal).toLocaleDateString("id-ID").replace(/\//g, "-")}.jpg`}
-                          target="_blank"
-                          rel="noreferrer"
+                        <button
+                          onClick={(e) => handleDownload(e, foto.url_foto, `absensi-${absen.divisi.nama_divisi.replace(/\s+/g, "_")}-${new Date(absen.tanggal).toLocaleDateString("id-ID").replace(/\//g, "-")}.jpg`)}
                           className="inline-flex items-center justify-center gap-1.5 text-[11px] sm:text-[12px] bg-blue-50 text-blue-600 border border-blue-100 hover:bg-blue-100 transition-all px-3.5 py-2 rounded-lg font-bold shadow-sm shrink-0"
-                          onClick={(e) => e.stopPropagation()}
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                           Simpan
-                        </a>
+                        </button>
                       )}
                       <button 
                         onClick={() => handleReset(absen)}
@@ -380,17 +395,13 @@ export default function AbsensiClient({ absensiData, fotoData }: { absensiData: 
 
             {/* Footer aksi */}
             <div className="flex gap-2.5 p-4 border-t border-slate-100 bg-white">
-              <a
-                href={previewFotoUrl}
-                download="foto-absensi.jpg"
-                target="_blank"
-                rel="noreferrer"
+              <button
+                onClick={(e) => handleDownload(e, previewFotoUrl, "foto-absensi.jpg")}
                 className="flex-1 inline-flex items-center justify-center gap-1.5 text-[13px] font-bold bg-slate-900 text-white hover:bg-slate-800 py-2.5 rounded-lg shadow transition-colors"
-                onClick={(e) => e.stopPropagation()}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 Simpan Foto
-              </a>
+              </button>
               <a
                 href={previewFotoUrl}
                 target="_blank"

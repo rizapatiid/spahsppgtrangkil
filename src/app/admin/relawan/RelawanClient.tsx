@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { createPortal } from "react-dom"
-import { Users, UserPlus, Search, X, Edit, Trash2 } from "lucide-react"
+import { Users, UserPlus, Search, X, Edit, Trash2, Printer } from "lucide-react"
 import { createRelawan, updateRelawan, deleteRelawan } from "./actions"
 import ConfirmModal from "@/components/ConfirmModal"
 
@@ -28,6 +28,21 @@ export default function RelawanClient({ relawan, divisiList }: { relawan: any[],
     message: "",
     onConfirm: () => {}
   })
+
+  // Print state
+  const [showPrintModal, setShowPrintModal] = useState(false)
+  const [ttdName, setTtdName] = useState("SITI MIATUN")
+  const [ttdNip, setTtdNip] = useState("")
+  const [printDivisi, setPrintDivisi] = useState("all")
+
+  const handlePrintClick = () => {
+    const params = new URLSearchParams()
+    if (printDivisi !== "all") params.set("divisi", printDivisi)
+    if (ttdName) params.set("ttdName", ttdName)
+    if (ttdNip) params.set("ttdNip", ttdNip)
+
+    window.location.href = `/cetak-relawan?${params.toString()}`
+  }
 
   // Filter based on search
   const filteredRelawan = relawan.filter(r => 
@@ -97,14 +112,25 @@ export default function RelawanClient({ relawan, divisiList }: { relawan: any[],
           </div>
         </div>
 
-        <button
-          onClick={() => setShowAddForm(true)}
-          className="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white px-3 sm:px-4 py-2 rounded-lg text-[12px] font-bold shadow-sm transition-all shrink-0 cursor-pointer"
-        >
-          <UserPlus size={15} />
-          <span className="hidden sm:inline">Tambah Relawan</span>
-          <span className="sm:hidden">Tambah</span>
-        </button>
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={() => setShowPrintModal(true)}
+            className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-full hover:bg-indigo-100 shadow-sm font-bold text-[12px] transition active:scale-95 cursor-pointer"
+          >
+            <Printer size={15} />
+            <span className="hidden sm:inline">Export PDF</span>
+            <span className="sm:hidden">Export</span>
+          </button>
+          
+          <button
+            onClick={() => setShowAddForm(true)}
+            className="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white px-3 sm:px-4 py-2 rounded-lg text-[12px] font-bold shadow-sm transition-all cursor-pointer"
+          >
+            <UserPlus size={15} />
+            <span className="hidden sm:inline">Tambah Relawan</span>
+            <span className="sm:hidden">Tambah</span>
+          </button>
+        </div>
       </div>
 
       {/* Form Tambah Relawan Modal */}
@@ -307,6 +333,71 @@ export default function RelawanClient({ relawan, divisiList }: { relawan: any[],
             </form>
           </div>
         </div>
+        </ModalPortal>
+      )}
+
+      {/* Print Settings Modal */}
+      {showPrintModal && (
+        <ModalPortal>
+          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
+              <div className="bg-slate-900 p-4 flex items-center justify-between text-white border-b border-slate-800">
+                <div className="flex items-center gap-2">
+                  <Printer size={16} className="text-blue-400" />
+                  <h3 className="font-extrabold text-[14px]">Export PDF Data Relawan</h3>
+                </div>
+                <button onClick={() => setShowPrintModal(false)} className="text-slate-400 hover:text-white transition"><X size={18} /></button>
+              </div>
+              
+              <div className="p-5 space-y-4">
+                <div>
+                  <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Pilih Divisi</label>
+                  <select 
+                    value={printDivisi}
+                    onChange={(e) => setPrintDivisi(e.target.value)}
+                    className="w-full border border-slate-200 bg-slate-50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium outline-none"
+                  >
+                    <option value="all">Semua Divisi</option>
+                    {divisiList.map(d => (
+                      <option key={d.id} value={d.id}>{d.nama_divisi}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Nama Penandatangan (Kiri Bawah)</label>
+                  <input 
+                    type="text" 
+                    value={ttdName} 
+                    onChange={(e) => setTtdName(e.target.value)}
+                    placeholder="Kosongkan jika ingin garis bawah saja"
+                    className="w-full border border-slate-200 bg-slate-50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium outline-none" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">NIP (Opsional)</label>
+                  <input 
+                    type="text" 
+                    value={ttdNip} 
+                    onChange={(e) => setTtdNip(e.target.value)}
+                    placeholder="Contoh: 19800101 200501 1 001"
+                    className="w-full border border-slate-200 bg-slate-50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium outline-none" 
+                  />
+                </div>
+              </div>
+              
+              <div className="flex justify-end gap-3 p-4 border-t border-slate-100 bg-slate-50">
+                <button type="button" onClick={() => setShowPrintModal(false)} className="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-lg text-[12px] font-bold transition">Batal</button>
+                <button 
+                  type="button" 
+                  onClick={handlePrintClick} 
+                  disabled={loading}
+                  className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-[12px] font-bold transition shadow-md inline-flex items-center gap-1.5 disabled:opacity-50"
+                >
+                  <Printer size={14} /> Buka & Cetak PDF
+                </button>
+              </div>
+            </div>
+          </div>
         </ModalPortal>
       )}
 

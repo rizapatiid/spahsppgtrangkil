@@ -98,11 +98,18 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
 
   const handlePrintClick = () => {
     setShowPrintModal(false)
-    if (loading) {
-      setPrintRequested(true)
-    } else {
-      setTimeout(() => window.print(), 500)
-    }
+    
+    const params = new URLSearchParams()
+    params.set("type", periodType)
+    params.set("month", selectedMonth.toString())
+    params.set("year", selectedYear.toString())
+    if (startDate) params.set("startDate", startDate)
+    if (endDate) params.set("endDate", endDate)
+    params.set("divisi", selectedDivisi)
+    if (ttdName) params.set("ttdName", ttdName)
+    if (ttdNip) params.set("ttdNip", ttdNip)
+
+    window.location.href = `/cetak-kehadiran?${params.toString()}`
   }
 
   const renderStatus = (status: string) => {
@@ -194,11 +201,11 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
 
         <button
           onClick={() => setShowPrintModal(true)}
-          className="inline-flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white px-3 sm:px-4 py-2 rounded-lg text-[12px] font-bold shadow-sm transition-all shrink-0 cursor-pointer w-full sm:w-auto"
+          className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-full hover:bg-indigo-100 shadow-sm font-bold text-[12px] transition active:scale-95 cursor-pointer shrink-0 w-full sm:w-auto"
         >
           <Printer size={15} />
-          <span className="hidden sm:inline">Simpan Laporan (PDF)</span>
-          <span className="sm:hidden">Simpan PDF</span>
+          <span className="hidden sm:inline">Export PDF</span>
+          <span className="sm:hidden">Export PDF</span>
         </button>
       </div>
 
@@ -450,16 +457,25 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
                   </select>
                 </div>
 
-                <div className="pt-4 border-t border-slate-100">
-                  <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">Penandatangan Laporan</label>
-                  <input 
-                    type="text"
-                    placeholder="Nama Lengkap"
-                    value={ttdName}
-                    onChange={e => setTtdName(e.target.value)}
-                    className="w-full border border-slate-200 bg-slate-50 p-2.5 rounded-lg text-[13px] font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-100 focus:bg-white focus:border-blue-400 transition-all placeholder:font-medium"
-                  />
-                </div>
+                  <div className="pt-4 border-t border-slate-100">
+                    <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">Penandatangan Laporan</label>
+                    <div className="space-y-3">
+                      <input 
+                        type="text"
+                        placeholder="Nama Lengkap"
+                        value={ttdName}
+                        onChange={e => setTtdName(e.target.value)}
+                        className="w-full border border-slate-200 bg-slate-50 p-2.5 rounded-lg text-[13px] font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-100 focus:bg-white focus:border-blue-400 transition-all placeholder:font-medium"
+                      />
+                      <input 
+                        type="text"
+                        placeholder="NIP (Opsional)"
+                        value={ttdNip}
+                        onChange={e => setTtdNip(e.target.value)}
+                        className="w-full border border-slate-200 bg-slate-50 p-2.5 rounded-lg text-[13px] font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-100 focus:bg-white focus:border-blue-400 transition-all placeholder:font-medium"
+                      />
+                    </div>
+                  </div>
               </div>
 
               <div className="pt-4 border-t border-slate-100 flex justify-end gap-2">

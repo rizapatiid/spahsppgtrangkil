@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { ArrowLeft, X, MessageSquare, Image as ImageIcon, Trash2, Download } from "lucide-react"
+import { ArrowLeft, X, MessageSquare, Image as ImageIcon, Trash2, Download, Printer, RotateCcw } from "lucide-react"
 import { resetLaporanAction, deleteFotoAction } from "./actions"
 import ConfirmModal from "@/components/ConfirmModal"
 
@@ -102,7 +102,7 @@ export default function LaporanDetailClient({
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
           <Link 
             href="/admin/laporan"
-            className="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 hover:text-slate-900 hover:bg-slate-200 flex items-center justify-center shrink-0 transition-colors"
+            className="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 hover:text-slate-900 hover:bg-slate-200 flex items-center justify-center shrink-0 transition-colors print:hidden"
           >
             <ArrowLeft size={16} strokeWidth={2.5} />
           </Link>
@@ -114,15 +114,26 @@ export default function LaporanDetailClient({
           </div>
         </div>
         
-        {/* Aksi Hapus */}
-        <button 
-          onClick={handleReset}
-          disabled={isLoading}
-          className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-rose-50 text-rose-600 border border-rose-100 rounded-lg hover:bg-rose-100 shadow-sm font-bold text-[11px] sm:text-[12px] transition active:scale-95 cursor-pointer disabled:opacity-50 shrink-0"
-        >
-          <Trash2 size={13} />
-          Reset Laporan
-        </button>
+        <div className="flex items-center gap-2 print:hidden">
+          <Link 
+            href={`/cetak-laporan/${laporan.id}`}
+            className="inline-flex items-center gap-1.5 p-2 sm:px-3 sm:py-1.5 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-lg hover:bg-indigo-100 shadow-sm font-bold text-[12px] transition active:scale-95 cursor-pointer shrink-0"
+            title="Export PDF"
+          >
+            <Printer size={16} />
+            <span className="hidden sm:inline">Export PDF</span>
+          </Link>
+          
+          <button 
+            onClick={handleReset}
+            disabled={isLoading}
+            className="inline-flex items-center gap-1.5 p-2 sm:px-3 sm:py-1.5 bg-rose-50 text-rose-600 border border-rose-100 rounded-lg hover:bg-rose-100 shadow-sm font-bold text-[12px] transition active:scale-95 cursor-pointer disabled:opacity-50 shrink-0"
+            title="Reset Laporan"
+          >
+            <RotateCcw size={16} />
+            <span className="hidden sm:inline">Reset Laporan</span>
+          </button>
+        </div>
       </div>
 
       {/* Main Single-Column Card */}
