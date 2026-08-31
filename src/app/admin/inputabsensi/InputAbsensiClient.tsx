@@ -46,7 +46,7 @@ export default function InputAbsensiClient({ divisiList }: { divisiList: any[] }
       
       const newAbsData: any = {}
       res.anggota.forEach((a: any) => {
-        newAbsData[a.id] = { status: "HADIR" }
+        newAbsData[a.id] = { status: "Hadir" }
       })
 
       if (res.absensi) {
@@ -257,12 +257,12 @@ export default function InputAbsensiClient({ divisiList }: { divisiList: any[] }
                   </div>
                   
                   <div className="flex items-center gap-2 flex-wrap">
-                    {["HADIR", "IZIN", "SAKIT", "ALPHA"].map(status => (
+                    {["Hadir", "Izin", "Sakit", "Alfa"].map(status => (
                       <label key={status} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border cursor-pointer transition-colors text-xs font-bold ${
                         absensiData[a.id]?.status === status 
-                          ? (status === "HADIR" ? "bg-emerald-50 border-emerald-200 text-emerald-700" : 
-                             status === "IZIN" ? "bg-blue-50 border-blue-200 text-blue-700" : 
-                             status === "SAKIT" ? "bg-amber-50 border-amber-200 text-amber-700" : 
+                          ? (status === "Hadir" ? "bg-emerald-50 border-emerald-200 text-emerald-700" : 
+                             status === "Izin" ? "bg-blue-50 border-blue-200 text-blue-700" : 
+                             status === "Sakit" ? "bg-amber-50 border-amber-200 text-amber-700" : 
                              "bg-red-50 border-red-200 text-red-700")
                           : "bg-white border-slate-200 text-slate-500 hover:bg-slate-50"
                       }`}>
