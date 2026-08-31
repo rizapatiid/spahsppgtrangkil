@@ -13,10 +13,14 @@ export default function InputAbsensiClient({ divisiList }: { divisiList: any[] }
   
   const [anggota, setAnggota] = useState<any[]>([])
   const [absensiData, setAbsensiData] = useState<any>({})
-  const [existingFoto, setExistingFoto] = useState<any>(null)
-  const [newFoto, setNewFoto] = useState<{ file: File, preview: string } | null>(null)
+  const [existingFotos, setExistingFotos] = useState<any[]>([])
+  type PhotoItem = { file: File, preview: string, name: string }
+  const [newFotos, setNewFotos] = useState<PhotoItem[]>([])
   
   const [isLoading, setIsLoading] = useState(false)
+  const activeDivName = divisiList.find(d => d.id.toString() === selectedDivisi)?.nama_divisi?.toLowerCase() || ""
+  const isTwoPhotos = ["driver", "distribusi", "pengolahan", "persiapan", "pencucian"].some(d => activeDivName.includes(d))
+  const maxPhotos = isTwoPhotos ? 2 : 1
   const [isSaving, setIsSaving] = useState(false)
   const [message, setMessage] = useState({ type: "", text: "" })
 
@@ -26,16 +30,16 @@ export default function InputAbsensiClient({ divisiList }: { divisiList: any[] }
     } else {
       setAnggota([])
       setAbsensiData({})
-      setExistingFoto(null)
-      setNewFoto(null)
+      setExistingFotos([])
+      setNewFotos([])
     }
   }, [selectedDate, selectedDivisi])
 
   const loadData = async () => {
     setIsLoading(true)
     setMessage({ type: "", text: "" })
-    setNewFoto(null)
-    setExistingFoto(null)
+    setNewFotos([])
+    setExistingFotos([])
     try {
       const res = await getAbsensiByDateAndDivisi(selectedDate, parseInt(selectedDivisi))
       setAnggota(res.anggota)
@@ -53,8 +57,8 @@ export default function InputAbsensiClient({ divisiList }: { divisiList: any[] }
         })
       }
       setAbsensiData(newAbsData)
-      if (res.fotoBriefing) {
-        setExistingFoto(res.fotoBriefing)
+      if (res.fotoBriefingList) {
+        setExistingFotos(res.fotoBriefingList)
       }
     } catch (e: any) {
       setMessage({ type: "error", text: "Gagal memuat data" })
@@ -71,27 +75,34 @@ export default function InputAbsensiClient({ divisiList }: { divisiList: any[] }
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return
-    const file = e.target.files[0]
-    setNewFoto({
-      file,
-      preview: URL.createObjectURL(file)
-    })
+    const files = Array.from(e.target.files || [])
+    if (!files.length) return
+    
+    if (existingFotos.length + newFotos.length + files.length > maxPhotos) {
+      setMessage({ type: "error", text: `Maksimal ${maxPhotos} foto diperbolehkan untuk divisi ini.` })
+      return
+    }
+
+    const adding = files.map(f => ({ file: f, preview: URL.createObjectURL(f), name: f.name }))
+    setNewFotos(prev => [...prev, ...adding])
     e.target.value = ""
   }
 
-  const removeNewFoto = () => {
-    if (newFoto) URL.revokeObjectURL(newFoto.preview)
-    setNewFoto(null)
+  const removeNewFoto = (idx: number) => {
+    setNewFotos(prev => {
+      const copy = [...prev]
+      URL.revokeObjectURL(copy[idx].preview)
+      copy.splice(idx, 1)
+      return copy
+    })
   }
 
-  const handleDeleteExisting = async () => {
-    if (!existingFoto) return
+  const handleDeleteExisting = async (id: string) => {
     if (!confirm("Hapus foto briefing ini?")) return
     try {
-      const res = await deleteFotoAbsensiManual(existingFoto.id)
+      const res = await deleteFotoAbsensiManual(id)
       if (res.error) throw new Error(res.error)
-      setExistingFoto(null)
+      setExistingFotos(prev => prev.filter((f: any) => f.id !== id))
     } catch(e:any) {
       alert(e.message)
     }
@@ -112,8 +123,9 @@ export default function InputAbsensiClient({ divisiList }: { divisiList: any[] }
       formData.append("tanggal", selectedDate)
       formData.append("divisiId", selectedDivisi)
       formData.append("absensiData", JSON.stringify(payload))
-      if (newFoto) {
-        formData.append("foto", newFoto.file)
+      
+      for (const nf of newFotos) {
+        formData.append("foto", nf.file)
       }
       
       const res = await saveAbsensiManual(formData)
@@ -190,39 +202,40 @@ export default function InputAbsensiClient({ divisiList }: { divisiList: any[] }
               </h3>
               
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                {existingFoto && (
-                  <div className="relative group rounded-lg overflow-hidden border border-slate-200 aspect-square">
-                    <img src={existingFoto.url_foto} alt="Existing" className="w-full h-full object-cover" />
+                {existingFotos.map((ef) => (
+                  <div key={ef.id} className="relative group rounded-lg overflow-hidden border border-slate-200 aspect-square">
+                    <img src={ef.url_foto} alt="Existing" className="w-full h-full object-cover" />
                     <button 
-                      onClick={handleDeleteExisting}
+                      onClick={() => handleDeleteExisting(ef.id)}
                       className="absolute top-2 right-2 p-1.5 bg-white/90 text-red-500 rounded-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50 shadow-sm"
                     >
                       <Trash2 size={14} />
                     </button>
                     <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-1.5 text-[10px] text-white text-center">Tersimpan</div>
                   </div>
-                )}
+                ))}
                 
-                {newFoto && (
-                  <div className="relative group rounded-lg overflow-hidden border border-blue-200 aspect-square ring-2 ring-blue-100">
-                    <img src={newFoto.preview} alt="New" className="w-full h-full object-cover" />
+                {newFotos.map((nf, idx) => (
+                  <div key={idx} className="relative group rounded-lg overflow-hidden border border-blue-200 aspect-square ring-2 ring-blue-100">
+                    <img src={nf.preview} alt="New" className="w-full h-full object-cover" />
                     <button 
-                      onClick={removeNewFoto}
+                      onClick={() => removeNewFoto(idx)}
                       className="absolute top-2 right-2 p-1.5 bg-white/90 text-slate-600 rounded-md opacity-0 group-hover:opacity-100 transition-opacity hover:text-red-500 hover:bg-red-50 shadow-sm"
                     >
                       <X size={14} />
                     </button>
                     <div className="absolute bottom-0 left-0 right-0 bg-blue-600/80 p-1.5 text-[10px] font-bold text-white text-center shadow-sm">Baru</div>
                   </div>
-                )}
+                ))}
                 
-                {!newFoto && (
+                {(existingFotos.length + newFotos.length < maxPhotos) && (
                   <label className="border-2 border-dashed border-slate-200 hover:border-blue-400 hover:bg-blue-50 rounded-lg aspect-square flex flex-col items-center justify-center cursor-pointer transition-colors text-slate-400 hover:text-blue-500">
                     <Camera size={24} className="mb-2" />
-                    <span className="text-[11px] font-bold text-center px-2">{existingFoto ? "Ganti Foto" : "Tambah Foto"}</span>
+                    <span className="text-[11px] font-bold text-center px-2">Tambah Foto</span>
                     <input 
                       type="file" 
                       accept="image/*" 
+                      multiple={maxPhotos > 1}
                       onChange={handleFileChange}
                       className="hidden"
                     />

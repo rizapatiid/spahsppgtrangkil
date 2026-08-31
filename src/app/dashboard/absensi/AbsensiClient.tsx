@@ -10,11 +10,13 @@ export default function AbsensiClient({ anggotaList, divisiName }: { anggotaList
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState({ text: "", type: "" })
   const [fileName, setFileName] = useState("")
-  const [filePreview, setFilePreview] = useState<string | null>(null)
   const router = useRouter()
 
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [isFromCamera, setIsFromCamera] = useState(false)
+  type PhotoItem = { file: File, preview: string, isFromCamera: boolean, name: string }
+  const [photos, setPhotos] = useState<PhotoItem[]>([])
+  
+  const isTwoPhotos = ["driver", "distribusi", "pengolahan", "persiapan", "pencucian"].some(d => divisiName.toLowerCase().includes(d))
+  const maxPhotos = isTwoPhotos ? 2 : 1
 
   async function addWatermark(file: File, divisi: string): Promise<File> {
     return new Promise((resolve) => {
@@ -79,22 +81,39 @@ export default function AbsensiClient({ anggotaList, divisiName }: { anggotaList
   }
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>, fromCamera: boolean) {
-    const file = e.target.files?.[0]
-    if (file) {
-      setIsFromCamera(fromCamera)
-      setSelectedFile(file)
-      if (fromCamera) {
-        const watermarked = await addWatermark(file, divisiName)
-        setFilePreview(URL.createObjectURL(watermarked))
-      } else {
-        setFilePreview(URL.createObjectURL(file))
-      }
+    const files = Array.from(e.target.files || [])
+    if (!files.length) return
+    
+    if (photos.length + files.length > maxPhotos) {
+      setMessage({ text: `Maksimal ${maxPhotos} foto diperbolehkan!`, type: "error" })
+      return
     }
+
+    const newPhotos: PhotoItem[] = []
+    for (const file of files) {
+      let preview = ""
+      let finalFile = file
+      if (fromCamera) {
+        finalFile = await addWatermark(file, divisiName)
+        preview = URL.createObjectURL(finalFile)
+      } else {
+        preview = URL.createObjectURL(file)
+      }
+      newPhotos.push({ file: finalFile, preview, isFromCamera: fromCamera, name: file.name })
+    }
+    
+    setPhotos(prev => [...prev, ...newPhotos])
+    // clear input so same file can be selected again if needed
+    e.target.value = ""
+  }
+  
+  function removePhoto(index: number) {
+    setPhotos(prev => prev.filter((_, i) => i !== index))
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    if (!selectedFile) {
+    if (photos.length === 0) {
       setMessage({ text: "Harap lampirkan foto bukti atau foto briefing!", type: "error" })
       return
     }
@@ -104,16 +123,17 @@ export default function AbsensiClient({ anggotaList, divisiName }: { anggotaList
 
     const form = e.currentTarget
     const formData = new FormData(form)
-
-    // Kompresi & Watermark foto (HANYA jika dari kamera)
-    let processedFile = selectedFile
-    if (isFromCamera) {
-      processedFile = await addWatermark(processedFile, divisiName)
-    }
-    const compressedFoto = await handleCompress(processedFile)
     
-    // Set file ke form data
-    formData.set("foto", compressedFoto, selectedFile.name)
+    // Hapus foto default jika ada
+    formData.delete("foto")
+
+    // Compress & append each photo
+    for (const photo of photos) {
+      let processedFile = photo.file
+      // If we already watermarked it in handleFileChange, we only need to compress
+      const compressedFoto = await handleCompress(processedFile)
+      formData.append("foto", compressedFoto, photo.name)
+    }
 
     const res = await submitAbsensi(formData)
 
@@ -121,8 +141,7 @@ export default function AbsensiClient({ anggotaList, divisiName }: { anggotaList
       setMessage({ text: res.error, type: "error" })
     } else {
       setMessage({ text: "Absensi berhasil disimpan!", type: "success" })
-      setSelectedFile(null)
-      setFilePreview(null)
+      setPhotos([])
       form.reset()
       router.refresh()
     }
@@ -168,23 +187,35 @@ export default function AbsensiClient({ anggotaList, divisiName }: { anggotaList
             <div className="border-2 border-dashed border-slate-200/80 bg-slate-50/50 rounded-2xl p-6 transition-all">
               <div className="flex flex-col items-center text-center">
                 
-                {filePreview ? (
+                {photos.length > 0 ? (
                   <div className="w-full relative group">
-                    <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden border border-slate-200 mb-4 shadow-sm group-hover:ring-2 group-hover:ring-rose-100 transition-all">
-                      <img src={filePreview} alt="Preview" className="w-full h-full object-cover" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                      {photos.map((photo, idx) => (
+                        <div key={idx} className="relative aspect-[4/3] rounded-xl overflow-hidden border border-slate-200 shadow-sm transition-all group/photo">
+                          <img src={photo.preview} alt={`Preview ${idx + 1}`} className="w-full h-full object-cover" />
+                          <button 
+                            type="button"
+                            onClick={() => removePhoto(idx)}
+                            className="absolute top-2 right-2 bg-rose-500/90 hover:bg-rose-600 text-white p-1.5 rounded-full opacity-100 md:opacity-0 md:group-hover/photo:opacity-100 transition-opacity shadow-sm"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                          </button>
+                        </div>
+                      ))}
                     </div>
                     
-                    {/* Actions when preview exists */}
-                    <div className="flex gap-2 w-full max-w-xs mx-auto">
-                      <label className="flex-1 cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 rounded-lg transition-all shadow-sm text-center font-bold text-xs">
-                        Ganti (Kamera)
-                        <input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => handleFileChange(e, true)} />
-                      </label>
-                      <label className="flex-1 cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 rounded-lg transition-all shadow-sm text-center font-bold text-xs">
-                        Ganti (Galeri)
-                        <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileChange(e, false)} />
-                      </label>
-                    </div>
+                    {photos.length < maxPhotos && (
+                      <div className="flex gap-2 w-full max-w-xs mx-auto mt-4">
+                        <label className="flex-1 cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 rounded-lg transition-all shadow-sm text-center font-bold text-xs flex justify-center items-center gap-1.5">
+                          <Camera size={14} /> Tambah
+                          <input type="file" accept="image/*" capture="environment" className="hidden" multiple={maxPhotos > 1} onChange={(e) => handleFileChange(e, true)} />
+                        </label>
+                        <label className="flex-1 cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 rounded-lg transition-all shadow-sm text-center font-bold text-xs flex justify-center items-center gap-1.5">
+                          <UploadCloud size={14} /> Tambah
+                          <input type="file" accept="image/*" className="hidden" multiple={maxPhotos > 1} onChange={(e) => handleFileChange(e, false)} />
+                        </label>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="flex flex-col gap-4 w-full max-w-xs mx-auto">
@@ -203,6 +234,7 @@ export default function AbsensiClient({ anggotaList, divisiName }: { anggotaList
                           accept="image/*" 
                           capture="environment" 
                           className="hidden" 
+                          multiple={maxPhotos > 1}
                           onChange={(e) => handleFileChange(e, true)}
                         />
                       </label>
@@ -215,6 +247,7 @@ export default function AbsensiClient({ anggotaList, divisiName }: { anggotaList
                           type="file" 
                           accept="image/*" 
                           className="hidden" 
+                          multiple={maxPhotos > 1}
                           onChange={(e) => handleFileChange(e, false)}
                         />
                       </label>

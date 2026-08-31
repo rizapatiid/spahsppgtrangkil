@@ -58,7 +58,7 @@ export default function InfoKetentuan() {
                 </div>
                 <div>
                   <h4 className="font-bold text-slate-800 mb-0.5 text-sm">Foto Bukti (Wajib)</h4>
-                  <p>Unggah 1 foto jelas yang menampilkan tim yang hadir pada briefing. Foto akan diberi <span className="italic">watermark</span> jam dan nama divisi secara otomatis oleh sistem.</p>
+                  <p>Unggah foto jelas yang menampilkan tim yang hadir pada briefing (Maksimal 2 foto untuk Divisi Driver, Distribusi, Pengolahan, Persiapan, dan Pencucian). Foto akan diberi <span className="italic">watermark</span> jam dan nama divisi secara otomatis oleh sistem.</p>
                 </div>
               </div>
 

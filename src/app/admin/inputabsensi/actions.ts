@@ -22,7 +22,7 @@ export async function getAbsensiByDateAndDivisi(dateStr: string, divisiId: numbe
     include: { detail: true }
   })
   
-  const fotoBriefing = await prisma.fotoKegiatan.findFirst({
+  const fotoBriefingList = await prisma.fotoKegiatan.findMany({
     where: {
       divisi_id: divisiId,
       tanggal: {
@@ -38,7 +38,7 @@ export async function getAbsensiByDateAndDivisi(dateStr: string, divisiId: numbe
     include: { anggota: true }
   })
 
-  return { absensi, anggota: divisi?.anggota || [], fotoBriefing }
+  return { absensi, anggota: divisi?.anggota || [], fotoBriefingList }
 }
 
 export async function saveAbsensiManual(formData: FormData) {
@@ -100,13 +100,12 @@ export async function saveAbsensiManual(formData: FormData) {
     }
     
     // Process Photo
-    const foto = formData.get("foto") as File
-    if (foto && foto.size > 0) {
-      const bytes = await foto.arrayBuffer()
-      const buffer = Buffer.from(bytes)
-      const url_foto = await uploadToCloudinary(buffer, "sppg_trangkil/absensi_manual")
-      
-      const existingFoto = await prisma.fotoKegiatan.findFirst({
+    const fotoFiles = formData.getAll("foto") as File[]
+    const validFotos = fotoFiles.filter(f => f.size > 0)
+    
+    if (validFotos.length > 0) {
+      // Hapus foto lama untuk tanggal & divisi ini
+      await prisma.fotoKegiatan.deleteMany({
         where: {
           divisi_id: divisiId,
           tanggal: {
@@ -116,13 +115,13 @@ export async function saveAbsensiManual(formData: FormData) {
           tipe_foto: "absensi_briefing"
         }
       })
-      
-      if (existingFoto) {
-        await prisma.fotoKegiatan.update({
-          where: { id: existingFoto.id },
-          data: { url_foto }
-        })
-      } else {
+
+      // Upload dan simpan foto baru
+      for (const foto of validFotos) {
+        const bytes = await foto.arrayBuffer()
+        const buffer = Buffer.from(bytes)
+        const url_foto = await uploadToCloudinary(buffer, "sppg_trangkil/absensi_manual")
+        
         await prisma.fotoKegiatan.create({
           data: {
             tanggal: targetDate,

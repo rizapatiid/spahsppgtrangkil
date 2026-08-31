@@ -35,15 +35,21 @@ export async function submitAbsensi(formData: FormData) {
     }
 
     // Ambil file foto
-    const foto = formData.get("foto") as File
-    if (!foto || foto.size === 0) {
+    const fotoFiles = formData.getAll("foto") as File[]
+    if (!fotoFiles || fotoFiles.length === 0 || fotoFiles[0].size === 0) {
       return { error: "Foto bukti kehadiran wajib diunggah" }
     }
 
     // Upload to Cloudinary
-    const bytes = await foto.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-    const url_foto = await uploadToCloudinary(buffer, "sppg_trangkil/absensi")
+    const uploadedUrls: string[] = [];
+    for (const foto of fotoFiles) {
+      if (foto.size > 0) {
+        const bytes = await foto.arrayBuffer()
+        const buffer = Buffer.from(bytes)
+        const url = await uploadToCloudinary(buffer, "sppg_trangkil/absensi")
+        uploadedUrls.push(url)
+      }
+    }
 
     // Kumpulkan data kehadiran
     const kehadiran: any[] = []
@@ -75,14 +81,16 @@ export async function submitAbsensi(formData: FormData) {
       }
 
       // Insert foto kegiatan khusus absensi ke tabel FotoKegiatan (opsional, tapi baik untuk rekap foto)
-      await tx.fotoKegiatan.create({
-        data: {
-          tanggal: today,
-          url_foto,
-          tipe_foto: "absensi_briefing",
-          divisi_id,
-        }
-      })
+      for (const url of uploadedUrls) {
+        await tx.fotoKegiatan.create({
+          data: {
+            tanggal: today,
+            url_foto: url,
+            tipe_foto: "absensi_briefing",
+            divisi_id,
+          }
+        })
+      }
     })
 
     revalidatePath("/dashboard/absensi")
