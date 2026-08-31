@@ -160,7 +160,7 @@ export default function AbsensiClient({ absensiData, fotoData }: { absensiData: 
           <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
             <div className="divide-y divide-slate-100">
               {filteredData.map((absen) => {
-                const foto = fotoData.find(f => f.divisi_id === absen.divisi_id && new Date(f.tanggal).getTime() === new Date(absen.tanggal).getTime())
+                const fotos = fotoData.filter(f => f.divisi_id === absen.divisi_id && new Date(f.tanggal).getTime() === new Date(absen.tanggal).getTime())
                 
                 const hadir = absen.detail.filter((d: any) => d.status === "Hadir").length
                 const sakit = absen.detail.filter((d: any) => d.status === "Sakit").length
@@ -170,22 +170,27 @@ export default function AbsensiClient({ absensiData, fotoData }: { absensiData: 
                 return (
                   <div 
                     key={absen.id} 
-                    onClick={() => setSelectedAbsen({ ...absen, foto })}
+                    onClick={() => setSelectedAbsen({ ...absen, fotos })}
                     className="p-4 sm:p-5 hover:bg-slate-50/50 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer"
                   >
                     
                     {/* Sisi Kiri: Thumbnail & Keterangan */}
                     <div className="flex items-center gap-4 min-w-0 flex-1">
                       {/* Thumbnail */}
-                      {foto ? (
-                        <div 
-                          className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shadow-sm shrink-0 cursor-zoom-in relative group"
-                          onClick={(e) => { e.stopPropagation(); setPreviewFotoUrl(foto.url_foto); }}
-                        >
-                          <img src={foto.url_foto} alt="Absensi" className="w-full h-full object-cover" />
-                          <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-                          </div>
+                      {fotos && fotos.length > 0 ? (
+                        <div className="flex gap-3 shrink-0">
+                          {fotos.map((f:any, idx:number) => (
+                            <div 
+                              key={idx}
+                              className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shadow-sm relative group cursor-zoom-in"
+                              onClick={(e) => { e.stopPropagation(); setPreviewFotoUrl(f.url_foto); }}
+                            >
+                              <img src={f.url_foto} alt="Absensi" className="w-full h-full object-cover" />
+                              <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       ) : (
                         <div className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-center shadow-sm shrink-0 text-slate-300">
@@ -218,15 +223,15 @@ export default function AbsensiClient({ absensiData, fotoData }: { absensiData: 
                       onClick={(e) => e.stopPropagation()}
                     >
                       <button 
-                        onClick={() => setSelectedAbsen({ ...absen, foto })}
+                        onClick={() => setSelectedAbsen({ ...absen, fotos })}
                         className="inline-flex items-center justify-center gap-1.5 text-[11px] sm:text-[12px] bg-slate-900 text-white hover:bg-slate-800 transition-all px-3.5 py-2 rounded-lg font-bold shadow-sm shrink-0 cursor-pointer"
                       >
                         <Eye size={13} strokeWidth={2.5} />
                         Detail
                       </button>
-                      {foto && (
+                      {fotos && fotos.length > 0 && (
                         <button
-                          onClick={(e) => handleDownload(e, foto.url_foto, `absensi-${absen.divisi.nama_divisi.replace(/\s+/g, "_")}-${new Date(absen.tanggal).toLocaleDateString("id-ID").replace(/\//g, "-")}.jpg`)}
+                          onClick={(e) => handleDownload(e, fotos[0].url_foto, `absensi-${absen.divisi.nama_divisi.replace(/\s+/g, "_")}-${new Date(absen.tanggal).toLocaleDateString("id-ID").replace(/\//g, "-")}.jpg`)}
                           className="inline-flex items-center justify-center gap-1.5 text-[11px] sm:text-[12px] bg-blue-50 text-blue-600 border border-blue-100 hover:bg-blue-100 transition-all px-3.5 py-2 rounded-lg font-bold shadow-sm shrink-0"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>

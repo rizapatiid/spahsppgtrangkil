@@ -91,7 +91,7 @@ export default function RiwayatClient({
               <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
                 <div className="divide-y divide-slate-100">
                   {filteredAbsensi.map(absen => {
-                    const foto = fotoAbsensi.find(f => new Date(f.tanggal).getTime() === new Date(absen.tanggal).getTime())
+                    const fotos = fotoAbsensi.filter(f => new Date(f.tanggal).getTime() === new Date(absen.tanggal).getTime())
                     const hadir = absen.detail.filter((d:any) => d.status === "Hadir").length
                     const sakit = absen.detail.filter((d:any) => d.status === "Sakit").length
                     const izin = absen.detail.filter((d:any) => d.status === "Izin").length
@@ -100,19 +100,24 @@ export default function RiwayatClient({
                     return (
                       <div 
                         key={absen.id} 
-                        onClick={() => setAbsensiModal({ absen, foto })}
+                        onClick={() => setAbsensiModal({ absen, fotos })}
                         className="p-4 sm:p-5 hover:bg-slate-50 transition-all flex items-center gap-4 cursor-pointer"
                       >
                         {/* Thumbnail */}
-                        {foto ? (
-                          <div 
-                            className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shadow-sm relative group/thumb cursor-zoom-in"
-                            onClick={(e) => { e.stopPropagation(); setPreviewFotoUrl(foto.url_foto); }}
-                          >
-                            <img src={foto.url_foto} alt="Absensi" className="w-full h-full object-cover" />
-                            <div className="absolute inset-0 bg-black/30 opacity-0 group-hover/thumb:opacity-100 transition-opacity flex items-center justify-center">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-                            </div>
+                        {fotos && fotos.length > 0 ? (
+                          <div className="flex gap-2 flex-shrink-0">
+                            {fotos.map((f:any, idx:number) => (
+                              <div 
+                                key={idx}
+                                className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shadow-sm relative group/thumb cursor-zoom-in"
+                                onClick={(e) => { e.stopPropagation(); setPreviewFotoUrl(f.url_foto); }}
+                              >
+                                <img src={f.url_foto} alt="Absensi" className="w-full h-full object-cover" />
+                                <div className="absolute inset-0 bg-black/30 opacity-0 group-hover/thumb:opacity-100 transition-opacity flex items-center justify-center">
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                                </div>
+                              </div>
+                            ))}
                           </div>
                         ) : (
                           <div className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-center shadow-sm">
@@ -301,7 +306,7 @@ export default function RiwayatClient({
 
     {/* MODAL DETAIL ABSENSI */}
     {absensiModal && (() => {
-      const { absen, foto } = absensiModal
+      const { absen, fotos } = absensiModal
       const hadir = absen.detail.filter((d:any) => d.status === "Hadir").length
       const sakit = absen.detail.filter((d:any) => d.status === "Sakit").length
       const izin = absen.detail.filter((d:any) => d.status === "Izin").length
@@ -342,15 +347,20 @@ export default function RiwayatClient({
               
               {/* Foto & Ringkasan */}
               <div className="flex items-center gap-4">
-                {foto ? (
-                  <div 
-                    onClick={() => setPreviewFotoUrl(foto.url_foto)} 
-                    className="relative group block w-28 h-28 sm:w-32 sm:h-32 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 shrink-0 shadow-sm cursor-zoom-in"
-                  >
-                    <img src={foto.url_foto} alt="Foto Absensi" className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-                    </div>
+                {fotos && fotos.length > 0 ? (
+                  <div className="flex gap-3 shrink-0">
+                    {fotos.map((f:any, idx:number) => (
+                      <div 
+                        key={idx}
+                        onClick={() => setPreviewFotoUrl(f.url_foto)} 
+                        className="relative group block w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shadow-sm cursor-zoom-in"
+                      >
+                        <img src={f.url_foto} alt="Foto Absensi" className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 ) : (
                   <div className="w-28 h-28 sm:w-32 sm:h-32 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-center shrink-0 shadow-sm">

@@ -20,7 +20,7 @@ export async function resetAbsensi(absensiId: string, divisiId: number, tanggalS
     tanggal.setUTCHours(0, 0, 0, 0)
 
     // Find and delete the associated photo
-    const foto = await prisma.fotoKegiatan.findFirst({
+    const fotos = await prisma.fotoKegiatan.findMany({
       where: {
         divisi_id: divisiId,
         tanggal: tanggal,
@@ -28,21 +28,23 @@ export async function resetAbsensi(absensiId: string, divisiId: number, tanggalS
       }
     })
 
-    if (foto) {
-      // Hapus file fisik
-      try {
-        if (foto.url_foto.startsWith("http")) {
-          await deleteFromCloudinary(foto.url_foto)
-        } else {
-          const filepath = path.join(process.cwd(), "public", foto.url_foto)
-          await unlink(filepath)
+    if (fotos.length > 0) {
+      for (const foto of fotos) {
+        // Hapus file fisik
+        try {
+          if (foto.url_foto.startsWith("http")) {
+            await deleteFromCloudinary(foto.url_foto)
+          } else {
+            const filepath = path.join(process.cwd(), "public", foto.url_foto)
+            await unlink(filepath)
+          }
+        } catch (e) {
+          console.log("File foto fisik tidak ditemukan, mengabaikan...")
         }
-      } catch (e) {
-        console.log("File foto fisik tidak ditemukan, mengabaikan...")
+        
+        // Hapus record foto
+        await prisma.fotoKegiatan.delete({ where: { id: foto.id } })
       }
-      
-      // Hapus record foto
-      await prisma.fotoKegiatan.delete({ where: { id: foto.id } })
     }
 
     // Delete the attendance record (AnggotaAbsensi will be cascade deleted)
