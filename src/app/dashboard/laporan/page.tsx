@@ -4,7 +4,6 @@ import { prisma } from "@/lib/prisma"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import LaporanClient from "./LaporanClient"
 import { getUploadedFotos, getSharedDivisiId } from "./actions"
-import PhotoLightbox from "@/components/PhotoLightbox"
 
 export default async function LaporanPage() {
   const session = await getServerSession(authOptions)
@@ -83,14 +82,9 @@ export default async function LaporanPage() {
                     
                     <div className="px-4 sm:px-5 pb-4 sm:pb-5 pt-0.5 sm:pt-1 pl-[3.25rem] sm:pl-[4.25rem]">
                       {/* Teks Isi Laporan */}
-                      <div className="whitespace-pre-wrap text-[13.5px] sm:text-[13px] text-slate-700 leading-[1.6] font-medium mb-3 sm:mb-4">
-                        {upLap.isi_laporan || <span className="italic text-slate-400 font-normal">Hanya melampirkan foto.</span>}
+                      <div className="whitespace-pre-wrap text-[13.5px] sm:text-[13px] text-slate-700 leading-[1.6] font-medium">
+                        {upLap.isi_laporan || <span className="italic text-slate-400 font-normal">Tidak ada catatan tertulis.</span>}
                       </div>
-
-                      {/* Lampiran Foto */}
-                      {upLap.foto.length > 0 && (
-                        <PhotoLightbox photos={upLap.foto} />
-                      )}
                     </div>
                   </details>
                 ))}
