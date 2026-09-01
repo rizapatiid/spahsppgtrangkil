@@ -1,6 +1,7 @@
 "use server"
 
 import { getServerSession } from "next-auth"
+import { revalidatePath } from "next/cache"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import { prisma } from "@/lib/prisma"
 import { uploadToCloudinary } from "@/lib/cloudinary"
@@ -133,8 +134,11 @@ export async function saveAbsensiManual(formData: FormData) {
       }
     }
 
-    return { success: true }
-  } catch (error: any) {
+    revalidatePath("/admin/absensi")
+      revalidatePath("/admin/inputabsensi")
+      revalidatePath("/dashboard/riwayat")
+      return { success: true }
+    } catch (error: any) {
     return { error: error.message || "Terjadi kesalahan" }
   }
 }
@@ -144,6 +148,9 @@ export async function deleteFotoAbsensiManual(fotoId: string) {
   if (!session || session.user.role !== "ADMIN") return { error: "Unauthorized" }
   try {
     await prisma.fotoKegiatan.delete({ where: { id: fotoId } })
+    revalidatePath("/admin/absensi")
+    revalidatePath("/admin/inputabsensi")
+    revalidatePath("/dashboard/riwayat")
     return { success: true }
   } catch(e:any) {
     return { error: e.message }

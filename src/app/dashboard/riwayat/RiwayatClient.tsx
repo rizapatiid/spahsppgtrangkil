@@ -91,7 +91,7 @@ export default function RiwayatClient({
               <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
                 <div className="divide-y divide-slate-100">
                   {filteredAbsensi.map(absen => {
-                    const fotos = fotoAbsensi.filter(f => new Date(f.tanggal).getTime() === new Date(absen.tanggal).getTime())
+                    const fotos = fotoAbsensi.filter(f => new Date(f.tanggal).toISOString().split('T')[0] === new Date(absen.tanggal).toISOString().split('T')[0])
                     const hadir = absen.detail.filter((d:any) => d.status === "Hadir").length
                     const sakit = absen.detail.filter((d:any) => d.status === "Sakit").length
                     const izin = absen.detail.filter((d:any) => d.status === "Izin").length

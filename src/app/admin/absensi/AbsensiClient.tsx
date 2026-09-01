@@ -160,7 +160,7 @@ export default function AbsensiClient({ absensiData, fotoData }: { absensiData: 
           <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
             <div className="divide-y divide-slate-100">
               {filteredData.map((absen) => {
-                const fotos = fotoData.filter(f => f.divisi_id === absen.divisi_id && new Date(f.tanggal).getTime() === new Date(absen.tanggal).getTime())
+                const fotos = fotoData.filter(f => f.divisi_id === absen.divisi_id && new Date(f.tanggal).toISOString().split('T')[0] === new Date(absen.tanggal).toISOString().split('T')[0])
                 
                 const hadir = absen.detail.filter((d: any) => d.status === "Hadir").length
                 const sakit = absen.detail.filter((d: any) => d.status === "Sakit").length
@@ -256,7 +256,7 @@ export default function AbsensiClient({ absensiData, fotoData }: { absensiData: 
         )}
       </div>      {/* Modal Popup Detail Absensi (Styled like Division Riwayat Modal) */}
       {selectedAbsen && (() => {
-        const { foto } = selectedAbsen
+        const { fotos } = selectedAbsen
         const hadir = selectedAbsen.detail.filter((d: any) => d.status === "Hadir").length
         const sakit = selectedAbsen.detail.filter((d: any) => d.status === "Sakit").length
         const izin = selectedAbsen.detail.filter((d: any) => d.status === "Izin").length
@@ -297,19 +297,24 @@ export default function AbsensiClient({ absensiData, fotoData }: { absensiData: 
               <div className="p-4 sm:p-5 space-y-4 overflow-y-auto max-h-[60vh] flex-1">
                 
                 {/* Foto & Ringkasan */}
-                <div className="flex items-center gap-4">
-                  {foto ? (
-                    <div 
-                      onClick={() => setPreviewFotoUrl(foto.url_foto)} 
-                      className="relative group block w-28 h-28 sm:w-32 sm:h-32 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shrink-0 shadow-sm cursor-zoom-in"
-                    >
-                      <img src={foto.url_foto} alt="Foto Absensi" className="w-full h-full object-cover" />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-                      </div>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                  {fotos && fotos.length > 0 ? (
+                    <div className="flex gap-3 shrink-0">
+                      {fotos.map((f:any, idx:number) => (
+                        <div 
+                          key={idx}
+                          onClick={() => setPreviewFotoUrl(f.url_foto)} 
+                          className="relative group block w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shadow-sm cursor-zoom-in"
+                        >
+                          <img src={f.url_foto} alt="Foto Absensi" className="w-full h-full object-cover" />
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   ) : (
-                    <div className="w-28 h-28 sm:w-32 sm:h-32 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-center shrink-0 shadow-sm text-slate-350 font-medium italic text-[11px]">
+                    <div className="w-28 h-28 sm:w-32 sm:h-32 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-center shrink-0 shadow-sm text-slate-350 font-medium italic text-[11px] p-4 text-center">
                       Tidak ada foto bukti absensi.
                     </div>
                   )}
