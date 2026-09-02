@@ -86,7 +86,7 @@ export default async function CetakLaporan({ params }: { params: Promise<{ id: s
             <tr>
               <td className="w-40 align-top">Dilaporkan Oleh</td>
               <td className="w-4 align-top">:</td>
-              <td className="align-top">{laporan.created_by}</td>
+              <td className="align-top">{laporan.divisi.nama_divisi}</td>
             </tr>
           </tbody>
         </table>
