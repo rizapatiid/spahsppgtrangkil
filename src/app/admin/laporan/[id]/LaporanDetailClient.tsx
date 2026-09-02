@@ -164,7 +164,7 @@ export default function LaporanDetailClient({
             <div className="w-full border border-slate-200 bg-slate-50/50 p-4 rounded-lg text-[13px] text-slate-700 min-h-[100px] whitespace-pre-wrap leading-relaxed">
               {laporan.isi_laporan || <span className="text-slate-400 italic">Tidak ada catatan yang ditulis.</span>}
             </div>
-            <p className="text-[11px] text-slate-400 font-bold mt-2 text-right">Pengirim: {laporan.created_by}</p>
+            <p className="text-[11px] text-slate-400 font-bold mt-2 text-right">Pengirim: {laporan.divisi.nama_divisi}</p>
           </div>
           
           {/* Dokumentasi Foto */}
