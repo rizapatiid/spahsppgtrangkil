@@ -117,7 +117,7 @@ export default function InputLaporanClient({ divisiList }: { divisiList: any[] }
     const newKet = prompt("Edit Keterangan Foto:", currentText || "")
     if (newKet === null) return
     try {
-      const { updateFotoKeteranganManual } = await import("./actions")
+      const { updateFotoKeteranganManual } = await import("@/app/admin/inputlaporan/actions")
       const res = await updateFotoKeteranganManual(id, newKet)
       if (res.error) throw new Error(res.error)
       setExistingPhotos(prev => prev.map(p => p.id === id ? { ...p, catatan: { keterangan: newKet } } : p))

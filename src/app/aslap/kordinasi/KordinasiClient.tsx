@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { Plus, Edit2, Trash2, Megaphone, CheckCircle2, AlertCircle, X, Search, Eye, Clock } from 'lucide-react'
-import { createArahan, updateArahan, deleteArahan } from './actions'
+import { createArahan, updateArahan, deleteArahan } from '@/app/admin/kordinasi/actions'
 
 type Divisi = {
   id: number
