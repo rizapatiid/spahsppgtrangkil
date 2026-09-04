@@ -158,6 +158,7 @@ export default function UsersClient({ users }: { users: any[] }) {
               <div>
                 <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Role / Peran</label>
                 <select name="role" required className="w-full border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none">
+                  <option value="ASLAP">Aslap (Asisten Lapangan)</option>
                   <option value="PERSIAPAN">Persiapan</option>
                   <option value="PENGOLAHAN">Pengolahan</option>
                   <option value="PEMORSIAN">Pemorsian</option>
@@ -219,6 +220,7 @@ export default function UsersClient({ users }: { users: any[] }) {
                 <div>
                   <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Role / Peran</label>
                   <select name="role" defaultValue={editUser.role} required className="w-full border border-slate-200 bg-slate-50/50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all outline-none">
+                    <option value="ASLAP">ASLAP</option>
                     <option value="PERSIAPAN">Persiapan</option>
                     <option value="PENGOLAHAN">Pengolahan</option>
                     <option value="PEMORSIAN">Pemorsian</option>
