@@ -17,6 +17,7 @@ export default function AslapSidebar() {
 
   const navItems = [
     { name: "Dashboard", href: "/aslap", icon: Home, exact: true },
+    { name: "Isi Absensi Mandiri", href: "/aslap/isi-absensi", icon: Users, exact: false },
     { name: "Rekap Absensi", href: "/aslap/absensi", icon: CalendarCheck, exact: false },
     { name: "Laporan Kehadiran", href: "/aslap/absensi-relawan", icon: FileSpreadsheet, exact: false },
     { name: "Laporan Divisi", href: "/aslap/laporan", icon: ClipboardList, exact: false },
