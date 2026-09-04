@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Calendar, Users, Save, CheckCircle2, AlertCircle, Trash2, X, Image as ImageIcon, Camera } from "lucide-react"
+import imageCompression from "browser-image-compression"
 import { getLaporanByDateAndDivisi, saveLaporanManual, deleteFotoManual } from "./actions"
 
 export default function InputLaporanClient({ divisiList }: { divisiList: any[] }) {
@@ -43,6 +44,15 @@ export default function InputLaporanClient({ divisiList }: { divisiList: any[] }
       resetForm()
     }
   }, [selectedDate, selectedDivisi])
+
+  
+  async function handleCompress(file: File) {
+    try {
+      return await imageCompression(file, { maxSizeMB: 1, maxWidthOrHeight: 1920, useWebWorker: true })
+    } catch {
+      return file
+    }
+  }
 
   const resetForm = () => {
     setIsiLaporan("")

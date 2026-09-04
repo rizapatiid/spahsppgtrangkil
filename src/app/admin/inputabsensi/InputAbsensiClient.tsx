@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Calendar, Users, Save, CheckCircle2, AlertCircle, Trash2, Camera, X, ImageIcon } from "lucide-react"
+import imageCompression from "browser-image-compression"
 import { getAbsensiByDateAndDivisi, saveAbsensiManual, deleteFotoAbsensiManual } from "./actions"
 
 export default function InputAbsensiClient({ divisiList }: { divisiList: any[] }) {
@@ -34,6 +35,15 @@ export default function InputAbsensiClient({ divisiList }: { divisiList: any[] }
       setNewFotos([])
     }
   }, [selectedDate, selectedDivisi])
+
+  
+  async function handleCompress(file: File) {
+    try {
+      return await imageCompression(file, { maxSizeMB: 1, maxWidthOrHeight: 1920, useWebWorker: true })
+    } catch {
+      return file
+    }
+  }
 
   const loadData = async () => {
     setIsLoading(true)
