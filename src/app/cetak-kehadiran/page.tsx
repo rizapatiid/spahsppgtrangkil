@@ -48,9 +48,9 @@ export default async function CetakKehadiranPage({ searchParams }: { searchParam
       case "Izin":
         return <div className="mx-auto flex items-center justify-center font-bold text-[12px] text-black">I</div>;
       case "Alfa":
-        return <div className="mx-auto flex items-center justify-center font-bold text-[12px] text-black">A</div>;
+        return <div className="mx-auto flex items-center justify-center font-bold text-[12px] text-black">-</div>;
       default:
-        return null;
+        return <div className="mx-auto"></div>;
     }
   };
 

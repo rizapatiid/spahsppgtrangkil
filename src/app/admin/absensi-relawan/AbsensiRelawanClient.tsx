@@ -121,7 +121,7 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
       case "Izin":
         return <div className="mx-auto flex items-center justify-center font-bold text-[12px] text-purple-600 print:w-auto print:h-auto print:text-black" title="Izin">I</div>
       case "Alfa":
-        return <div className="mx-auto flex items-center justify-center font-bold text-[12px] text-rose-600 print:w-auto print:h-auto print:text-black" title="Alfa">A</div>
+        return <div className="mx-auto flex items-center justify-center font-bold text-[12px] text-rose-600 print:w-auto print:h-auto print:text-black" title="Alfa">-</div>
       default:
         // Empty string is cleaner for PDF reports
         return <span className="text-slate-300 print:text-transparent print:hidden">-</span>
@@ -234,7 +234,7 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
               <div className="flex items-center gap-1.5"><div className="w-3.5 h-3.5 rounded flex items-center justify-center border border-black"><Check size={10} strokeWidth={4} className="text-black" /></div> <span className="text-[9px] font-semibold text-black">Hadir</span></div>
               <div className="flex items-center gap-1.5"><div className="w-3.5 h-3.5 rounded flex items-center justify-center border border-black text-[9px] font-bold text-black">S</div> <span className="text-[9px] font-semibold text-black">Sakit</span></div>
               <div className="flex items-center gap-1.5"><div className="w-3.5 h-3.5 rounded flex items-center justify-center border border-black text-[9px] font-bold text-black">I</div> <span className="text-[9px] font-semibold text-black">Izin</span></div>
-              <div className="flex items-center gap-1.5"><div className="w-3.5 h-3.5 rounded flex items-center justify-center border border-black text-[9px] font-bold text-black">A</div> <span className="text-[9px] font-semibold text-black">Alfa</span></div>
+              <div className="flex items-center gap-1.5"><div className="w-3.5 h-3.5 rounded flex items-center justify-center border border-black text-[9px] font-bold text-black">-</div> <span className="text-[9px] font-semibold text-black">Alfa</span></div>
             </div>
           </div>
 
@@ -283,7 +283,7 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
         <div className="flex items-center gap-1.5"><div className="w-4 h-4 rounded bg-emerald-100 text-emerald-600 flex items-center justify-center"><Check size={10} strokeWidth={3}/></div> <span className="text-[11px] font-bold text-slate-600">Hadir</span></div>
         <div className="flex items-center gap-1.5"><div className="w-4 h-4 rounded bg-amber-100 text-amber-600 flex items-center justify-center text-[10px] font-bold">S</div> <span className="text-[11px] font-bold text-slate-600">Sakit</span></div>
         <div className="flex items-center gap-1.5"><div className="w-4 h-4 rounded bg-purple-100 text-purple-600 flex items-center justify-center text-[10px] font-bold">I</div> <span className="text-[11px] font-bold text-slate-600">Izin</span></div>
-        <div className="flex items-center gap-1.5"><div className="w-4 h-4 rounded bg-rose-100 text-rose-600 flex items-center justify-center text-[10px] font-bold">A</div> <span className="text-[11px] font-bold text-slate-600">Alfa</span></div>
+        <div className="flex items-center gap-1.5"><div className="w-4 h-4 rounded bg-rose-100 text-rose-600 flex items-center justify-center text-[10px] font-bold">-</div> <span className="text-[11px] font-bold text-slate-600">Alfa</span></div>
       </div>
 
       {/* Tabel Matriks */}
