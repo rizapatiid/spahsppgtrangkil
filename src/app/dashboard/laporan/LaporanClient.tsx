@@ -59,9 +59,10 @@ export default function LaporanClient({ role, initialPhotos, initialCatatan }: {
       { id: "limbah_makanan", label: "2. Foto Limbah Makanan", desc: "(Min: 4, Max: 8)", min: 4, max: 8 },
       { id: "tray_kembali", label: "3. Foto Tray Kembali ke SPPG", desc: "(Min: 4, Max: 8)", min: 4, max: 8 }
     ]
-    if (role === "KEBERSIHAN" || role === "SATPAM") return [...base, 
+    if (role === "KEBERSIHAN") return [...base, 
       { id: "sampah_akhir", label: "2. Foto Sampah Akhir", desc: "(Max: 8)", min: 0, max: 8 }
     ]
+    if (role === "SATPAM") return base
     return base
   }
 

@@ -28,7 +28,8 @@ export default function InputLaporanClient({ divisiList }: { divisiList: any[] }
     if (r === "PEMORSIAN") return [...base, { id: "makanan_diporsi", label: "2. Foto Makanan yang Diporsi" }, { id: "kondisi_sebelum_dikirim", label: "3. Foto Kondisi Makanan Sebelum Dikirim" }, { id: "tray_siap", label: "4. Foto Tray Siap Distribusi" }, { id: "sisa_pemorsian", label: "5. Foto Sisa Pemorsian" }]
     if (r === "DISTRIBUSI") return [...base, { id: "lokasi_distribusi", label: "2. Foto Bukti di Lokasi" }, { id: "tray_kembali", label: "3. Foto Tray Kembali ke SPPG" }]
     if (r === "PENCUCIAN") return [...base, { id: "limbah_makanan", label: "2. Foto Limbah Makanan" }, { id: "tray_kembali", label: "3. Foto Tray Kembali ke SPPG" }]
-    if (r === "KEBERSIHAN" || r === "SATPAM") return [...base, { id: "sampah_akhir", label: "2. Foto Sampah Akhir" }]
+    if (r === "KEBERSIHAN") return [...base, { id: "sampah_akhir", label: "2. Foto Sampah Akhir" }]
+    if (r === "SATPAM") return base
     return base
   }
 
