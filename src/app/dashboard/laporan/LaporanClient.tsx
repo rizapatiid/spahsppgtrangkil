@@ -35,6 +35,15 @@ export default function LaporanClient({ role, initialPhotos, initialCatatan }: {
   }
 
   const getCategories = () => {
+    if (role === "KEBERSIHAN") return [
+      { id: "kegiatan_kebersihan", label: "1. Foto Kegiatan Kebersihan", desc: "(Min: 3, Max: 5)", min: 3, max: 5 },
+      { id: "sampah_akhir", label: "2. Foto Sampah Akhir", desc: "(Max: 8)", min: 0, max: 8 }
+    ]
+    if (role === "SATPAM") return [
+      { id: "kegiatan_satpam", label: "1. Foto Kegiatan Satpam", desc: "(Min: 3, Max: 5)", min: 3, max: 5 },
+      { id: "sampah_akhir", label: "2. Foto Sampah Akhir", desc: "(Max: 8)", min: 0, max: 8 }
+    ]
+
     const base = [{ id: "kegiatan", label: "1. Foto Kegiatan", desc: `Min: 3, Max: ${role === 'DISTRIBUSI' ? '6' : '5'}`, min: 3, max: role === 'DISTRIBUSI' ? 6 : 5 }]
     
     if (role === "PERSIAPAN") return [...base, 
@@ -59,10 +68,6 @@ export default function LaporanClient({ role, initialPhotos, initialCatatan }: {
       { id: "limbah_makanan", label: "2. Foto Limbah Makanan", desc: "(Min: 4, Max: 8)", min: 4, max: 8 },
       { id: "tray_kembali", label: "3. Foto Tray Kembali ke SPPG", desc: "(Min: 4, Max: 8)", min: 4, max: 8 }
     ]
-    if (role === "KEBERSIHAN") return [...base, 
-      { id: "sampah_akhir", label: "2. Foto Sampah Akhir", desc: "(Max: 8)", min: 0, max: 8 }
-    ]
-    if (role === "SATPAM") return base
     return base
   }
 

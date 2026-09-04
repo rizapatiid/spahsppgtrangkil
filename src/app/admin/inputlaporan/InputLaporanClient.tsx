@@ -22,14 +22,15 @@ export default function InputLaporanClient({ divisiList }: { divisiList: any[] }
   const [message, setMessage] = useState({ type: "", text: "" })
 
   const getCategories = (r: string) => {
+    if (r === "KEBERSIHAN") return [{ id: "kegiatan_kebersihan", label: "1. Foto Kegiatan Kebersihan" }, { id: "sampah_akhir", label: "2. Foto Sampah Akhir" }]
+    if (r === "SATPAM") return [{ id: "kegiatan_satpam", label: "1. Foto Kegiatan Satpam" }, { id: "sampah_akhir", label: "2. Foto Sampah Akhir" }]
+
     const base = [{ id: "kegiatan", label: "1. Foto Kegiatan" }]
     if (r === "PERSIAPAN") return [...base, { id: "bahan_makanan", label: "2. Foto Bahan Makanan (Bersih)" }, { id: "sampah", label: "3. Foto Sampah" }]
     if (r === "PENGOLAHAN") return [...base, { id: "masakan_matang", label: "2. Foto Masakan Matang" }, { id: "sampah", label: "3. Foto Sampah" }]
     if (r === "PEMORSIAN") return [...base, { id: "makanan_diporsi", label: "2. Foto Makanan yang Diporsi" }, { id: "kondisi_sebelum_dikirim", label: "3. Foto Kondisi Makanan Sebelum Dikirim" }, { id: "tray_siap", label: "4. Foto Tray Siap Distribusi" }, { id: "sisa_pemorsian", label: "5. Foto Sisa Pemorsian" }]
     if (r === "DISTRIBUSI") return [...base, { id: "lokasi_distribusi", label: "2. Foto Bukti di Lokasi" }, { id: "tray_kembali", label: "3. Foto Tray Kembali ke SPPG" }]
     if (r === "PENCUCIAN") return [...base, { id: "limbah_makanan", label: "2. Foto Limbah Makanan" }, { id: "tray_kembali", label: "3. Foto Tray Kembali ke SPPG" }]
-    if (r === "KEBERSIHAN") return [...base, { id: "sampah_akhir", label: "2. Foto Sampah Akhir" }]
-    if (r === "SATPAM") return base
     return base
   }
 

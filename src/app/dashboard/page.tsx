@@ -71,8 +71,9 @@ export default async function DashboardPage() {
       laporanStatus = "PARTIAL";
     }
 
-    const baseCats = [{ id: "kegiatan", label: "Foto Kegiatan", min: 3 }]
-    laporanCats = [...baseCats]
+    if (session.user.role === "KEBERSIHAN") laporanCats = [{ id: "kegiatan_kebersihan", label: "Foto Kegiatan Kebersihan", min: 3 }]
+    else if (session.user.role === "SATPAM") laporanCats = [{ id: "kegiatan_satpam", label: "Foto Kegiatan Satpam", min: 3 }]
+    else laporanCats = [{ id: "kegiatan", label: "Foto Kegiatan", min: 3 }]
     
     if (session.user.role === "PERSIAPAN") {
       laporanCats.push({ id: "bahan_makanan", label: "Bahan Makanan (Bersih)", min: 0 })

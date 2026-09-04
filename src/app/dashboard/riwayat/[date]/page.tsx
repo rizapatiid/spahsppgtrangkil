@@ -92,8 +92,10 @@ export default async function RiwayatDetailPage({ params }: { params: Promise<{ 
   }
 
   // Semua kategori berdasarkan role
-  const baseCats = [{ id: "kegiatan", label: "Foto Kegiatan", desc: "Minimal 3 foto kegiatan utama" }]
-  let allCategories = [...baseCats]
+  let allCategories: any[] = []
+  if (role === "KEBERSIHAN") allCategories = [{ id: "kegiatan_kebersihan", label: "Foto Kegiatan Kebersihan", desc: "Minimal 3 foto kegiatan utama" }]
+  else if (role === "SATPAM") allCategories = [{ id: "kegiatan_satpam", label: "Foto Kegiatan Satpam", desc: "Minimal 3 foto kegiatan utama" }]
+  else allCategories = [{ id: "kegiatan", label: "Foto Kegiatan", desc: "Minimal 3 foto kegiatan utama" }]
   if (role === "PERSIAPAN") {
     allCategories.push({ id: "bahan_makanan", label: "Bahan Makanan (Bersih)", desc: "Kondisi bahan setelah dibersihkan" })
     allCategories.push({ id: "sampah", label: "Sampah & Catatan", desc: "Foto sampah hasil persiapan" })

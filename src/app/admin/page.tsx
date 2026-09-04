@@ -47,8 +47,10 @@ function getLaporanStatus(laporanToday: any, namaDivisi: string) {
   else if (name.includes("KEBERSIHAN")) role = "KEBERSIHAN"
   else if (name.includes("SATPAM")) role = "SATPAM"
 
-  const baseCats = [{ id: "kegiatan", min: 3 }]
-  const laporanCats = [...baseCats]
+  let laporanCats: any[] = []
+  if (role === "KEBERSIHAN") laporanCats = [{ id: "kegiatan_kebersihan", min: 3 }]
+  else if (role === "SATPAM") laporanCats = [{ id: "kegiatan_satpam", min: 3 }]
+  else laporanCats = [{ id: "kegiatan", min: 3 }]
   
   if (role === "DISTRIBUSI") {
     laporanCats.push({ id: "tray_kembali", min: 4 })

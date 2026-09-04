@@ -179,8 +179,10 @@ export default function RiwayatClient({
                     
                     // LOGIKA CEK KELENGKAPAN LAPORAN PER ITEM
                     const role = session.user.role
-                    const baseCats = [{ id: "kegiatan", label: "Foto Kegiatan", min: 3 }]
-                    let allCats = [...baseCats]
+                    let allCats: any[] = []
+                    if (role === "KEBERSIHAN") allCats = [{ id: "kegiatan_kebersihan", label: "Foto Kegiatan Kebersihan", min: 3 }]
+                    else if (role === "SATPAM") allCats = [{ id: "kegiatan_satpam", label: "Foto Kegiatan Satpam", min: 3 }]
+                    else allCats = [{ id: "kegiatan", label: "Foto Kegiatan", min: 3 }]
                     
                     if (role === "PERSIAPAN") {
                       allCats.push({ id: "bahan_makanan", label: "Bahan Makanan (Bersih)", min: 0 })

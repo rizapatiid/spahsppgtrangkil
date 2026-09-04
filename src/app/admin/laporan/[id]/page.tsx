@@ -44,27 +44,37 @@ export default async function LaporanDetailPage({ params }: { params: Promise<{ 
   }, {} as Record<string, any[]>)
 
   // Semua kategori berdasarkan role
-  const baseCats = [{ id: "kegiatan", label: "Foto Kegiatan", desc: "Minimal 3 foto kegiatan utama" }]
-  let allCategories = [...baseCats]
-  if (role === "PERSIAPAN") {
-    allCategories.push({ id: "bahan_makanan", label: "Bahan Makanan (Bersih)", desc: "Kondisi bahan setelah dibersihkan" })
-    allCategories.push({ id: "sampah", label: "Sampah & Catatan", desc: "Foto sampah hasil persiapan" })
-  } else if (role === "PENGOLAHAN") {
-    allCategories.push({ id: "masakan_matang", label: "Masakan Matang", desc: "Foto masakan yang sudah selesai dimasak" })
-    allCategories.push({ id: "sampah", label: "Sampah & Catatan", desc: "Foto sampah hasil pengolahan" })
-  } else if (role === "PEMORSIAN") {
-    allCategories.push({ id: "makanan_diporsi", label: "Makanan yang Diporsi", desc: "Proses pemorsian makanan" })
-    allCategories.push({ id: "kondisi_sebelum_dikirim", label: "Kondisi Sebelum Dikirim", desc: "Kondisi makanan sebelum didistribusikan" })
-    allCategories.push({ id: "tray_siap", label: "Tray Siap Distribusi di Rak", desc: "Tray yang sudah tersusun rapi di rak" })
-    allCategories.push({ id: "sisa_pemorsian", label: "Sisa Pemorsian", desc: "Foto sisa makanan setelah diporsi" })
-  } else if (role === "DISTRIBUSI") {
-    allCategories.push({ id: "lokasi_distribusi", label: "Bukti di Lokasi Distribusi", desc: "Foto bukti pengantaran di lokasi" })
-    allCategories.push({ id: "tray_kembali", label: "Tray Kembali ke SPPG", desc: "Minimal 4 foto tray yang kembali" })
-  } else if (role === "PENCUCIAN") {
-    allCategories.push({ id: "limbah_makanan", label: "Limbah Makanan", desc: "Minimal 4 foto limbah makanan" })
-    allCategories.push({ id: "tray_kembali", label: "Tray Kembali ke SPPG", desc: "Minimal 4 foto tray yang kembali" })
-  } else if (role === "KEBERSIHAN" || role === "SATPAM") {
-    allCategories.push({ id: "sampah_akhir", label: "Sampah Akhir", desc: "Foto kondisi sampah di akhir kegiatan" })
+  let allCategories: any[] = []
+  if (role === "KEBERSIHAN") {
+    allCategories = [
+      { id: "kegiatan_kebersihan", label: "Foto Kegiatan Kebersihan", desc: "Minimal 3 foto kegiatan utama" },
+      { id: "sampah_akhir", label: "Sampah Akhir", desc: "Foto kondisi sampah di akhir kegiatan" }
+    ]
+  } else if (role === "SATPAM") {
+    allCategories = [
+      { id: "kegiatan_satpam", label: "Foto Kegiatan Satpam", desc: "Minimal 3 foto kegiatan utama" },
+      { id: "sampah_akhir", label: "Sampah Akhir", desc: "Foto kondisi sampah di akhir kegiatan" }
+    ]
+  } else {
+    allCategories = [{ id: "kegiatan", label: "Foto Kegiatan", desc: "Minimal 3 foto kegiatan utama" }]
+    if (role === "PERSIAPAN") {
+      allCategories.push({ id: "bahan_makanan", label: "Bahan Makanan (Bersih)", desc: "Kondisi bahan setelah dibersihkan" })
+      allCategories.push({ id: "sampah", label: "Sampah & Catatan", desc: "Foto sampah hasil persiapan" })
+    } else if (role === "PENGOLAHAN") {
+      allCategories.push({ id: "masakan_matang", label: "Masakan Matang", desc: "Foto masakan yang sudah selesai dimasak" })
+      allCategories.push({ id: "sampah", label: "Sampah & Catatan", desc: "Foto sampah hasil pengolahan" })
+    } else if (role === "PEMORSIAN") {
+      allCategories.push({ id: "makanan_diporsi", label: "Makanan yang Diporsi", desc: "Proses pemorsian makanan" })
+      allCategories.push({ id: "kondisi_sebelum_dikirim", label: "Kondisi Sebelum Dikirim", desc: "Kondisi makanan sebelum didistribusikan" })
+      allCategories.push({ id: "tray_siap", label: "Tray Siap Distribusi di Rak", desc: "Tray yang sudah tersusun rapi di rak" })
+      allCategories.push({ id: "sisa_pemorsian", label: "Sisa Pemorsian", desc: "Foto sisa makanan setelah diporsi" })
+    } else if (role === "DISTRIBUSI") {
+      allCategories.push({ id: "lokasi_distribusi", label: "Bukti di Lokasi Distribusi", desc: "Foto bukti pengantaran di lokasi" })
+      allCategories.push({ id: "tray_kembali", label: "Tray Kembali ke SPPG", desc: "Minimal 4 foto tray yang kembali" })
+    } else if (role === "PENCUCIAN") {
+      allCategories.push({ id: "limbah_makanan", label: "Limbah Makanan", desc: "Minimal 4 foto limbah makanan" })
+      allCategories.push({ id: "tray_kembali", label: "Tray Kembali ke SPPG", desc: "Minimal 4 foto tray yang kembali" })
+    }
   }
 
   return (
