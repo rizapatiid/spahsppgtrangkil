@@ -11,7 +11,7 @@ import { deleteFromCloudinary } from "@/lib/cloudinary"
 export async function resetAbsensi(absensiId: string, divisiId: number, tanggalString: string) {
   try {
     const session = await getServerSession(authOptions)
-    if (session?.user.role !== "ADMIN") {
+    if ((session?.user?.role !== "ADMIN" && session?.user?.role !== "ASLAP")) {
       return { error: "Akses Ditolak: Hanya Admin yang bisa mereset absensi." }
     }
 

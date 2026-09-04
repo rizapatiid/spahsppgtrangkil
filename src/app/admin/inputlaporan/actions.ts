@@ -7,7 +7,7 @@ import { uploadToCloudinary } from "@/lib/cloudinary"
 
 export async function getLaporanByDateAndDivisi(dateStr: string, divisiId: number) {
   const session = await getServerSession(authOptions)
-  if (!session || session.user.role !== "ADMIN") throw new Error("Unauthorized")
+  if (!session || (session.user.role !== "ADMIN" && session.user.role !== "ASLAP")) throw new Error("Unauthorized")
 
   const targetDate = new Date(`${dateStr}T00:00:00.000Z`)
   
@@ -37,7 +37,7 @@ export async function getLaporanByDateAndDivisi(dateStr: string, divisiId: numbe
 
 export async function saveLaporanManual(formData: FormData) {
   const session = await getServerSession(authOptions)
-  if (!session || session.user.role !== "ADMIN") return { error: "Unauthorized" }
+  if (!session || (session.user.role !== "ADMIN" && session.user.role !== "ASLAP")) return { error: "Unauthorized" }
   
   const dateStr = formData.get("tanggal") as string
   const divisiId = parseInt(formData.get("divisiId") as string)
@@ -115,7 +115,7 @@ export async function saveLaporanManual(formData: FormData) {
 
 export async function deleteFotoManual(fotoId: string) {
   const session = await getServerSession(authOptions)
-  if (!session || session.user.role !== "ADMIN") return { error: "Unauthorized" }
+  if (!session || (session.user.role !== "ADMIN" && session.user.role !== "ASLAP")) return { error: "Unauthorized" }
   try {
     await prisma.fotoKegiatan.delete({ where: { id: fotoId } })
     return { success: true }
@@ -126,7 +126,7 @@ export async function deleteFotoManual(fotoId: string) {
 
 export async function updateFotoKeteranganManual(fotoId: string, keterangan: string) {
   const session = await getServerSession(authOptions)
-  if (!session || session.user.role !== "ADMIN") return { error: "Unauthorized" }
+  if (!session || (session.user.role !== "ADMIN" && session.user.role !== "ASLAP")) return { error: "Unauthorized" }
   try {
     await prisma.fotoKegiatan.update({
       where: { id: fotoId },

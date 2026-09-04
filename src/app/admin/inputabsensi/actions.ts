@@ -8,7 +8,7 @@ import { uploadToCloudinary } from "@/lib/cloudinary"
 
 export async function getAbsensiByDateAndDivisi(dateStr: string, divisiId: number) {
   const session = await getServerSession(authOptions)
-  if (!session || session.user.role !== "ADMIN") throw new Error("Unauthorized")
+  if (!session || (session.user.role !== "ADMIN" && session.user.role !== "ASLAP")) throw new Error("Unauthorized")
 
   const targetDate = new Date(`${dateStr}T00:00:00.000Z`)
 
@@ -44,7 +44,7 @@ export async function getAbsensiByDateAndDivisi(dateStr: string, divisiId: numbe
 
 export async function saveAbsensiManual(formData: FormData) {
   const session = await getServerSession(authOptions)
-  if (!session || session.user.role !== "ADMIN") return { error: "Unauthorized" }
+  if (!session || (session.user.role !== "ADMIN" && session.user.role !== "ASLAP")) return { error: "Unauthorized" }
 
   const dateStr = formData.get("tanggal") as string
   const divisiId = parseInt(formData.get("divisiId") as string)
@@ -145,7 +145,7 @@ export async function saveAbsensiManual(formData: FormData) {
 
 export async function deleteFotoAbsensiManual(fotoId: string) {
   const session = await getServerSession(authOptions)
-  if (!session || session.user.role !== "ADMIN") return { error: "Unauthorized" }
+  if (!session || (session.user.role !== "ADMIN" && session.user.role !== "ASLAP")) return { error: "Unauthorized" }
   try {
     await prisma.fotoKegiatan.delete({ where: { id: fotoId } })
     revalidatePath("/admin/absensi")

@@ -18,6 +18,8 @@ export default function LoginPage() {
     if (status === "authenticated" && session) {
       if (session.user.role === "ADMIN") {
         router.replace("/admin");
+      } else if (session.user.role === "ASLAP") {
+        router.replace("/aslap");
       } else {
         router.replace("/dashboard");
       }
@@ -43,7 +45,6 @@ export default function LoginPage() {
       setError("Username atau password salah");
       setLoading(false);
     } else {
-      router.push("/dashboard");
       router.refresh();
     }
   };
