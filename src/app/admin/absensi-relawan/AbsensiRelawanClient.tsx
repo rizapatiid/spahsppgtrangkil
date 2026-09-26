@@ -43,19 +43,16 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
   const [showPrintModal, setShowPrintModal] = useState(false)
   const [printRequested, setPrintRequested] = useState(false)
 
-  const [ttdName, setTtdName] = useState("")
-  const [ttdNip, setTtdNip] = useState("")
+  
 
   useEffect(() => {
     if (selectedDivisi !== "all") {
       const div = divisiList.find(d => d.id === parseInt(selectedDivisi))
       if (div) {
-        setTtdName(div.koordinator || "")
-        setTtdNip(div.nip_koordinator || "")
+        
       }
     } else {
-      setTtdName("")
-      setTtdNip("")
+      
     }
   }, [selectedDivisi, divisiList])
 
@@ -106,8 +103,7 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
     if (startDate) params.set("startDate", startDate)
     if (endDate) params.set("endDate", endDate)
     params.set("divisi", selectedDivisi)
-    if (ttdName) params.set("ttdName", ttdName)
-    if (ttdNip) params.set("ttdNip", ttdNip)
+    
 
     window.location.href = `/cetak-kehadiran?${params.toString()}`
   }
@@ -413,14 +409,7 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
             <p className="mb-1">Trangkil, {formatId(new Date().toISOString())}</p>
             <p className="font-bold mb-16">Mengetahui,<br/>Admin SPPG Trangkil</p>
             
-            {ttdName ? (
-              <p className="font-bold underline underline-offset-4 decoration-1">{ttdName}</p>
-            ) : (
-              <>
-                <div className="border-b border-black w-48 mx-auto"></div>
-                <p className="mt-1 font-semibold text-[10px]">( .................................................... )</p>
-              </>
-            )}
+            <p className="font-bold underline underline-offset-4 decoration-1">Jelya Affa Carely S.Pd</p>
           </div>
         </div>
       </div>
@@ -457,25 +446,7 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
                   </select>
                 </div>
 
-                  <div className="pt-4 border-t border-slate-100">
-                    <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">Penandatangan Laporan</label>
-                    <div className="space-y-3">
-                      <input 
-                        type="text"
-                        placeholder="Nama Lengkap"
-                        value={ttdName}
-                        onChange={e => setTtdName(e.target.value)}
-                        className="w-full border border-slate-200 bg-slate-50 p-2.5 rounded-lg text-[13px] font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-100 focus:bg-white focus:border-blue-400 transition-all placeholder:font-medium"
-                      />
-                      <input 
-                        type="text"
-                        placeholder="NIP (Opsional)"
-                        value={ttdNip}
-                        onChange={e => setTtdNip(e.target.value)}
-                        className="w-full border border-slate-200 bg-slate-50 p-2.5 rounded-lg text-[13px] font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-100 focus:bg-white focus:border-blue-400 transition-all placeholder:font-medium"
-                      />
-                    </div>
-                  </div>
+
               </div>
 
               <div className="pt-4 border-t border-slate-100 flex justify-end gap-2">

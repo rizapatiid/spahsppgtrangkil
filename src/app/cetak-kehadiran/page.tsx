@@ -12,8 +12,6 @@ export default async function CetakKehadiranPage({ searchParams }: { searchParam
   const startDate = params.startDate;
   const endDate = params.endDate;
   const divisiId = params.divisi === "all" ? undefined : parseInt(params.divisi);
-  const ttdName = params.ttdName || "";
-  const ttdNip = params.ttdNip || "";
 
   const divisiList = await prisma.divisi.findMany({ orderBy: { id: "asc" } });
 
@@ -187,17 +185,7 @@ export default async function CetakKehadiranPage({ searchParams }: { searchParam
               <p className="mb-1">Pati, {formatId(new Date().toISOString())}</p>
               <p className="font-bold mb-16">Mengetahui,<br/>Kepala SPPG Trangkil</p>
               
-              {ttdName ? (
-                <>
-                  <p className="font-bold underline underline-offset-4 decoration-1">{ttdName}</p>
-                  {ttdNip && <p className="mt-1">NIP: {ttdNip}</p>}
-                </>
-              ) : (
-                <>
-                  <div className="border-b border-black w-48 mx-auto"></div>
-                  <p className="mt-1 font-semibold text-[10px]">( .................................................... )</p>
-                </>
-              )}
+              <p className="font-bold underline underline-offset-4 decoration-1">Jelya Affa Carely S.Pd</p>
             </div>
           </div>
 

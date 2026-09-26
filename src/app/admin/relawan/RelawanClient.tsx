@@ -31,15 +31,13 @@ export default function RelawanClient({ relawan, divisiList }: { relawan: any[],
 
   // Print state
   const [showPrintModal, setShowPrintModal] = useState(false)
-  const [ttdName, setTtdName] = useState("SITI MIATUN")
-  const [ttdNip, setTtdNip] = useState("")
+  
   const [printDivisi, setPrintDivisi] = useState("all")
 
   const handlePrintClick = () => {
     const params = new URLSearchParams()
     if (printDivisi !== "all") params.set("divisi", printDivisi)
-    if (ttdName) params.set("ttdName", ttdName)
-    if (ttdNip) params.set("ttdNip", ttdNip)
+    
 
     window.location.href = `/cetak-relawan?${params.toString()}`
   }
@@ -363,28 +361,7 @@ export default function RelawanClient({ relawan, divisiList }: { relawan: any[],
                     ))}
                   </select>
                 </div>
-                <div>
-                  <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Nama Penandatangan (Kiri Bawah)</label>
-                  <input 
-                    type="text" 
-                    value={ttdName} 
-                    onChange={(e) => setTtdName(e.target.value)}
-                    placeholder="Kosongkan jika ingin garis bawah saja"
-                    className="w-full border border-slate-200 bg-slate-50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium outline-none" 
-                  />
                 </div>
-                <div>
-                  <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">NIP (Opsional)</label>
-                  <input 
-                    type="text" 
-                    value={ttdNip} 
-                    onChange={(e) => setTtdNip(e.target.value)}
-                    placeholder="Contoh: 19800101 200501 1 001"
-                    className="w-full border border-slate-200 bg-slate-50 p-2.5 rounded-lg text-[13px] text-slate-800 font-medium outline-none" 
-                  />
-                </div>
-              </div>
-              
               <div className="flex justify-end gap-3 p-4 border-t border-slate-100 bg-slate-50">
                 <button type="button" onClick={() => setShowPrintModal(false)} className="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-lg text-[12px] font-bold transition">Batal</button>
                 <button 

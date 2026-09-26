@@ -5,8 +5,6 @@ import React from "react"
 export default async function CetakRelawanPage({ searchParams }: { searchParams: Promise<any> }) {
   const params = await searchParams;
   const divisiId = params.divisi === "all" || !params.divisi ? undefined : parseInt(params.divisi);
-  const ttdName = params.ttdName || "";
-  const ttdNip = params.ttdNip || "";
 
   const relawanData = await prisma.anggotaDivisi.findMany({
     where: divisiId ? { divisi_id: divisiId } : undefined,
@@ -134,17 +132,7 @@ export default async function CetakRelawanPage({ searchParams }: { searchParams:
               <p className="mb-1">Pati, {formatId(new Date().toISOString())}</p>
               <p className="font-bold mb-16">Mengetahui,<br/>Kepala SPPG Trangkil</p>
               
-              {ttdName ? (
-                <>
-                  <p className="font-bold underline underline-offset-4 decoration-1">{ttdName}</p>
-                  {ttdNip && <p className="mt-1">NIP: {ttdNip}</p>}
-                </>
-              ) : (
-                <>
-                  <div className="border-b border-black w-48 mx-auto"></div>
-                  <p className="mt-1 font-semibold text-[10px]">( .................................................... )</p>
-                </>
-              )}
+              <p className="font-bold underline underline-offset-4 decoration-1">Jelya Affa Carely S.Pd</p>
             </div>
           </div>
 
