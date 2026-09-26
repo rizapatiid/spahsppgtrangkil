@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react"
 import { CalendarDays, Filter, Check, FileSpreadsheet, Printer, X, CalendarIcon } from "lucide-react"
-import { fetchAbsensiMatrix } from "./actions"
+import { fetchAbsensiMatrix } from "@/app/admin/absensi-relawan/actions"
 
 export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[] }) {
   const currentDate = new Date()
