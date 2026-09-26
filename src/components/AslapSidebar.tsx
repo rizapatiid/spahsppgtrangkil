@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Users, FileText, ShieldCheck, ArrowLeft, ChevronRight, CalendarCheck, ClipboardList, X, FileSpreadsheet, Megaphone } from "lucide-react"
+import { Home, Users, FileText, ShieldCheck, ArrowLeft, ChevronRight, CalendarCheck, ClipboardList, X, FileSpreadsheet } from "lucide-react"
 import { useSidebar } from "./SidebarContext"
 
 export default function AslapSidebar() {
@@ -21,7 +21,6 @@ export default function AslapSidebar() {
     { name: "Rekap Absensi", href: "/aslap/absensi", icon: CalendarCheck, exact: false },
     { name: "Laporan Kehadiran", href: "/aslap/absensi-relawan", icon: FileSpreadsheet, exact: false },
     { name: "Laporan Divisi", href: "/aslap/laporan", icon: ClipboardList, exact: false },
-    { name: "Kordinasi", href: "/aslap/kordinasi", icon: Megaphone, exact: false },
   ]
 
   return (
