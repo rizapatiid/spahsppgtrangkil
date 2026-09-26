@@ -38,6 +38,7 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
   const [dateColumns, setDateColumns] = useState<{dateStr: string, label: string}[]>([])
   const [actualStart, setActualStart] = useState("")
   const [actualEnd, setActualEnd] = useState("")
+  const [liburDates, setLiburDates] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
 
   const [showPrintModal, setShowPrintModal] = useState(false)
@@ -80,6 +81,7 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
       setDateColumns(res.dateColumns)
       setActualStart(res.periodStart)
       setActualEnd(res.periodEnd)
+      setLiburDates(res.liburDates || [])
       setLoading(false)
     }
     loadData()
@@ -108,20 +110,23 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
     window.location.href = `/cetak-kehadiran?${params.toString()}`
   }
 
-  const renderStatus = (status: string) => {
-    switch (status) {
-      case "Hadir":
-        return <div className="mx-auto flex items-center justify-center font-bold text-[12px] print:w-auto print:h-auto"><Check size={14} strokeWidth={4} className="text-emerald-600 print:text-black print:w-3.5 print:h-3.5" /></div>
-      case "Sakit":
-        return <div className="mx-auto flex items-center justify-center font-bold text-[12px] text-amber-600 print:w-auto print:h-auto print:text-black" title="Sakit">S</div>
-      case "Izin":
-        return <div className="mx-auto flex items-center justify-center font-bold text-[12px] text-purple-600 print:w-auto print:h-auto print:text-black" title="Izin">I</div>
-      case "Alfa":
-        return <div className="mx-auto flex items-center justify-center font-bold text-[12px] text-rose-600 print:w-auto print:h-auto print:text-black" title="Alfa">-</div>
-      default:
-        // Empty string is cleaner for PDF reports
-        return <span className="text-slate-300 print:text-transparent print:hidden">-</span>
+    const renderStatus = (status: string, isLibur: boolean) => {
+    if (status === "Hadir") {
+      return <div className="mx-auto flex items-center justify-center font-bold text-[12px] print:w-auto print:h-auto"><Check size={14} strokeWidth={4} className="text-emerald-600 print:text-black print:w-3.5 print:h-3.5" /></div>
     }
+    if (status === "Sakit") {
+      return <div className="mx-auto flex items-center justify-center font-bold text-[12px] text-amber-600 print:w-auto print:h-auto print:text-black" title="Sakit">S</div>
+    }
+    if (status === "Izin") {
+      return <div className="mx-auto flex items-center justify-center font-bold text-[12px] text-purple-600 print:w-auto print:h-auto print:text-black" title="Izin">I</div>
+    }
+    if (status === "Alfa") {
+      return <div className="mx-auto flex items-center justify-center font-bold text-[12px] text-rose-600 print:w-auto print:h-auto print:text-black" title="Alfa">-</div>
+    }
+    if (isLibur) {
+      return <div className="mx-auto flex items-center justify-center font-bold text-[12px] text-red-500 print:w-auto print:h-auto print:text-black" title="Libur">L</div>
+    }
+    return <span className="text-slate-300 print:text-transparent print:hidden">-</span>
   }
 
   // Komponen pemilih periode yang bisa di-reuse di main UI dan Modal
@@ -382,7 +387,7 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
                               if (status === "Hadir") totalHadir++
                               return (
                                 <td key={col.dateStr} className="p-0.5 border-r border-slate-100 text-center align-middle print:w-auto print:min-w-0 print:border print:border-black print:bg-transparent print:p-0.5">
-                                  {renderStatus(status)}
+                                  {renderStatus(status, liburDates.includes(col.dateStr))}
                                 </td>
                               )
                             })}

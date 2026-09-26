@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Users, FileText, ShieldCheck, ArrowLeft, ChevronRight, CalendarCheck, ClipboardList, X, FileSpreadsheet, Megaphone } from "lucide-react"
+import { Home, Users, FileText, ShieldCheck, ArrowLeft, ChevronRight, CalendarCheck, ClipboardList, X, FileSpreadsheet, Megaphone , CalendarOff} from "lucide-react"
 import { useSidebar } from "./SidebarContext"
 
 export default function AdminSidebar() {
@@ -23,6 +23,7 @@ export default function AdminSidebar() {
     { name: "Laporan Kehadiran", href: "/admin/absensi-relawan", icon: FileSpreadsheet, exact: false },
     { name: "Laporan Divisi", href: "/admin/laporan", icon: ClipboardList, exact: false },
     { name: "Kordinasi", href: "/admin/kordinasi", icon: Megaphone, exact: false },
+    { name: "Pengaturan Libur", href: "/admin/pengaturan-libur", icon: CalendarOff, exact: false },
   ]
 
   return (

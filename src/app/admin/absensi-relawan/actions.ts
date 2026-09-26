@@ -68,6 +68,15 @@ export async function fetchAbsensiMatrix(params: {
     ]
   });
 
+
+  // Fetch HariLibur within the range
+  const hariLiburList = await prisma.hariLibur.findMany({
+    where: {
+      tanggal: { gte: start, lte: end }
+    }
+  });
+  const liburDates = new Set(hariLiburList.map(h => formatLocal(h.tanggal)));
+
   // Fetch Absensi within the range
   const absensiList = await prisma.absensi.findMany({
     where: {
@@ -97,5 +106,5 @@ export async function fetchAbsensiMatrix(params: {
     };
   });
 
-  return { matrix, dateColumns, periodStart: formatLocal(start), periodEnd: formatLocal(end) };
+  return { matrix, dateColumns, periodStart: formatLocal(start), periodEnd: formatLocal(end), liburDates: Array.from(liburDates) };
 }

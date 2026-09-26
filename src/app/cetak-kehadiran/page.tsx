@@ -24,7 +24,7 @@ export default async function CetakKehadiranPage({ searchParams }: { searchParam
     divisiId
   });
 
-  const { matrix: dataMatrix, dateColumns, periodStart: actualStart, periodEnd: actualEnd } = res;
+  const { matrix: dataMatrix, dateColumns, periodStart: actualStart, periodEnd: actualEnd, liburDates } = res;
   
   const selectedDivisi = params.divisi || "all";
   const namaDivisi = selectedDivisi === "all" ? "SEMUA DIVISI" : divisiList.find(d => d.id === parseInt(selectedDivisi))?.nama_divisi || "";
@@ -37,19 +37,23 @@ export default async function CetakKehadiranPage({ searchParams }: { searchParam
     return `${d.getDate()} ${monthsId[d.getMonth()]} ${d.getFullYear()}`;
   };
 
-  const renderStatus = (status: string) => {
-    switch (status) {
-      case "Hadir":
-        return <div className="mx-auto flex items-center justify-center font-bold text-[12px]"><Check size={14} strokeWidth={4} className="text-black w-3.5 h-3.5" /></div>;
-      case "Sakit":
-        return <div className="mx-auto flex items-center justify-center font-bold text-[12px] text-black">S</div>;
-      case "Izin":
-        return <div className="mx-auto flex items-center justify-center font-bold text-[12px] text-black">I</div>;
-      case "Alfa":
-        return <div className="mx-auto flex items-center justify-center font-bold text-[12px] text-black">-</div>;
-      default:
-        return <div className="mx-auto"></div>;
+  const renderStatus = (status: string, isLibur: boolean) => {
+    if (status === "Hadir") {
+      return <div className="mx-auto flex items-center justify-center font-bold text-[12px]"><Check size={14} strokeWidth={4} className="text-black w-3.5 h-3.5" /></div>;
     }
+    if (status === "Sakit") {
+      return <div className="mx-auto flex items-center justify-center font-bold text-[12px] text-black">S</div>;
+    }
+    if (status === "Izin") {
+      return <div className="mx-auto flex items-center justify-center font-bold text-[12px] text-black">I</div>;
+    }
+    if (status === "Alfa") {
+      return <div className="mx-auto flex items-center justify-center font-bold text-[12px] text-black">-</div>;
+    }
+    if (isLibur) {
+      return <div className="mx-auto flex items-center justify-center font-bold text-[12px] text-black">L</div>;
+    }
+    return <div className="mx-auto"></div>;
   };
 
   return (
@@ -162,7 +166,7 @@ export default async function CetakKehadiranPage({ searchParams }: { searchParam
                               if (status === "Hadir") totalHadir++;
                               return (
                                 <td key={col.dateStr} className="p-0.5 border border-black text-center align-middle">
-                                  {renderStatus(status)}
+                                  {renderStatus(status, (liburDates || []).includes(col.dateStr))}
                                 </td>
                               );
                             })}
