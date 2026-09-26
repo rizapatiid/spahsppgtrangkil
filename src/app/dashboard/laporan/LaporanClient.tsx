@@ -6,8 +6,11 @@ import imageCompression from "browser-image-compression"
 import ConfirmModal from "@/components/ConfirmModal"
 import UploadProgressBar from "@/components/UploadProgressBar"
 import { uploadToCloudinaryClient } from "@/lib/clientUpload"
+import { useModal } from "@/components/ModalContext"
 
 export default function LaporanClient({ role, initialPhotos, initialCatatan }: { role: string, initialPhotos: any[], initialCatatan: string }) {
+  const { showAlert, showConfirm } = useModal()
+
   const [loadingSection, setLoadingSection] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
@@ -156,12 +159,12 @@ export default function LaporanClient({ role, initialPhotos, initialCatatan }: {
       }
 
       if (lastError) {
-        alert("Gagal mengunggah sebagian foto: " + lastError)
+        showAlert("Gagal mengunggah sebagian foto: " + lastError)
       } else {
         setSelectedFiles(prev => ({ ...prev, [catId]: [] }))
       }
     } catch (err: any) {
-      alert("Terjadi kesalahan sistem: " + err.message)
+      showAlert("Terjadi kesalahan sistem: " + err.message)
     }
 
     setLoadingSection(null)
@@ -178,7 +181,7 @@ export default function LaporanClient({ role, initialPhotos, initialCatatan }: {
         setLoadingSection("delete-" + fotoId)
         const res = await deleteFotoLaporan(fotoId)
         if (res.error) {
-          alert(res.error)
+          showAlert(res.error)
         } else {
           setUploadedPhotos(prev => prev.filter(f => f.id !== fotoId))
         }
@@ -199,9 +202,9 @@ export default function LaporanClient({ role, initialPhotos, initialCatatan }: {
     setLoadingSection(null)
 
     if (res.error) {
-      alert(res.error)
+      showAlert(res.error)
     } else {
-      alert("Catatan harian berhasil disimpan! Anda tetap bisa mengedit atau menambah foto jika diperlukan.")
+      showAlert("Catatan harian berhasil disimpan! Anda tetap bisa mengedit atau menambah foto jika diperlukan.")
     }
   }
 
@@ -229,7 +232,7 @@ export default function LaporanClient({ role, initialPhotos, initialCatatan }: {
 
     const res = await editFotoLaporan(editModalFoto.id, formData)
     if (res.error) {
-      alert(res.error)
+      showAlert(res.error)
     } else if (res.photo) {
       setUploadedPhotos(prev => prev.map(p => p.id === editModalFoto.id ? res.photo : p))
       setEditModalFoto(null)

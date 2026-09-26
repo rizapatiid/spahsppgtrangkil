@@ -7,6 +7,7 @@ import { createArahan, updateArahan, deleteArahan } from './actions'
 import UploadProgressBar from "@/components/UploadProgressBar"
 import { uploadToCloudinaryClient } from "@/lib/clientUpload"
 import imageCompression from "browser-image-compression"
+import { useModal } from "@/components/ModalContext"
 
 type Divisi = {
   id: number
@@ -24,6 +25,8 @@ type Arahan = {
 }
 
 export default function KordinasiClient({ arahan, divisiList }: { arahan: Arahan[], divisiList: Divisi[] }) {
+  const { showAlert, showConfirm } = useModal()
+
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [currentId, setCurrentId] = useState<number | null>(null)
@@ -115,11 +118,11 @@ export default function KordinasiClient({ arahan, divisiList }: { arahan: Arahan
   }
 
   const handleDelete = async (id: number) => {
-    if (confirm('Apakah Anda yakin ingin menghapus arahan ini?')) {
+    if (await showConfirm('Apakah Anda yakin ingin menghapus arahan ini?')) {
       try {
         await deleteArahan(id)
       } catch (err) {
-        alert('Gagal menghapus arahan')
+        showAlert('Gagal menghapus arahan')
       }
     }
   }

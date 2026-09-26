@@ -6,8 +6,11 @@ import imageCompression from "browser-image-compression"
 import UploadProgressBar from "@/components/UploadProgressBar"
 import { uploadToCloudinaryClient } from "@/lib/clientUpload"
 import { getAbsensiByDateAndDivisi, saveAbsensiManual, deleteFotoAbsensiManual } from "@/app/admin/inputabsensi/actions"
+import { useModal } from "@/components/ModalContext"
 
 export default function InputAbsensiClient({ divisiList }: { divisiList: any[] }) {
+  const { showAlert, showConfirm } = useModal()
+
   const [selectedDate, setSelectedDate] = useState(() => {
     const d = new Date()
     return d.toISOString().split("T")[0]
@@ -112,13 +115,14 @@ export default function InputAbsensiClient({ divisiList }: { divisiList: any[] }
   }
 
   const handleDeleteExisting = async (id: string) => {
-    if (!confirm("Hapus foto briefing ini?")) return
+    const confirmed = await showConfirm("Hapus foto briefing ini?");
+    if (!confirmed) return
     try {
       const res = await deleteFotoAbsensiManual(id)
       if (res.error) throw new Error(res.error)
       setExistingFotos(prev => prev.filter((f: any) => f.id !== id))
     } catch(e:any) {
-      alert(e.message)
+      showAlert(e.message)
     }
   }
 

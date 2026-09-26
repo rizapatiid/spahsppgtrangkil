@@ -6,8 +6,11 @@ import imageCompression from "browser-image-compression"
 import UploadProgressBar from "@/components/UploadProgressBar"
 import { uploadToCloudinaryClient } from "@/lib/clientUpload"
 import { getLaporanByDateAndDivisi, saveLaporanManual, deleteFotoManual } from "@/app/admin/inputlaporan/actions"
+import { useModal } from "@/components/ModalContext"
 
 export default function InputLaporanClient({ divisiList }: { divisiList: any[] }) {
+  const { showAlert, showConfirm } = useModal()
+
   const [selectedDate, setSelectedDate] = useState(() => {
     const d = new Date()
     return d.toISOString().split("T")[0]
@@ -126,18 +129,19 @@ export default function InputLaporanClient({ divisiList }: { divisiList: any[] }
       if (res.error) throw new Error(res.error)
       setExistingPhotos(prev => prev.map(p => p.id === id ? { ...p, catatan: { keterangan: newKet } } : p))
     } catch(e:any) {
-      alert(e.message)
+      showAlert(e.message)
     }
   }
 
   const handleDeleteExisting = async (id: string) => {
-    if (!confirm("Hapus foto ini?")) return
+    const confirmed = await showConfirm("Hapus foto ini?");
+    if (!confirmed) return
     try {
       const res = await deleteFotoManual(id)
       if (res.error) throw new Error(res.error)
       setExistingPhotos(prev => prev.filter(p => p.id !== id))
     } catch(e:any) {
-      alert(e.message)
+      showAlert(e.message)
     }
   }
 

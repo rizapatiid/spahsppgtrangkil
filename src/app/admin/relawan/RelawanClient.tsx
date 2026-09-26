@@ -5,6 +5,7 @@ import { createPortal } from "react-dom"
 import { Users, UserPlus, Search, X, Edit, Trash2, Printer } from "lucide-react"
 import { createRelawan, updateRelawan, deleteRelawan } from "./actions"
 import ConfirmModal from "@/components/ConfirmModal"
+import { useModal } from "@/components/ModalContext"
 
 function ModalPortal({ children }: { children: React.ReactNode }) {
   if (typeof document === "undefined") return null
@@ -12,6 +13,8 @@ function ModalPortal({ children }: { children: React.ReactNode }) {
 }
 
 export default function RelawanClient({ relawan, divisiList }: { relawan: any[], divisiList: any[] }) {
+  const { showAlert, showConfirm } = useModal()
+
   const [showAddForm, setShowAddForm] = useState(false)
   const [loading, setLoading] = useState(false)
   const [search, setSearch] = useState("")
@@ -57,10 +60,10 @@ export default function RelawanClient({ relawan, divisiList }: { relawan: any[],
     setLoading(false)
     
     if (res.error) {
-      alert(res.error)
+      showAlert(res.error)
     } else {
       setShowAddForm(false)
-      alert("Relawan berhasil ditambahkan")
+      showAlert("Relawan berhasil ditambahkan")
     }
   }
 
@@ -73,10 +76,10 @@ export default function RelawanClient({ relawan, divisiList }: { relawan: any[],
     setLoading(false)
     
     if (res.error) {
-      alert(res.error)
+      showAlert(res.error)
     } else {
       setEditData(null)
-      alert("Data relawan berhasil diperbarui")
+      showAlert("Data relawan berhasil diperbarui")
     }
   }
 

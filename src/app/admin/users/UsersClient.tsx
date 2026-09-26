@@ -5,6 +5,7 @@ import { createPortal } from "react-dom"
 import { Users, UserPlus, ToggleLeft, ToggleRight, X } from "lucide-react"
 import { createDivisiAccount, updateDivisiAccount, toggleUserStatus, resetPassword } from "./actions"
 import ConfirmModal from "@/components/ConfirmModal"
+import { useModal } from "@/components/ModalContext"
 
 function ModalPortal({ children }: { children: React.ReactNode }) {
   if (typeof document === "undefined") return null
@@ -12,6 +13,8 @@ function ModalPortal({ children }: { children: React.ReactNode }) {
 }
 
 export default function UsersClient({ users }: { users: any[] }) {
+  const { showAlert, showConfirm } = useModal()
+
   const [showAddForm, setShowAddForm] = useState(false)
   const [loading, setLoading] = useState(false)
 
@@ -42,10 +45,10 @@ export default function UsersClient({ users }: { users: any[] }) {
     const res = await createDivisiAccount(formData)
     setLoading(false)
     if (res.error) {
-      alert(res.error)
+      showAlert(res.error)
     } else {
       setShowAddForm(false)
-      alert("Akun berhasil dibuat")
+      showAlert("Akun berhasil dibuat")
     }
   }
 
@@ -59,10 +62,10 @@ export default function UsersClient({ users }: { users: any[] }) {
     const res = await updateDivisiAccount(editUser.id, formData)
     setLoading(false)
     if (res.error) {
-      alert(res.error)
+      showAlert(res.error)
     } else {
       setEditUser(null)
-      alert("Akun berhasil diperbarui")
+      showAlert("Akun berhasil diperbarui")
     }
   }
 
@@ -86,11 +89,11 @@ export default function UsersClient({ users }: { users: any[] }) {
     const res = await resetPassword(resetId, newPass)
     setLoading(false)
     if (res?.error) {
-      alert(res.error)
+      showAlert(res.error)
     } else {
       setResetId(null)
       setNewPass("")
-      alert("Password berhasil direset")
+      showAlert("Password berhasil direset")
     }
   }
 

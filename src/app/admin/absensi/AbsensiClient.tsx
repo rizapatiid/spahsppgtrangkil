@@ -5,8 +5,11 @@ import Link from "next/link"
 import { CalendarCheck, RotateCcw, X, Image as ImageIcon, Eye } from "lucide-react"
 import { resetAbsensi } from "./actions"
 import ConfirmModal from "@/components/ConfirmModal"
+import { useModal } from "@/components/ModalContext"
 
 export default function AbsensiClient({ absensiData, fotoData }: { absensiData: any[], fotoData: any[] }) {
+  const { showAlert, showConfirm } = useModal()
+
   const [selectedAbsen, setSelectedAbsen] = useState<any | null>(null)
   const [previewFotoUrl, setPreviewFotoUrl] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -97,9 +100,9 @@ export default function AbsensiClient({ absensiData, fotoData }: { absensiData: 
         setIsLoading(false)
 
         if (res.error) {
-          alert(res.error)
+          showAlert(res.error)
         } else {
-          alert("Absensi berhasil direset!")
+          showAlert("Absensi berhasil direset!")
           window.location.reload()
         }
       }
