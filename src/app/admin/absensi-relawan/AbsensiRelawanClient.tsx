@@ -38,7 +38,7 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
   const [dateColumns, setDateColumns] = useState<{dateStr: string, label: string}[]>([])
   const [actualStart, setActualStart] = useState("")
   const [actualEnd, setActualEnd] = useState("")
-  const [liburDates, setLiburDates] = useState<string[]>([])
+  const [liburDates, setLiburDates] = useState<Record<string, number[]>>({})
   const [loading, setLoading] = useState(true)
 
   const [showPrintModal, setShowPrintModal] = useState(false)
@@ -81,7 +81,7 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
       setDateColumns(res.dateColumns)
       setActualStart(res.periodStart)
       setActualEnd(res.periodEnd)
-      setLiburDates(res.liburDates || [])
+      setLiburDates(res.liburDates || {})
       setLoading(false)
     }
     loadData()
@@ -387,7 +387,7 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
                               if (status === "Hadir") totalHadir++
                               return (
                                 <td key={col.dateStr} className="p-0.5 border-r border-slate-100 text-center align-middle print:w-auto print:min-w-0 print:border print:border-black print:bg-transparent print:p-0.5">
-                                  {renderStatus(status, liburDates.includes(col.dateStr))}
+                                  {renderStatus(status, (liburDates[col.dateStr] || []).includes(anggota.id))}
                                 </td>
                               )
                             })}

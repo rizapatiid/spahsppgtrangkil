@@ -69,13 +69,22 @@ export async function fetchAbsensiMatrix(params: {
   });
 
 
-  // Fetch HariLibur within the range
+  // Fetch HariLibur and related Relawan within the range
   const hariLiburList = await prisma.hariLibur.findMany({
     where: {
       tanggal: { gte: start, lte: end }
+    },
+    include: {
+      relawan: true
     }
   });
-  const liburDates = new Set(hariLiburList.map(h => formatLocal(h.tanggal)));
+  
+  // Format: { "2026-09-15": [1, 2, 3] }
+  const liburMap: Record<string, number[]> = {};
+  hariLiburList.forEach(h => {
+    const dStr = formatLocal(h.tanggal);
+    liburMap[dStr] = h.relawan.map(r => r.anggota_id);
+  });
 
   // Fetch Absensi within the range
   const absensiList = await prisma.absensi.findMany({
@@ -106,5 +115,5 @@ export async function fetchAbsensiMatrix(params: {
     };
   });
 
-  return { matrix, dateColumns, periodStart: formatLocal(start), periodEnd: formatLocal(end), liburDates: Array.from(liburDates) };
+  return { matrix, dateColumns, periodStart: formatLocal(start), periodEnd: formatLocal(end), liburDates: liburMap };
 }
