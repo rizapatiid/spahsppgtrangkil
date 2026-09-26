@@ -1,0 +1,19 @@
+[ KA SPPG ]                                 [ MITRA ]
+            Jelya Affa Carely                              Sutiyem
+                 └────────────────────────┬───────────────────┘
+                                          │
+              ┌───────────────────────────┼───────────────────────────┐
+        [ AKUNTAN (AK) ]           [ AHLI GIZI (AG) ]        [ ASISTEN LAPANGAN ]
+     Aprilia Sri Wulandari            Ulin Nikmah               Imrotus Solihah
+                                          │                           │
+              ┌───────────────────────────┼──────────────┐            ├──────────────┬──────────────┬──────────────┐
+              │                           │              │            │              │              │              │
+     [DIVISI PERSIAPAN]          [DIVISI PENGOLAHAN] [DIVISI PEMORSIAN] [DIVISI DISTRIBUSI] [DIVISI PENCUCIAN] [DIVISI KEBERSIHAN] [DIVISI SATPAM]
+      - Endang Setiyani           - Ali Mansur        - Abdul Kholik     - Ahmad Asrofi     - Arsy Daffa Ain   - Retno Sulistyowati - Agustio Pujiyanto
+      - Jumiati Kasan             - Dwi Retnowati     - Ani Sekarwati    - Dwi Kemal Y.     - Dava Khoirul A.
+      - Karunia Cahya N.          - Edy Bagus H.      - Dita Santi R.    - M. Taufiq        - Moh. Abid Alea W.
+      - Meinaldi Aji W.           - Jumiati Mursidi   - Jumiati Eko      - Syaiful Anwar    - Novita Tri A. P.
+      - Suparti                   - Sri Rujaenah      - Kasmi                               - Riza Badruz Z.
+      - Tri Murtini               - Suprapto          - Moh. Febriantoro                    - Siti Miatun
+                                                      - Siti Rukani                         - Supaisih
+                                                      - Tita Diah L.

@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth/next"
-import { authOptions } from "../../../api/auth/[...nextauth]/route"
+import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import Link from "next/link"
