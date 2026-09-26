@@ -13,9 +13,8 @@ export default async function LaporanPage() {
   const initialPhotos = divisiId ? await getUploadedFotos(divisiId) : []
 
   // Ambil laporan existing hari ini
-  const now = new Date()
-  const wibDateString = now.toLocaleDateString("en-CA", { timeZone: "Asia/Jakarta" })
-  const today = new Date(`${wibDateString}T00:00:00.000Z`)
+  const { getLogicalDate } = await import("@/lib/dateUtils")
+  const today = getLogicalDate()
   const existingLaporan = divisiId ? await prisma.laporanDivisi.findFirst({
     where: { divisi_id: divisiId, tanggal: { gte: today } }
   }) : null

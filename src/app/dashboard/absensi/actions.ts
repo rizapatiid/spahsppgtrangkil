@@ -16,9 +16,8 @@ export async function submitAbsensi(formData: FormData) {
     const divisi_id = session.user.divisi_id
     
     // Gunakan tanggal hari ini (set jam ke 00:00:00 UTC berdasarkan WIB)
-    const now = new Date()
-    const wibDateString = now.toLocaleDateString("en-CA", { timeZone: "Asia/Jakarta" })
-    const today = new Date(`${wibDateString}T00:00:00.000Z`)
+  const { getLogicalDate } = await import("@/lib/dateUtils")
+  const today = getLogicalDate()
 
     // Cek apakah sudah absen hari ini
     const existing = await prisma.absensi.findUnique({

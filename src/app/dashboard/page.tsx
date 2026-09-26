@@ -26,9 +26,8 @@ export default async function DashboardPage() {
   })
 
   // Cek status hari ini
-  const now = new Date()
-  const wibDateString = now.toLocaleDateString("en-CA", { timeZone: "Asia/Jakarta" })
-  const today = new Date(`${wibDateString}T00:00:00.000Z`)
+  const { getLogicalDate } = await import("@/lib/dateUtils")
+  const today = getLogicalDate()
   
   const absensiToday = await prisma.absensi.findFirst({
     where: { divisi_id, tanggal: { gte: today } },
@@ -116,7 +115,7 @@ export default async function DashboardPage() {
     "Fokus, kedisiplinan, dan kerja sama adalah kunci utama divisi kita.",
     "Kesuksesan sejati datang dari apa yang kita lakukan secara konsisten setiap hari."
   ]
-  const dayOfYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / 1000 / 60 / 60 / 24)
+  const dayOfYear = Math.floor((new Date().getTime() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 1000 / 60 / 60 / 24)
   const dailyQuote = quotes[dayOfYear % quotes.length]
 
   return (

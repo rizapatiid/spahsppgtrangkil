@@ -24,9 +24,8 @@ export async function uploadFotoLaporan(formData: FormData, tipe_foto: string) {
     }
 
     const divisi_id = await getSharedDivisiId(session)
-    const now = new Date()
-    const wibDateString = now.toLocaleDateString("en-CA", { timeZone: "Asia/Jakarta" })
-    const today = new Date(`${wibDateString}T00:00:00.000Z`)
+  const { getLogicalDate } = await import("@/lib/dateUtils")
+  const today = getLogicalDate()
 
     // Pastikan ada LaporanDivisi untuk hari ini agar admin bisa melacaknya
     let laporan = await prisma.laporanDivisi.findFirst({
@@ -99,9 +98,8 @@ export async function deleteFotoLaporan(fotoId: string) {
 }
 
 export async function getUploadedFotos(divisiId: number) {
-  const now = new Date()
-  const wibDateString = now.toLocaleDateString("en-CA", { timeZone: "Asia/Jakarta" })
-  const today = new Date(`${wibDateString}T00:00:00.000Z`)
+  const { getLogicalDate } = await import("@/lib/dateUtils")
+  const today = getLogicalDate()
   
   return await prisma.fotoKegiatan.findMany({
     where: {
@@ -158,9 +156,8 @@ export async function submitFinalLaporan(catatan: string) {
     if (!session || !session.user.divisi_id) return { error: "Sesi tidak valid" }
     
     const divisi_id = await getSharedDivisiId(session)
-    const now = new Date()
-    const wibDateString = now.toLocaleDateString("en-CA", { timeZone: "Asia/Jakarta" })
-    const today = new Date(`${wibDateString}T00:00:00.000Z`)
+  const { getLogicalDate } = await import("@/lib/dateUtils")
+  const today = getLogicalDate()
 
     const existing = await prisma.laporanDivisi.findFirst({
       where: { divisi_id, tanggal: { gte: today } }
