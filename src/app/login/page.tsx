@@ -3,6 +3,7 @@
 import { signIn, useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { User, Lock, Eye, EyeOff, AlertCircle, ShieldCheck } from "lucide-react";
 
 export default function LoginPage() {
@@ -60,9 +61,11 @@ export default function LoginPage() {
         
         {/* Header Logo */}
         <div className="flex items-center gap-3.5 relative z-10">
-          <img 
+          <Image 
             src="https://res.cloudinary.com/glcpjxnr/image/upload/v1787672024/sppg_trangkil/assets/gcvi4ohrnoapnxb8dfro.png" 
-            alt="Logo SPAH" 
+            alt="Logo SPAH"
+            width={120}
+            height={56} 
             className="h-14 w-auto object-contain shrink-0" 
             style={{
               filter: "drop-shadow(0 0 1.2px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 0.3px rgba(255, 255, 255, 0.7))"
@@ -98,7 +101,7 @@ export default function LoginPage() {
           {/* Header Mobile & Branding */}
           <div className="space-y-3">
             <div className="flex items-center justify-between lg:justify-start">
-              <img src="https://res.cloudinary.com/glcpjxnr/image/upload/v1787672024/sppg_trangkil/assets/gcvi4ohrnoapnxb8dfro.png" alt="Logo SPAH" className="h-14 w-auto object-contain lg:hidden -ml-2" />
+              <Image src="https://res.cloudinary.com/glcpjxnr/image/upload/v1787672024/sppg_trangkil/assets/gcvi4ohrnoapnxb8dfro.png" alt="Logo SPAH" width={120} height={56} className="h-14 w-auto object-contain lg:hidden -ml-2" />
             </div>
             <div>
               <h1 className="text-2xl font-black text-slate-800 tracking-tight">Selamat Datang 👋</h1>
