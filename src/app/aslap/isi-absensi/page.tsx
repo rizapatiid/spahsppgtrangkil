@@ -19,6 +19,12 @@ export default async function AbsensiPage() {
   // Cek apakah sudah absen hari ini
   const { getLogicalDate } = await import("@/lib/dateUtils")
   const today = getLogicalDate()
+  
+  const hariLibur = await prisma.hariLibur.findUnique({
+    where: { tanggal: today },
+    include: { relawan: true }
+  });
+  const liburIds = hariLibur ? hariLibur.relawan.map(r => r.anggota_id) : [];
 
   const existingAbsensi = await prisma.absensi.findFirst({
     where: {
@@ -119,7 +125,7 @@ export default async function AbsensiPage() {
             </div>
           </div>
           <CardContent className="p-6 sm:p-7 bg-white">
-            <AbsensiClient anggotaList={anggotaList} divisiName={session?.user.role || "UNKNOWN"} />
+            <AbsensiClient anggotaList={anggotaList} divisiName={session?.user.role || "UNKNOWN"} liburIds={liburIds} />
           </CardContent>
         </Card>
       )}

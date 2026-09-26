@@ -7,7 +7,9 @@ import { useRouter } from "next/navigation"
 import { Camera, Save, UserCheck, Phone, CheckCircle2, AlertCircle, UploadCloud } from "lucide-react"
 import UploadProgressBar from "@/components/UploadProgressBar"
 import { uploadToCloudinaryClient } from "@/lib/clientUpload"
-export default function AbsensiClient({ anggotaList, divisiName }: { anggotaList: any[], divisiName: string }) {
+export default function AbsensiClient({ anggotaList, divisiName, liburIds = [] }: { anggotaList: any[], divisiName: string, liburIds?: number[] }) {
+  const activeAnggota = anggotaList.filter((a:any) => !liburIds.includes(a.id))
+  const liburAnggota = anggotaList.filter((a:any) => liburIds.includes(a.id))
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState({ text: "", type: "" })
   const [fileName, setFileName] = useState("")
