@@ -39,7 +39,17 @@ export async function getAbsensiByDateAndDivisi(dateStr: string, divisiId: numbe
     include: { anggota: true }
   })
 
-  return { absensi, anggota: divisi?.anggota || [], fotoBriefingList }
+  const hariLibur = await prisma.hariLibur.findUnique({
+    where: { tanggal: targetDate },
+    include: { relawan: true }
+  })
+  
+  const liburIds = hariLibur ? hariLibur.relawan.map(r => r.anggota_id) : []
+  
+  const activeAnggota = (divisi?.anggota || []).filter(a => !liburIds.includes(a.id))
+  const liburAnggota = (divisi?.anggota || []).filter(a => liburIds.includes(a.id))
+
+  return { absensi, anggota: activeAnggota, liburAnggota, fotoBriefingList }
 }
 
 export async function saveAbsensiManual(formData: FormData) {

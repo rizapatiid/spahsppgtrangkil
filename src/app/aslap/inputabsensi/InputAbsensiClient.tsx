@@ -18,6 +18,7 @@ export default function InputAbsensiClient({ divisiList }: { divisiList: any[] }
   const [selectedDivisi, setSelectedDivisi] = useState("")
   
   const [anggota, setAnggota] = useState<any[]>([])
+  const [liburAnggota, setLiburAnggota] = useState<any[]>([])
   const [absensiData, setAbsensiData] = useState<any>({})
   const [existingFotos, setExistingFotos] = useState<any[]>([])
   type PhotoItem = { file: File, preview: string, name: string }
@@ -37,6 +38,7 @@ export default function InputAbsensiClient({ divisiList }: { divisiList: any[] }
       loadData()
     } else {
       setAnggota([])
+      setLiburAnggota([])
       setAbsensiData({})
       setExistingFotos([])
       setNewFotos([])
@@ -60,6 +62,7 @@ export default function InputAbsensiClient({ divisiList }: { divisiList: any[] }
     try {
       const res = await getAbsensiByDateAndDivisi(selectedDate, parseInt(selectedDivisi))
       setAnggota(res.anggota)
+      setLiburAnggota(res.liburAnggota || [])
       
       const newAbsData: any = {}
       res.anggota.forEach((a: any) => {
