@@ -25,6 +25,7 @@ export default async function AbsensiPage() {
     include: { relawan: true }
   });
   const liburIds = hariLibur ? hariLibur.relawan.map(r => r.anggota_id) : [];
+  console.log("TODAY:", today, "HARI_LIBUR:", hariLibur, "LIBUR_IDS:", liburIds);
 
   const existingAbsensi = await prisma.absensi.findFirst({
     where: {

@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
+import { revalidatePath } from "next/cache"
 
 export async function getHariLibur() {
   const data = await prisma.hariLibur.findMany({
@@ -67,6 +68,14 @@ export async function saveJadwalLibur(tanggal: string, keterangan: string, anggo
       })
     }
 
+    revalidatePath("/")
+    revalidatePath("/dashboard/absensi")
+    revalidatePath("/admin/absensi-relawan")
+    revalidatePath("/cetak-kehadiran")
+    revalidatePath("/")
+    revalidatePath("/dashboard/absensi")
+    revalidatePath("/admin/absensi-relawan")
+    revalidatePath("/cetak-kehadiran")
     return { success: true }
   } catch (e: any) {
     return { error: e.message }
@@ -81,6 +90,14 @@ export async function deleteHariLibur(id: number) {
     await prisma.hariLibur.delete({
       where: { id: Number(id) }
     })
+    revalidatePath("/")
+    revalidatePath("/dashboard/absensi")
+    revalidatePath("/admin/absensi-relawan")
+    revalidatePath("/cetak-kehadiran")
+    revalidatePath("/")
+    revalidatePath("/dashboard/absensi")
+    revalidatePath("/admin/absensi-relawan")
+    revalidatePath("/cetak-kehadiran")
     return { success: true }
   } catch (e: any) {
     return { error: e.message }
