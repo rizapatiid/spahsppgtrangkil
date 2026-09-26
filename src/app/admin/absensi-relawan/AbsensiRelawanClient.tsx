@@ -387,7 +387,7 @@ export default function AbsensiRelawanClient({ divisiList }: { divisiList: any[]
                               if (status === "Hadir") totalHadir++
                               return (
                                 <td key={col.dateStr} className="p-0.5 border-r border-slate-100 text-center align-middle print:w-auto print:min-w-0 print:border print:border-black print:bg-transparent print:p-0.5">
-                                  {renderStatus(status, (liburDates[col.dateStr] || []).includes(anggota.id))}
+                                  {renderStatus(status, (liburDates[col.dateStr] || []).includes(row.id))}
                                 </td>
                               )
                             })}

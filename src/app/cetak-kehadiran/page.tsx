@@ -166,7 +166,7 @@ export default async function CetakKehadiranPage({ searchParams }: { searchParam
                               if (status === "Hadir") totalHadir++;
                               return (
                                 <td key={col.dateStr} className="p-0.5 border border-black text-center align-middle">
-                                  {renderStatus(status, (liburDates[col.dateStr] || []).includes(anggota.id))}
+                                  {renderStatus(status, (liburDates[col.dateStr] || []).includes(row.id))}
                                 </td>
                               );
                             })}
