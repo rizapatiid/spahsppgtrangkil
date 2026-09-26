@@ -77,20 +77,16 @@ export async function saveLaporanManual(formData: FormData) {
     // Process new photos
     const keys = Array.from(formData.keys())
     for (const key of keys) {
-      if (key.startsWith("foto_")) {
-        const file = formData.get(key) as File
-        if (file && file.size > 0) {
-          const suffix = key.replace("foto_", "") // e.g. "kegiatan_0"
+      if (key.startsWith("foto_url_")) {
+        const url_foto = formData.get(key) as string
+        if (url_foto) {
+          const suffix = key.replace("foto_url_", "") // e.g. "kegiatan_0"
           const parts = suffix.split("_")
           const counter = parts.pop() // "0"
           const tipe_foto = parts.join("_") // "kegiatan"
           
           const ketKey = `ket_${tipe_foto}_${counter}`
           const keterangan = (formData.get(ketKey) as string) || ""
-
-          const bytes = await file.arrayBuffer()
-          const buffer = Buffer.from(bytes)
-          const url_foto = await uploadToCloudinary(buffer, `sppg_trangkil/laporan_manual/${tipe_foto}`)
           
           await prisma.fotoKegiatan.create({
             data: {

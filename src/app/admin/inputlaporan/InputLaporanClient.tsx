@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react"
 import { Calendar, Users, Save, CheckCircle2, AlertCircle, Trash2, X, Image as ImageIcon, Camera } from "lucide-react"
 import imageCompression from "browser-image-compression"
+import UploadProgressBar from "@/components/UploadProgressBar"
+import { uploadToCloudinaryClient } from "@/lib/clientUpload"
 import { getLaporanByDateAndDivisi, saveLaporanManual, deleteFotoManual } from "./actions"
 
 export default function InputLaporanClient({ divisiList }: { divisiList: any[] }) {
@@ -20,6 +22,8 @@ export default function InputLaporanClient({ divisiList }: { divisiList: any[] }
   
   const [isLoading, setIsLoading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
   const [message, setMessage] = useState({ type: "", text: "" })
 
   const getCategories = (r: string) => {

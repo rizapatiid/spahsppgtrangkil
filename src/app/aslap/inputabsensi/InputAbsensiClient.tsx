@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react"
 import { Calendar, Users, Save, CheckCircle2, AlertCircle, Trash2, Camera, X, ImageIcon } from "lucide-react"
 import imageCompression from "browser-image-compression"
+import UploadProgressBar from "@/components/UploadProgressBar"
+import { uploadToCloudinaryClient } from "@/lib/clientUpload"
 import { getAbsensiByDateAndDivisi, saveAbsensiManual, deleteFotoAbsensiManual } from "@/app/admin/inputabsensi/actions"
 
 export default function InputAbsensiClient({ divisiList }: { divisiList: any[] }) {
@@ -23,6 +25,8 @@ export default function InputAbsensiClient({ divisiList }: { divisiList: any[] }
   const isTwoPhotos = ["driver", "distribusi", "pengolahan", "persiapan", "pencucian"].some(d => activeDivName.includes(d))
   const maxPhotos = isTwoPhotos ? 2 : 1
   const [isSaving, setIsSaving] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
   const [message, setMessage] = useState({ type: "", text: "" })
 
   useEffect(() => {
@@ -134,9 +138,18 @@ export default function InputAbsensiClient({ divisiList }: { divisiList: any[] }
       formData.append("divisiId", selectedDivisi)
       formData.append("absensiData", JSON.stringify(payload))
       
+      setIsUploading(true)
+      setUploadProgress(0)
+      let uploadedCount = 0
       for (const nf of newFotos) {
-        formData.append("foto", nf.file)
+        const compressedFoto = await handleCompress(nf.file)
+        const url = await uploadToCloudinaryClient(compressedFoto, "sppg_trangkil/absensi", (p) => {
+          setUploadProgress(Math.round(((uploadedCount * 100) + p) / newFotos.length))
+        })
+        formData.append("foto_urls", url)
+        uploadedCount++
       }
+      setIsUploading(false)
       
       const res = await saveAbsensiManual(formData)
       if (res.error) throw new Error(res.error)
@@ -152,6 +165,7 @@ export default function InputAbsensiClient({ divisiList }: { divisiList: any[] }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      <UploadProgressBar progress={uploadProgress} isUploading={isUploading} />
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="p-5 sm:p-6 border-b border-slate-100">
           <h2 className="text-lg font-bold text-slate-800 mb-1">Input Absensi Manual</h2>

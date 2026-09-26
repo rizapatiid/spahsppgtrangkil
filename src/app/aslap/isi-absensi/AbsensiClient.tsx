@@ -5,11 +5,14 @@ import { submitAbsensi } from "./actions"
 import imageCompression from "browser-image-compression"
 import { useRouter } from "next/navigation"
 import { Camera, Save, UserCheck, Phone, CheckCircle2, AlertCircle, UploadCloud } from "lucide-react"
-
+import UploadProgressBar from "@/components/UploadProgressBar"
+import { uploadToCloudinaryClient } from "@/lib/clientUpload"
 export default function AbsensiClient({ anggotaList, divisiName }: { anggotaList: any[], divisiName: string }) {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState({ text: "", type: "" })
   const [fileName, setFileName] = useState("")
+  const [isUploading, setIsUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
   const router = useRouter()
 
   type PhotoItem = { file: File, preview: string, isFromCamera: boolean, name: string }
@@ -127,15 +130,30 @@ export default function AbsensiClient({ anggotaList, divisiName }: { anggotaList
     // Hapus foto default jika ada
     formData.delete("foto")
 
-    // Compress & append each photo
-    for (const photo of photos) {
-      let processedFile = photo.file
-      // If we already watermarked it in handleFileChange, we only need to compress
-      const compressedFoto = await handleCompress(processedFile)
-      formData.append("foto", compressedFoto, photo.name)
+    // Compress & upload each photo
+    setIsUploading(true)
+    setUploadProgress(0)
+    let uploadedCount = 0
+    try {
+      for (const photo of photos) {
+        let processedFile = photo.file
+        const compressedFoto = await handleCompress(processedFile)
+        
+        const url = await uploadToCloudinaryClient(compressedFoto, "sppg_trangkil/absensi", (p) => {
+          setUploadProgress(Math.round(((uploadedCount * 100) + p) / photos.length))
+        })
+        formData.append("foto_urls", url)
+        uploadedCount++
+      }
+    } catch (err: any) {
+      setMessage({ text: err.message || "Gagal mengunggah gambar", type: "error" })
+      setLoading(false)
+      setIsUploading(false)
+      return
     }
 
     const res = await submitAbsensi(formData)
+    setIsUploading(false)
 
     if (res.error) {
       setMessage({ text: res.error, type: "error" })
@@ -162,6 +180,7 @@ export default function AbsensiClient({ anggotaList, divisiName }: { anggotaList
 
   return (
     <form onSubmit={onSubmit} className="space-y-6">
+      <UploadProgressBar progress={uploadProgress} isUploading={isUploading} />
       {message.text && (
         <div className={`p-4 rounded-xl text-sm flex items-start gap-3 border ${message.type === "error" ? "bg-rose-50 text-rose-700 border-rose-100" : "bg-emerald-50 text-emerald-700 border-emerald-100"}`}>
           {message.type === "error" ? <AlertCircle size={20} className="shrink-0" /> : <CheckCircle2 size={20} className="shrink-0" />}

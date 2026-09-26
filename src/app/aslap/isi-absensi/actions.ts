@@ -34,21 +34,10 @@ export async function submitAbsensi(formData: FormData) {
       return { error: "Divisi ini sudah mengisi absensi untuk hari ini." }
     }
 
-    // Ambil file foto
-    const fotoFiles = formData.getAll("foto") as File[]
-    if (!fotoFiles || fotoFiles.length === 0 || fotoFiles[0].size === 0) {
+    // Ambil URL foto (yang sudah diupload dari client)
+    const uploadedUrls = formData.getAll("foto_urls") as string[]
+    if (!uploadedUrls || uploadedUrls.length === 0) {
       return { error: "Foto bukti kehadiran wajib diunggah" }
-    }
-
-    // Upload to Cloudinary
-    const uploadedUrls: string[] = [];
-    for (const foto of fotoFiles) {
-      if (foto.size > 0) {
-        const bytes = await foto.arrayBuffer()
-        const buffer = Buffer.from(bytes)
-        const url = await uploadToCloudinary(buffer, "sppg_trangkil/absensi")
-        uploadedUrls.push(url)
-      }
     }
 
     // Kumpulkan data kehadiran

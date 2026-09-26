@@ -4,9 +4,13 @@ import { useState, useEffect } from "react"
 import { uploadFotoLaporan, deleteFotoLaporan, submitFinalLaporan, editFotoLaporan } from "./actions"
 import imageCompression from "browser-image-compression"
 import ConfirmModal from "@/components/ConfirmModal"
+import UploadProgressBar from "@/components/UploadProgressBar"
+import { uploadToCloudinaryClient } from "@/lib/clientUpload"
 
 export default function LaporanClient({ role, initialPhotos, initialCatatan }: { role: string, initialPhotos: any[], initialCatatan: string }) {
   const [loadingSection, setLoadingSection] = useState<string | null>(null)
+  const [isUploading, setIsUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
   
   const [uploadedPhotos, setUploadedPhotos] = useState<any[]>(initialPhotos)
   const [selectedFiles, setSelectedFiles] = useState<Record<string, { file: File, preview: string, keterangan?: string }[]>>({})
@@ -114,11 +118,21 @@ export default function LaporanClient({ role, initialPhotos, initialCatatan }: {
     setLoadingSection(catId)
 
     try {
-      // Unggah secara paralel dari sisi klien agar tidak terkena limit payload/timeout Vercel
-      const uploadPromises = filesToUpload.map(async (item) => {
+      setIsUploading(true)
+      setUploadProgress(0)
+      const progressArray = new Array(filesToUpload.length).fill(0)
+      
+      const uploadPromises = filesToUpload.map(async (item, idx) => {
         const formData = new FormData()
         const compressed = await handleCompress(item.file)
-        formData.append("fotos", compressed, item.file.name)
+        
+        const url = await uploadToCloudinaryClient(compressed, `sppg_trangkil/laporan/${catId}`, (p) => {
+           progressArray[idx] = p
+           const total = progressArray.reduce((acc, val) => acc + val, 0)
+           setUploadProgress(Math.round(total / filesToUpload.length))
+        })
+        
+        formData.append("foto_urls", url)
         formData.append("keterangans", item.keterangan || "")
         
         return uploadFotoLaporan(formData, catId)
@@ -169,6 +183,7 @@ export default function LaporanClient({ role, initialPhotos, initialCatatan }: {
           setUploadedPhotos(prev => prev.filter(f => f.id !== fotoId))
         }
         setLoadingSection(null)
+        setIsUploading(false)
       }
     })
   }
@@ -201,8 +216,14 @@ export default function LaporanClient({ role, initialPhotos, initialCatatan }: {
 
     const formData = new FormData()
     if (file) {
+      setIsUploading(true)
+      setUploadProgress(0)
       const compressed = await handleCompress(file)
-      formData.append("foto", compressed, file.name)
+      const url = await uploadToCloudinaryClient(compressed, `sppg_trangkil/laporan`, (p) => {
+          setUploadProgress(p)
+      })
+      formData.append("foto_url", url)
+      setIsUploading(false)
     }
     formData.append("keterangan", keterangan)
 
@@ -218,6 +239,7 @@ export default function LaporanClient({ role, initialPhotos, initialCatatan }: {
 
   return (
     <div className="flex flex-col relative pb-6 px-4 sm:px-5 lg:px-8">
+      <UploadProgressBar progress={uploadProgress} isUploading={isUploading} />
       <div className="max-w-5xl mx-auto w-full space-y-6 pt-6">
         
         {/* Judul Halaman */}

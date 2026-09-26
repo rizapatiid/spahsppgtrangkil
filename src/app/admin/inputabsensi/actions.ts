@@ -101,10 +101,9 @@ export async function saveAbsensiManual(formData: FormData) {
     }
     
     // Process Photo
-    const fotoFiles = formData.getAll("foto") as File[]
-    const validFotos = fotoFiles.filter(f => f.size > 0)
+    const fotoUrls = formData.getAll("foto_urls") as string[]
     
-    if (validFotos.length > 0) {
+    if (fotoUrls.length > 0) {
       // Hapus foto lama untuk tanggal & divisi ini
       await prisma.fotoKegiatan.deleteMany({
         where: {
@@ -118,15 +117,11 @@ export async function saveAbsensiManual(formData: FormData) {
       })
 
       // Upload dan simpan foto baru
-      for (const foto of validFotos) {
-        const bytes = await foto.arrayBuffer()
-        const buffer = Buffer.from(bytes)
-        const url_foto = await uploadToCloudinary(buffer, "sppg_trangkil/absensi_manual")
-        
+      for (const url of fotoUrls) {
         await prisma.fotoKegiatan.create({
           data: {
             tanggal: targetDate,
-            url_foto,
+            url_foto: url,
             tipe_foto: "absensi_briefing",
             divisi_id: divisiId
           }

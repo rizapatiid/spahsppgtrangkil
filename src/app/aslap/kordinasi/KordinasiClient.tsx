@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { Plus, Edit2, Trash2, Megaphone, CheckCircle2, AlertCircle, X, Search, Eye, Clock } from 'lucide-react'
 import { createArahan, updateArahan, deleteArahan } from '@/app/admin/kordinasi/actions'
+import UploadProgressBar from "@/components/UploadProgressBar"
+import { uploadToCloudinaryClient } from "@/lib/clientUpload"
+import imageCompression from "browser-image-compression"
 
 type Divisi = {
   id: number
@@ -37,6 +40,8 @@ export default function KordinasiClient({ arahan, divisiList }: { arahan: Arahan
   }, [])
 
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   
@@ -78,7 +83,16 @@ export default function KordinasiClient({ arahan, divisiList }: { arahan: Arahan
       formData.append('isi', isi)
       formData.append('divisi_id', divisiId)
       if (image) {
-        formData.append('image', image)
+        setIsUploading(true)
+        setUploadProgress(0)
+        try {
+          const compressed = await imageCompression(image, { maxSizeMB: 1, maxWidthOrHeight: 1920, useWebWorker: true })
+          const url = await uploadToCloudinaryClient(compressed, 'sppg_trangkil/arahan', (p) => setUploadProgress(p))
+          formData.append('image_url', url)
+        } catch(e) {
+          console.error(e)
+        }
+        setIsUploading(false)
       }
 
       if (isEditing && currentId) {
@@ -117,6 +131,7 @@ export default function KordinasiClient({ arahan, divisiList }: { arahan: Arahan
 
   return (
     <div className="space-y-6">
+      <UploadProgressBar progress={uploadProgress} isUploading={isUploading} />
       {/* Header Halaman */}
       <div className="flex items-center justify-between gap-3 mb-2 pb-4 border-b border-slate-200/80 px-1">
         <div className="flex items-center gap-3 min-w-0">

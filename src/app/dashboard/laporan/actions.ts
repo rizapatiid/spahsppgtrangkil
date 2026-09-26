@@ -43,19 +43,15 @@ export async function uploadFotoLaporan(formData: FormData, tipe_foto: string) {
       })
     }
 
-    const files = formData.getAll("fotos") as File[]
+    const urls = formData.getAll("foto_urls") as string[]
     const keterangans = formData.getAll("keterangans") as string[]
-    if (files.length === 0) return { error: "Tidak ada file" }
+    if (urls.length === 0) return { error: "Tidak ada file" }
 
     const savedPhotos = []
 
-    for (let i = 0; i < files.length; i++) {
-      const foto = files[i]
-      if (foto.size === 0) continue
-
-      const bytes = await foto.arrayBuffer()
-      const buffer = Buffer.from(bytes)
-      const url_foto = await uploadToCloudinary(buffer, `sppg_trangkil/laporan/${tipe_foto}`)
+    for (let i = 0; i < urls.length; i++) {
+      const url_foto = urls[i]
+      if (!url_foto) continue
 
       const saved = await prisma.fotoKegiatan.create({
         data: {
@@ -121,7 +117,7 @@ export async function editFotoLaporan(fotoId: string, formData: FormData) {
     const fotoRecord = await prisma.fotoKegiatan.findUnique({ where: { id: fotoId } })
     if (!fotoRecord) return { error: "Foto tidak ditemukan" }
 
-    const file = formData.get("foto") as File | null
+    const fileUrl = formData.get("foto_url") as string | null
     const keterangan = formData.get("keterangan") as string | null
 
     let newUrl = fotoRecord.url_foto
@@ -131,18 +127,14 @@ export async function editFotoLaporan(fotoId: string, formData: FormData) {
       newCatatan.keterangan = keterangan
     }
 
-    if (file && file.size > 0) {
+    if (fileUrl) {
       // Hapus fisik lama jika ada di Cloudinary
       try {
         if (fotoRecord.url_foto.startsWith("http")) {
           await deleteFromCloudinary(fotoRecord.url_foto)
         }
       } catch (e) {}
-
-      // Upload fisik baru ke Cloudinary
-      const bytes = await file.arrayBuffer()
-      const buffer = Buffer.from(bytes)
-      newUrl = await uploadToCloudinary(buffer, `sppg_trangkil/laporan/${fotoRecord.tipe_foto}`)
+      newUrl = fileUrl
     }
 
     const updated = await prisma.fotoKegiatan.update({
