@@ -248,16 +248,16 @@ export default function PengaturanLiburClient({
       </ModalPortal>
       )}
 
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-        <div className="p-5 border-b border-slate-100 bg-slate-50/50">
-          <h2 className="text-[15px] font-extrabold text-slate-800">Daftar Jadwal Libur Aktif</h2>
+      <div className="space-y-3 sm:space-y-4">
+        <div className="flex items-center justify-between px-1">
+          <h2 className="text-[13px] font-extrabold text-slate-800 uppercase tracking-wider">Daftar Jadwal Libur Aktif</h2>
         </div>
-        <div className="divide-y divide-slate-100">
+        <div className="space-y-3 sm:space-y-4">
           {data.length === 0 ? (
             <div className="p-8 text-center text-slate-500 text-[13px] font-medium">Belum ada jadwal libur yang diatur.</div>
           ) : (
             data.map(item => (
-              <div key={item.id} className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-0 hover:bg-slate-50/50 transition">
+              <div key={item.id} className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md hover:border-slate-300 transition-all cursor-pointer">
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center text-rose-500 shrink-0 mt-1">
                     <CalendarOff size={18} />
@@ -271,7 +271,7 @@ export default function PengaturanLiburClient({
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-wrap items-center gap-2 shrink-0 sm:ml-3 w-full sm:w-auto">
+                <div className="flex flex-wrap items-center gap-2 shrink-0 self-end sm:self-auto">
                   <button 
                     onClick={() => setDetailItem(item)}
                     className="inline-flex items-center justify-center gap-1.5 text-[11px] sm:text-[12px] bg-slate-900 text-white hover:bg-slate-800 transition-all px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-lg font-bold shadow-sm shrink-0 cursor-pointer"
