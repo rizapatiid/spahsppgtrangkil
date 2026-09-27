@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Calendar, Trash2, Plus, CalendarOff, Users, CheckSquare, Square } from "lucide-react"
+import { Calendar, Trash2, Plus, CalendarOff, Users, CheckSquare, Square, X } from "lucide-react"
 import { saveJadwalLibur, deleteHariLibur } from "./actions"
 import { useModal } from "@/components/ModalContext"
 import { useRouter } from "next/navigation"
@@ -19,6 +19,7 @@ export default function PengaturanLiburClient({
   
   // State for which relawan are selected for holiday
   const [selectedRelawan, setSelectedRelawan] = useState<number[]>([])
+  const [detailItem, setDetailItem] = useState<any>(null)
   
   const [loading, setLoading] = useState(false)
   const { showConfirm, showAlert } = useModal()
@@ -220,6 +221,44 @@ export default function PengaturanLiburClient({
           )}
         </div>
       </div>
+      {/* DETAIL MODAL */}
+      {detailItem && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="px-5 py-4 flex items-center justify-between border-b border-slate-100 bg-slate-50/50">
+              <div>
+                <h3 className="font-extrabold text-slate-800 text-[15px]">Detail Relawan Libur</h3>
+                <p className="text-xs font-medium text-slate-500 mt-0.5">{formatTanggal(detailItem.tanggal)}</p>
+              </div>
+              <button onClick={() => setDetailItem(null)} className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="p-5 max-h-[60vh] overflow-y-auto space-y-4">
+              {detailItem.relawan?.length === 0 ? (
+                <p className="text-center text-slate-500 text-sm py-4 font-medium">Tidak ada relawan yang ditandai libur.</p>
+              ) : (
+                <div className="space-y-1">
+                  {detailItem.relawan?.map((r: any, idx: number) => (
+                    <div key={idx} className="flex flex-col p-2.5 rounded-lg border border-slate-100 bg-slate-50">
+                      <span className="font-bold text-[13px] text-slate-700">{r.anggota?.nama || "Unknown"}</span>
+                      <span className="font-medium text-[11px] text-slate-500">{r.anggota?.divisi?.nama_divisi || "-"}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="p-4 border-t border-slate-100 bg-slate-50">
+              <button 
+                onClick={() => setDetailItem(null)}
+                className="w-full py-2.5 bg-white border border-slate-200 hover:bg-slate-100 rounded-xl text-[13px] font-bold text-slate-700 transition"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -9,7 +9,13 @@ export async function getHariLibur() {
   const data = await prisma.hariLibur.findMany({
     orderBy: { tanggal: 'desc' },
     include: {
-      relawan: true
+      relawan: {
+        include: {
+          anggota: {
+            select: { nama: true, divisi: { select: { nama_divisi: true } } }
+          }
+        }
+      }
     }
   })
   return data
