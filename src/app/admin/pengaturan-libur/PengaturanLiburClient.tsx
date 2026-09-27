@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { createPortal } from "react-dom"
-import { Calendar, Trash2, Plus, CalendarOff, Users, CheckSquare, Square, X, Edit2 } from "lucide-react"
+import { Calendar, Trash2, Plus, CalendarOff, Users, CheckSquare, Square, X, Edit2, Eye } from "lucide-react"
 import { saveJadwalLibur, deleteHariLibur } from "./actions"
 import { useModal } from "@/components/ModalContext"
 import { useRouter } from "next/navigation"
@@ -241,7 +241,7 @@ export default function PengaturanLiburClient({
           ) : (
             data.map(item => (
               <div key={item.id} className="p-4 sm:p-5 flex items-start justify-between hover:bg-slate-50/50 transition">
-                <div className="flex items-start gap-4 cursor-pointer group" onClick={() => setDetailItem(item)}>
+                <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center text-rose-500 shrink-0 mt-1">
                     <CalendarOff size={18} />
                   </div>
@@ -254,22 +254,29 @@ export default function PengaturanLiburClient({
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-1 shrink-0">
-                    <button 
-                      onClick={(e) => { e.stopPropagation(); handleEdit(item); }}
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:bg-blue-50 hover:text-blue-500 transition"
-                      title="Edit"
-                    >
-                      <Edit2 size={16} />
-                    </button>
-                    <button 
-                      onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }}
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition"
-                      title="Hapus"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
+                <div className="flex flex-wrap items-center gap-1.5 shrink-0 ml-3">
+                  <button 
+                    onClick={() => setDetailItem(item)}
+                    className="inline-flex items-center justify-center gap-1.5 text-[11px] sm:text-[12px] bg-slate-900 text-white hover:bg-slate-800 transition-all px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-lg font-bold shadow-sm shrink-0 cursor-pointer"
+                  >
+                    <Eye size={13} strokeWidth={2.5} />
+                    <span className="hidden sm:inline">Detail</span>
+                  </button>
+                  <button 
+                    onClick={() => handleEdit(item)}
+                    className="inline-flex items-center justify-center gap-1.5 text-[11px] sm:text-[12px] bg-blue-50 text-blue-600 border border-blue-100 hover:bg-blue-100 transition-all px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-lg font-bold shadow-sm shrink-0 cursor-pointer"
+                  >
+                    <Edit2 size={13} strokeWidth={2.5} />
+                    <span className="hidden sm:inline">Edit</span>
+                  </button>
+                  <button 
+                    onClick={() => handleDelete(item.id)}
+                    className="inline-flex items-center justify-center gap-1.5 text-[11px] sm:text-[12px] bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-100 transition-all px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-lg font-bold shadow-sm shrink-0 cursor-pointer"
+                  >
+                    <Trash2 size={13} strokeWidth={2.5} />
+                    <span className="hidden sm:inline">Hapus</span>
+                  </button>
+                </div>
               </div>
             ))
           )}
@@ -280,12 +287,19 @@ export default function PengaturanLiburClient({
         <ModalPortal>
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="bg-slate-900 p-4 sm:p-5 flex items-center justify-between text-white shrink-0">
-              <div>
-                <h3 className="font-extrabold text-[14px]">Detail Relawan Libur</h3>
-                <p className="text-[11px] text-slate-400 font-medium mt-0.5">{formatTanggal(detailItem.tanggal)}</p>
+            <div className="bg-slate-900 p-4 sm:p-5 flex items-center justify-between gap-3 shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white shrink-0">
+                  <Users size={16} strokeWidth={2.5} />
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-[14px]">Detail Relawan Libur</h3>
+                  <p className="text-slate-300 text-[11px] font-medium">{formatTanggal(detailItem.tanggal)}</p>
+                </div>
               </div>
-              <button onClick={() => setDetailItem(null)} className="text-slate-400 hover:text-white transition"><X size={20} /></button>
+              <button onClick={() => setDetailItem(null)} className="text-slate-400 hover:text-white transition-colors cursor-pointer">
+                <X size={20} />
+              </button>
             </div>
             <div className="p-5 max-h-[60vh] overflow-y-auto space-y-4 bg-white">
               {detailItem.relawan?.length === 0 ? (
