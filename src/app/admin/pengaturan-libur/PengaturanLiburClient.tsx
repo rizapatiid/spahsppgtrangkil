@@ -277,21 +277,21 @@ export default function PengaturanLiburClient({
                     className="inline-flex items-center justify-center gap-1.5 text-[11px] sm:text-[12px] bg-slate-900 text-white hover:bg-slate-800 transition-all px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-lg font-bold shadow-sm shrink-0 cursor-pointer"
                   >
                     <Eye size={13} strokeWidth={2.5} />
-                    <span className="hidden sm:inline">Detail</span>
+                    Detail
                   </button>
                   <button 
                     onClick={() => handleEdit(item)}
                     className="inline-flex items-center justify-center gap-1.5 text-[11px] sm:text-[12px] bg-blue-50 text-blue-600 border border-blue-100 hover:bg-blue-100 transition-all px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-lg font-bold shadow-sm shrink-0 cursor-pointer"
                   >
                     <Edit2 size={13} strokeWidth={2.5} />
-                    <span className="hidden sm:inline">Edit</span>
+                    Edit
                   </button>
                   <button 
                     onClick={() => handleDelete(item.id)}
                     className="inline-flex items-center justify-center gap-1.5 text-[11px] sm:text-[12px] bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-100 transition-all px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-lg font-bold shadow-sm shrink-0 cursor-pointer"
                   >
                     <Trash2 size={13} strokeWidth={2.5} />
-                    <span className="hidden sm:inline">Hapus</span>
+                    Hapus
                   </button>
                 </div>
               </div>
