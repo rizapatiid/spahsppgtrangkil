@@ -1,10 +1,16 @@
 "use client"
 
 import { useState } from "react"
+import { createPortal } from "react-dom"
 import { Calendar, Trash2, Plus, CalendarOff, Users, CheckSquare, Square, X, Edit2 } from "lucide-react"
 import { saveJadwalLibur, deleteHariLibur } from "./actions"
 import { useModal } from "@/components/ModalContext"
 import { useRouter } from "next/navigation"
+
+function ModalPortal({ children }: { children: React.ReactNode }) {
+  if (typeof document === "undefined") return null
+  return createPortal(children, document.body)
+}
 
 export default function PengaturanLiburClient({ 
   initialData, 
@@ -215,13 +221,10 @@ export default function PengaturanLiburClient({
             </div>
           </div>
 
-          <div className="pt-2">
-            <button 
-              type="submit" 
-              disabled={loading}
-              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[13px] font-bold transition shadow-md shadow-blue-500/20 flex items-center justify-center gap-2 w-full sm:w-auto"
-            >
-              <Plus size={16} /> Simpan Jadwal Libur
+          <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+            <button type="button" onClick={() => setShowAddForm(false)} className="px-5 py-2.5 bg-slate-150 hover:bg-slate-200 text-slate-700 rounded-lg text-[13px] font-bold transition cursor-pointer">Batal</button>
+            <button type="submit" disabled={loading} className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-[13px] font-bold transition shadow-md cursor-pointer disabled:opacity-50">
+              {loading ? "Menyimpan..." : "Simpan Jadwal"}
             </button>
           </div>
         </form>
@@ -274,18 +277,17 @@ export default function PengaturanLiburClient({
       </div>
       {/* DETAIL MODAL */}
       {detailItem && (
+        <ModalPortal>
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="px-5 py-4 flex items-center justify-between border-b border-slate-100 bg-slate-50/50">
+            <div className="bg-slate-900 p-4 sm:p-5 flex items-center justify-between text-white shrink-0">
               <div>
-                <h3 className="font-extrabold text-slate-800 text-[15px]">Detail Relawan Libur</h3>
-                <p className="text-xs font-medium text-slate-500 mt-0.5">{formatTanggal(detailItem.tanggal)}</p>
+                <h3 className="font-extrabold text-[14px]">Detail Relawan Libur</h3>
+                <p className="text-[11px] text-slate-400 font-medium mt-0.5">{formatTanggal(detailItem.tanggal)}</p>
               </div>
-              <button onClick={() => setDetailItem(null)} className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition">
-                <X size={18} />
-              </button>
+              <button onClick={() => setDetailItem(null)} className="text-slate-400 hover:text-white transition"><X size={20} /></button>
             </div>
-            <div className="p-5 max-h-[60vh] overflow-y-auto space-y-4">
+            <div className="p-5 max-h-[60vh] overflow-y-auto space-y-4 bg-white">
               {detailItem.relawan?.length === 0 ? (
                 <p className="text-center text-slate-500 text-sm py-4 font-medium">Tidak ada relawan yang ditandai libur.</p>
               ) : (
@@ -315,16 +317,17 @@ export default function PengaturanLiburClient({
                 </div>
               )}
             </div>
-            <div className="p-4 border-t border-slate-100 bg-slate-50">
+            <div className="flex justify-end gap-3 p-4 border-t border-slate-100 bg-slate-50">
               <button 
                 onClick={() => setDetailItem(null)}
-                className="w-full py-2.5 bg-white border border-slate-200 hover:bg-slate-100 rounded-xl text-[13px] font-bold text-slate-700 transition"
+                className="px-5 py-2.5 bg-slate-150 hover:bg-slate-200 text-slate-700 rounded-lg text-[13px] font-bold transition cursor-pointer"
               >
                 Tutup
               </button>
             </div>
           </div>
         </div>
+        </ModalPortal>
       )}
     </div>
   )
