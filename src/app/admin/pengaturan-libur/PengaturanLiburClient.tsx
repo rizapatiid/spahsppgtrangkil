@@ -197,7 +197,7 @@ export default function PengaturanLiburClient({
           ) : (
             data.map(item => (
               <div key={item.id} className="p-4 sm:p-5 flex items-start justify-between hover:bg-slate-50/50 transition">
-                <div className="flex items-start gap-4">
+                <div className="flex items-start gap-4 cursor-pointer group" onClick={() => setDetailItem(item)}>
                   <div className="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center text-rose-500 shrink-0 mt-1">
                     <CalendarOff size={18} />
                   </div>
