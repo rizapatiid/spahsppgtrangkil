@@ -238,13 +238,29 @@ export default function PengaturanLiburClient({
               {detailItem.relawan?.length === 0 ? (
                 <p className="text-center text-slate-500 text-sm py-4 font-medium">Tidak ada relawan yang ditandai libur.</p>
               ) : (
-                <div className="space-y-1">
-                  {detailItem.relawan?.map((r: any, idx: number) => (
-                    <div key={idx} className="flex flex-col p-2.5 rounded-lg border border-slate-100 bg-slate-50">
-                      <span className="font-bold text-[13px] text-slate-700">{r.anggota?.nama || "Unknown"}</span>
-                      <span className="font-medium text-[11px] text-slate-500">{r.anggota?.divisi?.nama_divisi || "-"}</span>
-                    </div>
-                  ))}
+                <div className="space-y-4">
+                  {(() => {
+                    const grouped = detailItem.relawan?.reduce((acc: any, curr: any) => {
+                      const divName = curr.anggota?.divisi?.nama_divisi || "Tanpa Divisi";
+                      if (!acc[divName]) acc[divName] = [];
+                      acc[divName].push(curr.anggota?.nama || "Tanpa Nama");
+                      return acc;
+                    }, {});
+                    
+                    return grouped ? Object.entries(grouped).map(([divName, names]: any) => (
+                      <div key={divName}>
+                        <h4 className="text-[11px] font-extrabold text-blue-500 uppercase tracking-wider mb-2">{divName}</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {names.map((name: string, idx: number) => (
+                            <div key={idx} className="flex items-center gap-2 p-2 rounded-lg border border-slate-100 bg-slate-50 hover:border-slate-200 transition">
+                              <div className="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
+                              <span className="font-bold text-[13px] text-slate-700 truncate">{name}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )) : null;
+                  })()}
                 </div>
               )}
             </div>
