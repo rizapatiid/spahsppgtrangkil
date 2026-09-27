@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Calendar, Trash2, Plus, CalendarOff, Users, CheckSquare, Square, X } from "lucide-react"
+import { Calendar, Trash2, Plus, CalendarOff, Users, CheckSquare, Square, X, Edit2 } from "lucide-react"
 import { saveJadwalLibur, deleteHariLibur } from "./actions"
 import { useModal } from "@/components/ModalContext"
 import { useRouter } from "next/navigation"
@@ -67,6 +67,21 @@ export default function PengaturanLiburClient({
       setSelectedRelawan([])
       router.refresh()
     }
+  }
+
+  const handleEdit = (item: any) => {
+    try {
+      const dateStr = new Date(item.tanggal).toISOString().split('T')[0];
+      setTanggal(dateStr);
+    } catch(e) {
+      if (typeof item.tanggal === 'string') {
+        setTanggal(item.tanggal.split('T')[0]);
+      }
+    }
+    setKeterangan(item.keterangan || "");
+    const ids = item.relawan?.map((r: any) => r.anggota_id) || [];
+    setSelectedRelawan(ids);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   const handleDelete = async (id: number) => {
@@ -210,12 +225,22 @@ export default function PengaturanLiburClient({
                     </div>
                   </div>
                 </div>
-                <button 
-                  onClick={() => handleDelete(item.id)}
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition shrink-0"
-                >
-                  <Trash2 size={16} />
-                </button>
+                <div className="flex items-center gap-1 shrink-0">
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); handleEdit(item); }}
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:bg-blue-50 hover:text-blue-500 transition"
+                      title="Edit"
+                    >
+                      <Edit2 size={16} />
+                    </button>
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }}
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition"
+                      title="Hapus"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
               </div>
             ))
           )}
