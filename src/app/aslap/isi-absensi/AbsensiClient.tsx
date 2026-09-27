@@ -299,7 +299,7 @@ export default function AbsensiClient({ anggotaList, divisiName, liburIds = [] }
             </div>
             
             <div className="space-y-3 lg:max-h-[600px] lg:overflow-y-auto lg:pr-2 lg:pb-4" style={{ scrollbarWidth: 'thin' }}>
-              {anggotaList.map((anggota) => (
+              {activeAnggota.map((anggota: any) => (
                 <div key={anggota.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 sm:px-5 sm:py-3.5 bg-white border border-slate-200/60 shadow-sm shadow-slate-100 hover:border-slate-300 hover:shadow-md rounded-2xl transition-all gap-3 sm:gap-4 group">
                   <div className="flex items-center gap-3 sm:gap-3.5">
                     <div className="w-10 h-10 sm:w-9 sm:h-9 rounded-full bg-slate-100 border border-slate-200 text-slate-600 flex items-center justify-center font-bold text-sm shrink-0 group-hover:bg-white group-hover:border-slate-300 transition-all">
