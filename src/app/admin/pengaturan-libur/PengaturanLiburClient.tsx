@@ -22,6 +22,7 @@ export default function PengaturanLiburClient({
   const [detailItem, setDetailItem] = useState<any>(null)
   
   const [loading, setLoading] = useState(false)
+  const [showAddForm, setShowAddForm] = useState(false)
   const { showConfirm, showAlert } = useModal()
   const router = useRouter()
 
@@ -81,6 +82,7 @@ export default function PengaturanLiburClient({
     setKeterangan(item.keterangan || "");
     const ids = item.relawan?.map((r: any) => r.anggota_id) || [];
     setSelectedRelawan(ids);
+    setShowAddForm(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -104,13 +106,36 @@ export default function PengaturanLiburClient({
 
   return (
     <div className="space-y-6">
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+      {/* Header Halaman */}
+      <div className="flex items-center justify-between gap-3 mb-2 pb-4 border-b border-slate-200/80 px-1">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
+            <CalendarOff size={18} strokeWidth={2.5} />
+          </div>
+          <div className="min-w-0">
+            <h2 className="text-[15px] sm:text-[16px] font-extrabold text-slate-800 tracking-tight truncate">Pengaturan Hari Libur</h2>
+            <p className="text-[11px] text-slate-500 font-medium truncate">Atur jadwal libur per relawan pada tanggal tertentu.</p>
+          </div>
+        </div>
+
+        <button
+          onClick={() => setShowAddForm(!showAddForm)}
+          className="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white px-3 sm:px-4 py-2 rounded-lg text-[12px] font-bold shadow-sm transition-all shrink-0 cursor-pointer"
+        >
+          <Plus size={15} className={showAddForm ? "rotate-45 transition-transform" : "transition-transform"} />
+          <span className="hidden sm:inline">{showAddForm ? "Tutup Form" : "Buat Jadwal Baru"}</span>
+          <span className="sm:hidden">{showAddForm ? "Tutup" : "Buat"}</span>
+        </button>
+      </div>
+
+      {showAddForm && (
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 animate-in fade-in slide-in-from-top-4 duration-300">
         <h2 className="text-[15px] font-extrabold text-slate-800 mb-4 flex items-center gap-2">
           <CalendarOff size={18} className="text-blue-500" />
-          Atur Jadwal Libur Relawan
+          Formulir Jadwal Libur Relawan
         </h2>
         
-        <form onSubmit={handleAdd} className="space-y-5">
+        <form onSubmit={async (e) => { await handleAdd(e); setShowAddForm(false); }} className="space-y-5">
           <div className="flex flex-col sm:flex-row gap-4 items-end">
             <div className="flex-1 w-full">
               <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">Tanggal Libur</label>
@@ -201,6 +226,7 @@ export default function PengaturanLiburClient({
           </div>
         </form>
       </div>
+      )}
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
         <div className="p-5 border-b border-slate-100 bg-slate-50/50">
