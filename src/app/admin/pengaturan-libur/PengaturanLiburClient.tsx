@@ -134,14 +134,28 @@ export default function PengaturanLiburClient({
         </button>
       </div>
 
+      {/* Form Tambah/Edit Modal */}
       {showAddForm && (
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 animate-in fade-in slide-in-from-top-4 duration-300">
-        <h2 className="text-[15px] font-extrabold text-slate-800 mb-4 flex items-center gap-2">
-          <CalendarOff size={18} className="text-blue-500" />
-          Formulir Jadwal Libur Relawan
-        </h2>
-        
-        <form onSubmit={async (e) => { await handleAdd(e); setShowAddForm(false); }} className="space-y-5">
+        <ModalPortal>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-5 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200 max-h-[90vh]">
+            <div className="bg-slate-900 p-4 sm:p-5 flex items-center justify-between gap-3 shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white shrink-0">
+                  <CalendarOff size={16} strokeWidth={2.5} />
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-[14px]">Formulir Jadwal Libur</h3>
+                  <p className="text-slate-300 text-[11px] font-medium">Tambah atau edit jadwal libur relawan</p>
+                </div>
+              </div>
+              <button onClick={() => setShowAddForm(false)} className="text-slate-400 hover:text-white transition-colors cursor-pointer">
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="overflow-y-auto bg-slate-50 flex-1">
+              <form onSubmit={async (e) => { await handleAdd(e); setShowAddForm(false); }} className="p-5 space-y-5 bg-white m-4 rounded-xl border border-slate-100">
           <div className="flex flex-col sm:flex-row gap-4 items-end">
             <div className="flex-1 w-full">
               <label className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">Tanggal Libur</label>
@@ -221,14 +235,17 @@ export default function PengaturanLiburClient({
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
-            <button type="button" onClick={() => setShowAddForm(false)} className="px-5 py-2.5 bg-slate-150 hover:bg-slate-200 text-slate-700 rounded-lg text-[13px] font-bold transition cursor-pointer">Batal</button>
+          <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 mt-6">
+            <button type="button" onClick={() => setShowAddForm(false)} className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[13px] font-bold transition cursor-pointer">Batal</button>
             <button type="submit" disabled={loading} className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-[13px] font-bold transition shadow-md cursor-pointer disabled:opacity-50">
               {loading ? "Menyimpan..." : "Simpan Jadwal"}
             </button>
           </div>
         </form>
+        </div>
       </div>
+      </div>
+      </ModalPortal>
       )}
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
